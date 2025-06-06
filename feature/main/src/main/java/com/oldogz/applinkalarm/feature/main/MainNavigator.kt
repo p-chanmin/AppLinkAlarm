@@ -1,0 +1,40 @@
+package com.oldogz.applinkalarm.feature.main
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
+import com.oldogz.core.navigation.Route
+import com.oldogz.applinkalarm.feature.home.navigation.navigationToHome
+
+internal class MainNavigator(
+    val navController: NavHostController,
+) {
+    val startDestination = Route.Home
+
+    fun navigateToHome() {
+        navController.navigationToHome()
+    }
+
+    private fun popBackStack() {
+        navController.popBackStack()
+    }
+
+    fun popBackStackIfNotStartDestination() {
+        if (!isSameCurrentDestination<Route.Home>()) {
+            popBackStack()
+        }
+    }
+
+    private inline fun <reified T : Route> isSameCurrentDestination(): Boolean {
+        val currentRoute = navController.currentDestination?.route
+        return currentRoute == T::class.simpleName
+    }
+}
+
+@Composable
+internal fun rememberMainNavigator(
+    navController: NavHostController = rememberNavController(),
+): MainNavigator = remember(navController) {
+    MainNavigator(navController)
+}
