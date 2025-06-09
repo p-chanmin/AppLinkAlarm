@@ -24,7 +24,7 @@ rootProject.name = "AppLink Alarm"
 include(":app")
 
 include(":feature:main")
-include(":feature:home")
+include(":feature:alarm")
 
 include(":core:navigation")
 include(":core:model")

@@ -3,7 +3,7 @@ plugins {
 }
 
 android {
-    namespace = "com.oldogz.applinkalarm.feature.home"
+    namespace = "com.oldogz.applinkalarm.feature.alarm"
 }
 
 dependencies {

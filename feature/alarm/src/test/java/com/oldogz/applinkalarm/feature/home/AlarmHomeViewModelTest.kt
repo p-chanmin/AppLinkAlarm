@@ -6,7 +6,7 @@ import org.junit.Rule
 import org.junit.Test
 import kotlin.test.assertEquals
 
-internal class HomeViewModelTest {
+internal class AlarmHomeViewModelTest {
 
     @get:Rule
     var mainCoroutineRule = MainDispatcherRule()
