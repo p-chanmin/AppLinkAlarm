@@ -7,5 +7,5 @@ sealed interface Route {
     data object AlarmHome : Route
 
     @Serializable
-    data object AlarmEdit : Route
+    data class AlarmEdit(val id: Int? = null) : Route
 }

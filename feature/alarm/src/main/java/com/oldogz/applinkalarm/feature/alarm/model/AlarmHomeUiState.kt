@@ -1,5 +1,11 @@
 package com.oldogz.applinkalarm.feature.alarm.model
 
+import androidx.compose.runtime.Immutable
+import com.oldogz.core.model.AppLinkAlarm
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
+@Immutable
 data class AlarmHomeUiState(
-    val text: String = "sample"
+    val alarms: ImmutableList<AppLinkAlarm> = persistentListOf()
 )
