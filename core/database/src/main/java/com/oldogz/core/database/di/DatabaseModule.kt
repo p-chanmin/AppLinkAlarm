@@ -1,6 +1,10 @@
 package com.oldogz.core.database.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.oldogz.core.database.AppLinkAlarmDatabase
 import dagger.Module
@@ -29,4 +33,13 @@ object DatabaseModule {
     @Provides
     fun provideAlarmEntityDao(appLinkAlarmDatabase: AppLinkAlarmDatabase) =
         appLinkAlarmDatabase.alarmEntityDao()
+
+    @Provides
+    @Singleton
+    fun providePreferencesDataStore(@ApplicationContext context: Context): DataStore<Preferences> =
+        PreferenceDataStoreFactory.create(
+            produceFile = { context.preferencesDataStoreFile(PREFERENCES_STORE_NAME) }
+        )
+
+    private const val PREFERENCES_STORE_NAME = "AppLinkAlarmDataStore"
 }

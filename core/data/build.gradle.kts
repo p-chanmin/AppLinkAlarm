@@ -1,5 +1,6 @@
 plugins {
     id("oldogz.android.library")
+    id("oldogz.android.kotlin.serialization")
 }
 
 android {
@@ -8,4 +9,5 @@ android {
 
 dependencies {
     implementation(project(":core:model"))
+    implementation(project(":core:database"))
 }
