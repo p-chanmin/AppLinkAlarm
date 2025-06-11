@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
+import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
@@ -67,6 +69,7 @@ import com.oldogz.core.designsystem.theme.NeonBlue
 import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -80,10 +83,32 @@ internal fun AlarmEditScreen(
 ) {
 
     val alarmEditUiState by alarmEditViewModel.alarmEditUiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
+    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 5)
+    val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30)
+    val periodOfDayState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
     LaunchedEffect(Unit) {
         alarmEditViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        alarmEditViewModel.event.collect { event ->
+            when (event) {
+                is AlarmEditUiEvent.AlarmEditComplete -> popBackStack()
+                is AlarmEditUiEvent.AlarmLoad -> {
+                    coroutineScope.launch {
+                        hourState.scrollToItem(event.hour - 1)
+                        minuteState.scrollToItem(event.minute)
+                        when (event.periodOfDay) {
+                            PeriodOfDay.AM -> periodOfDayState.scrollToItem(0)
+                            PeriodOfDay.PM -> periodOfDayState.scrollToItem(1)
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -92,6 +117,9 @@ internal fun AlarmEditScreen(
         paddingValues = paddingValues,
         popBackStack = popBackStack,
         updateLinkedAppPackage = alarmEditViewModel::updateLinkedAppPackage,
+        hourState = hourState,
+        minuteState = minuteState,
+        periodOfDayState = periodOfDayState,
         updateHour = alarmEditViewModel::updateHour,
         updateMinute = alarmEditViewModel::updateMinute,
         updatePeriodOfDay = alarmEditViewModel::updatePeriodOfDay,
@@ -112,9 +140,12 @@ private fun AlarmEditContent(
     paddingValues: PaddingValues,
     popBackStack: () -> Unit,
     updateLinkedAppPackage: (String) -> Unit,
+    hourState: LazyListState,
+    minuteState: LazyListState,
+    periodOfDayState: LazyListState,
     updateHour: (Int) -> Unit,
     updateMinute: (Int) -> Unit,
-    updatePeriodOfDay: (String) -> Unit,
+    updatePeriodOfDay: (PeriodOfDay) -> Unit,
     updateDayOfWeek: (DayOfWeek) -> Unit,
     updateAlarmName: (String) -> Unit,
     updateMessage: (String) -> Unit,
@@ -147,7 +178,11 @@ private fun AlarmEditContent(
             AppLinkAlarmTopAppBar(
                 modifier = Modifier
                     .fillMaxWidth(),
-                title = "New Alarm",
+                title = if (alarmEditUiState.id == null) {
+                    "New Alarm"
+                } else {
+                    "Edit Alarm"
+                },
                 navigationIcon = {
                     AppLinkAlarmIconButton(
                         imageVector = Icons.Filled.Close,
@@ -161,6 +196,7 @@ private fun AlarmEditContent(
             Column(
                 modifier = Modifier
                     .weight(1f)
+                    .fillMaxWidth()
                     .verticalScroll(scrollState)
             ) {
                 ChooseApp(
@@ -168,6 +204,9 @@ private fun AlarmEditContent(
                     selectAppDialog = selectAppDialog
                 )
                 AlarmTimer(
+                    hourState = hourState,
+                    minuteState = minuteState,
+                    periodOfDayState = periodOfDayState,
                     updateHour = updateHour,
                     updateMinute = updateMinute,
                     updatePeriodOfDay = updatePeriodOfDay,
@@ -203,7 +242,10 @@ private fun AlarmEditContent(
                     .fillMaxWidth()
                     .padding(Paddings.large),
                 content = "Save",
-                enabled = true,
+                enabled = (alarmEditUiState.linkedAppPackage != null &&
+                        alarmEditUiState.dayOfWeek.isNotEmpty() &&
+                        alarmEditUiState.alarmName.isNotEmpty() &&
+                        alarmEditUiState.message.isNotEmpty()),
                 onClick = saveAlarm
             )
         }
@@ -308,14 +350,13 @@ internal fun ChooseApp(
 
 @Composable
 internal fun AlarmTimer(
+    hourState: LazyListState,
+    minuteState: LazyListState,
+    periodOfDayState: LazyListState,
     updateHour: (Int) -> Unit,
     updateMinute: (Int) -> Unit,
-    updatePeriodOfDay: (String) -> Unit,
+    updatePeriodOfDay: (PeriodOfDay) -> Unit,
 ) {
-    val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 5)
-    val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30)
-    val periodOfDayState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
-
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -364,7 +405,15 @@ internal fun AlarmTimer(
                     state = periodOfDayState,
                     list = listOf("AM", "PM"),
                     itemHeight = 50.dp,
-                    selectedItem = { it?.let { periodOfDay -> updatePeriodOfDay(periodOfDay) } }
+                    selectedItem = {
+                        it?.let { periodOfDay ->
+                            if (periodOfDay == "AM") {
+                                updatePeriodOfDay(PeriodOfDay.AM)
+                            } else {
+                                updatePeriodOfDay(PeriodOfDay.PM)
+                            }
+                        }
+                    }
                 )
             }
         }
@@ -694,6 +743,9 @@ private fun AlarmEditContentPreview() {
             paddingValues = PaddingValues(),
             popBackStack = {},
             updateLinkedAppPackage = {},
+            hourState = rememberLazyListState(),
+            minuteState = rememberLazyListState(),
+            periodOfDayState = rememberLazyListState(),
             updateHour = {},
             updateMinute = {},
             updatePeriodOfDay = {},
