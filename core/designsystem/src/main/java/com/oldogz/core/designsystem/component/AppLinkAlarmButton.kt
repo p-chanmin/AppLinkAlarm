@@ -22,11 +22,15 @@ import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 
 @Composable
 fun AppLinkAlarmIconButton(
+    modifier: Modifier = Modifier,
     imageVector: ImageVector,
     contentDescription: String?,
     onClick: () -> Unit
 ) {
-    IconButton(onClick = onClick) {
+    IconButton(
+        modifier = modifier,
+        onClick = onClick
+    ) {
         Icon(
             imageVector = imageVector,
             contentDescription = contentDescription
@@ -37,7 +41,7 @@ fun AppLinkAlarmIconButton(
 @Composable
 fun AppLinkAlarmButton(
     modifier: Modifier = Modifier,
-    enable: Boolean = true,
+    enabled: Boolean = true,
     content: String,
     containerColor: Color = MaterialTheme.colorScheme.primary,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
@@ -45,7 +49,7 @@ fun AppLinkAlarmButton(
 ) {
     Button(
         modifier = modifier,
-        enabled = enable,
+        enabled = enabled,
         onClick = onClick,
         colors = ButtonDefaults.buttonColors().copy(
             containerColor = containerColor,
@@ -84,13 +88,13 @@ private fun AppLinkAlarmButtonPreview() {
         Column {
             AppLinkAlarmButton(
                 modifier = Modifier.fillMaxWidth(),
-                enable = true,
+                enabled = true,
                 content = "enable = true",
                 onClick = {}
             )
             AppLinkAlarmButton(
                 modifier = Modifier.fillMaxWidth(),
-                enable = false,
+                enabled = false,
                 content = "enable = false",
                 onClick = {}
             )
@@ -98,7 +102,7 @@ private fun AppLinkAlarmButtonPreview() {
                 modifier = Modifier.fillMaxWidth(),
                 containerColor = MaterialTheme.colorScheme.secondary,
                 contentColor = MaterialTheme.colorScheme.onBackground,
-                enable = true,
+                enabled = true,
                 content = "enable = false",
                 onClick = {}
             )
