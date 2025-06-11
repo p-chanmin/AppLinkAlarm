@@ -22,6 +22,8 @@ internal fun MainNavHost(
         alarmNavGraph(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToAlarmEdit = navigator::navigateToAlarmEdit,
+            popBackStack = navigator::popBackStackIfNotStartDestination
         )
     }
 }

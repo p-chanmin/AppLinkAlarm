@@ -4,8 +4,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.oldogz.core.navigation.Route
+import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToAlarmEdit
 import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToHome
+import com.oldogz.core.navigation.Route
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -14,6 +15,10 @@ internal class MainNavigator(
 
     fun navigateToHome() {
         navController.navigationToHome()
+    }
+
+    fun navigateToAlarmEdit() {
+        navController.navigationToAlarmEdit()
     }
 
     private fun popBackStack() {
