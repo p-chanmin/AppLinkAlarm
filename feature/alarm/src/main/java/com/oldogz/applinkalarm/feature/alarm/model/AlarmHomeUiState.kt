@@ -7,5 +7,12 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class AlarmHomeUiState(
-    val alarms: ImmutableList<AppLinkAlarm> = persistentListOf()
+    val isSelectMode: Boolean = false,
+    val alarms: ImmutableList<AppLinkAlarmUiState> = persistentListOf()
+)
+
+@Immutable
+data class AppLinkAlarmUiState(
+    val selected: Boolean = false,
+    val appLinkAlarm: AppLinkAlarm
 )

@@ -1,49 +1,49 @@
 package com.oldogz.applinkalarm.feature.alarm.home
 
-import android.content.Context
 import android.content.res.Configuration
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AlarmOff
+import androidx.compose.material.icons.filled.AlarmOn
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.oldogz.applinkalarm.feature.alarm.component.AppIconImage
+import com.oldogz.applinkalarm.feature.alarm.component.AppLinkAlarmItem
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
+import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
-import com.oldogz.core.designsystem.component.AppLinkAlarmSwitch
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
-import com.oldogz.core.designsystem.theme.Paddings
-import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
 @Composable
@@ -66,7 +66,12 @@ internal fun AlarmHomeScreen(
         homeUiState = homeUiState,
         paddingValues = paddingValues,
         navigateToAlarmEdit = navigateToAlarmEdit,
-        updateAlarmActive = alarmHomeViewModel::updateAlarmActive
+        updateAlarmActive = alarmHomeViewModel::updateAlarmActive,
+        updateSelectMode = alarmHomeViewModel::updateSelectMode,
+        selectAlarm = alarmHomeViewModel::selectAlarm,
+        selectAllAlarm = alarmHomeViewModel::selectAllAlarm,
+        updateSelectedAlarmActive = alarmHomeViewModel::updateSelectedAlarmActive,
+        deleteSelectedAlarm = alarmHomeViewModel::deleteSelectedAlarm,
     )
 }
 
@@ -76,34 +81,28 @@ private fun AlarmHomeContent(
     paddingValues: PaddingValues,
     navigateToAlarmEdit: (Int?) -> Unit,
     updateAlarmActive: (AppLinkAlarm, Boolean) -> Unit,
+    updateSelectMode: (Boolean, Int?) -> Unit,
+    selectAlarm: (Boolean, Int) -> Unit,
+    selectAllAlarm: (Boolean) -> Unit,
+    updateSelectedAlarmActive: (Boolean) -> Unit,
+    deleteSelectedAlarm: () -> Unit,
 ) {
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         Column(
             modifier = Modifier.fillMaxSize()
         ) {
-            AppLinkAlarmTopAppBar(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                title = "AppLink Alarms",
-                navigationIcon = {
-                    AppLinkAlarmIconButton(
-                        imageVector = Icons.Filled.Settings,
-                        contentDescription = "Settings",
-                        onClick = {}
-                    )
-                },
-                actions = {
-                    AppLinkAlarmIconButton(
-                        imageVector = Icons.Filled.Add,
-                        contentDescription = "Add Alarm",
-                        onClick = { navigateToAlarmEdit(null) }
-                    )
-                }
+            AlarmHomeTopAppBar(
+                isSelectMode = homeUiState.isSelectMode,
+                alarms = homeUiState.alarms,
+                navigateToAlarmEdit = navigateToAlarmEdit,
+                updateSelectMode = updateSelectMode,
+                selectAllAlarm = selectAllAlarm
             )
 
             LazyColumn(
@@ -111,135 +110,173 @@ private fun AlarmHomeContent(
                     .weight(1f)
                     .fillMaxWidth()
             ) {
-                items(homeUiState.alarms, key = { it.id }) { alarm ->
+                items(homeUiState.alarms, key = { it.appLinkAlarm.id }) { uiState ->
                     AppLinkAlarmItem(
                         modifier = Modifier,
-                        onClick = { navigateToAlarmEdit(alarm.id) },
-                        appLinkAlarm = alarm,
-                        updateAlarmActive = { updateAlarmActive(alarm, it) },
+                        selectMode = homeUiState.isSelectMode,
+                        selected = uiState.selected,
+                        navigateToAlarmEdit = navigateToAlarmEdit,
+                        appLinkAlarm = uiState.appLinkAlarm,
+                        updateAlarmActive = { updateAlarmActive(uiState.appLinkAlarm, it) },
+                        updateSelectMode = updateSelectMode,
+                        selectAlarm = selectAlarm,
                     )
                 }
+            }
+            AnimatedVisibility(
+                visible = homeUiState.isSelectMode && homeUiState.alarms.any { it.selected },
+                enter = slideInVertically { fullHeight -> fullHeight },
+            ) {
+                AlarmSelectController(
+                    updateSelectedAlarmActive = updateSelectedAlarmActive,
+                    deleteSelectedAlarm = deleteSelectedAlarm,
+                )
             }
         }
     }
 }
 
 @Composable
-internal fun AppLinkAlarmItem(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit,
-    appLinkAlarm: AppLinkAlarm,
-    updateAlarmActive: (Boolean) -> Unit,
+private fun AlarmHomeTopAppBar(
+    isSelectMode: Boolean,
+    alarms: ImmutableList<AppLinkAlarmUiState>,
+    navigateToAlarmEdit: (Int?) -> Unit,
+    updateSelectMode: (Boolean, Int?) -> Unit,
+    selectAllAlarm: (Boolean) -> Unit,
 ) {
-    val context = LocalContext.current
-
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(Paddings.small),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = 2.dp
-        )
-    ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.background)
-                .clickable { onClick() }
-                .padding(Paddings.medium)
-                .padding(vertical = Paddings.medium),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-
-
-            Row(
-                modifier = Modifier.weight(1f)
-            ) {
-                AppIconImage(
-                    linkedAppPackage = appLinkAlarm.linkedAppPackage
-                )
+    if (isSelectMode) {
+        AppLinkAlarmTopAppBar(
+            modifier = Modifier
+                .fillMaxWidth(),
+            title = if (alarms.none { it.selected }) {
+                "Select Alarms"
+            } else {
+                "${alarms.count { it.selected }} selected"
+            },
+            navigationIcon = {
                 Column(
-                    modifier = Modifier.padding(start = Paddings.xlarge),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    val checkBoxState = when {
+                        alarms.all { it.selected } -> ToggleableState.On
+                        alarms.none { it.selected } -> ToggleableState.Off
+                        else -> ToggleableState.Indeterminate
+                    }
+                    TriStateCheckbox(
+                        state = checkBoxState,
+                        onClick = {
+                            when (checkBoxState) {
+                                ToggleableState.On -> {
+                                    selectAllAlarm(false)
+                                }
+
+                                else -> {
+                                    selectAllAlarm(true)
+                                }
+                            }
+                        },
+                    )
+                    Text(
+                        modifier = Modifier.offset(y = (-10).dp),
+                        text = "All",
+                        style = MaterialTheme.typography.labelMedium
+                    )
+                }
+            },
+            actions = {
+                TextButton(
+                    onClick = { updateSelectMode(false, null) }
                 ) {
                     Text(
-                        text = appLinkAlarm.alarmName,
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            color = MaterialTheme.colorScheme.onBackground,
-                            fontWeight = FontWeight.Bold
-                        )
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = Paddings.small),
-                        text = alarmModeToString(
-                            context,
-                            appLinkAlarm.alarmMode,
-                            appLinkAlarm.directAppLaunch
-                        ),
+                        text = "Cancel",
                         style = MaterialTheme.typography.labelLarge.copy(
-                            color = MaterialTheme.colorScheme.onSecondary
-                        )
-                    )
-                    Text(
-                        modifier = Modifier.padding(top = Paddings.small),
-                        text = dayOfWeekToString(context, appLinkAlarm.dayOfWeek),
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            color = MaterialTheme.colorScheme.onSecondary
-                        )
-                    )
-                    val hour = appLinkAlarm.hour.toString().padStart(2, '0')
-                    val minute = appLinkAlarm.minute.toString().padStart(2, '0')
-                    Text(
-                        modifier = Modifier.padding(top = Paddings.small),
-                        text = "$hour:$minute ${appLinkAlarm.periodOfDay}",
-                        style = MaterialTheme.typography.labelLarge.copy(
-                            color = MaterialTheme.colorScheme.onSecondary
+                            MaterialTheme.colorScheme.onBackground
                         )
                     )
                 }
             }
-            AppLinkAlarmSwitch(
+        )
+    } else {
+        AppLinkAlarmTopAppBar(
+            modifier = Modifier
+                .fillMaxWidth(),
+            title = "AppLink Alarms",
+            navigationIcon = {
+                AppLinkAlarmIconButton(
+                    imageVector = Icons.Filled.Settings,
+                    contentDescription = "Settings",
+                    onClick = {}
+                )
+            },
+            actions = {
+                AppLinkAlarmIconButton(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add Alarm",
+                    onClick = { navigateToAlarmEdit(null) }
+                )
+            }
+        )
+    }
+}
+
+@Composable
+private fun AlarmSelectController(
+    updateSelectedAlarmActive: (Boolean) -> Unit,
+    deleteSelectedAlarm: () -> Unit,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.secondary)
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AppLinkAlarmIconButton(
                 modifier = Modifier,
-                checked = appLinkAlarm.active,
-                onCheckedChange = updateAlarmActive
+                imageVector = Icons.Filled.AlarmOn,
+                contentDescription = "selected alarm On",
+                onClick = { updateSelectedAlarmActive(true) }
+            )
+            Text(
+                modifier = Modifier.offset(y = (-8).dp),
+                text = "On",
+                style = MaterialTheme.typography.labelMedium
             )
         }
-    }
-}
-
-private fun alarmModeToString(
-    context: Context,
-    alarmMode: AlarmMode,
-    directAppLaunch: Boolean
-): String {
-    val alarmModeText = when (alarmMode) {
-        AlarmMode.INSTANT -> "Instant Alarm"
-        AlarmMode.FLEXIBLE -> "Flexible Alarm"
-    }
-    return if (directAppLaunch) {
-        val directAppLaunchText = "Direct App Launch"
-        "$alarmModeText, $directAppLaunchText"
-    } else {
-        alarmModeText
-    }
-}
-
-private fun dayOfWeekToString(context: Context, dayOfWeek: List<DayOfWeek>): String {
-    return if (dayOfWeek.size == 7) {
-        "Every Day"
-    } else {
-        dayOfWeek.map {
-            when (it) {
-                DayOfWeek.SUNDAY -> "Son"
-                DayOfWeek.MONDAY -> "Mon"
-                DayOfWeek.TUESDAY -> "Tue"
-                DayOfWeek.WEDNESDAY -> "Wed"
-                DayOfWeek.THURSDAY -> "Thu"
-                DayOfWeek.FRIDAY -> "Fri"
-                DayOfWeek.SATURDAY -> "Sat"
-            }
-        }.joinToString(",")
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AppLinkAlarmIconButton(
+                modifier = Modifier,
+                imageVector = Icons.Filled.AlarmOff,
+                contentDescription = "selected alarm Off",
+                onClick = { updateSelectedAlarmActive(false) }
+            )
+            Text(
+                modifier = Modifier.offset(y = (-8).dp),
+                text = "Off",
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+        Column(
+            modifier = Modifier.weight(1f),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AppLinkAlarmIconButton(
+                modifier = Modifier,
+                imageVector = Icons.Filled.DeleteOutline,
+                contentDescription = "selected alarm Delete",
+                onClick = deleteSelectedAlarm
+            )
+            Text(
+                modifier = Modifier.offset(y = (-8).dp),
+                text = "Delete",
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
     }
 }
 
@@ -250,39 +287,58 @@ private fun HomeContentPreview() {
     AppLinkAlarmTheme {
         AlarmHomeContent(
             homeUiState = AlarmHomeUiState(
+                isSelectMode = true,
                 alarms = persistentListOf(
-                    AppLinkAlarm(
-                        id = 1,
-                        hour = 10,
-                        minute = 3,
-                        periodOfDay = PeriodOfDay.AM,
-                        alarmName = "알람 테스트 1 입니다.",
-                        dayOfWeek = listOf(
-                            DayOfWeek.MONDAY,
-                            DayOfWeek.TUESDAY,
-                            DayOfWeek.WEDNESDAY,
-                            DayOfWeek.THURSDAY,
-                            DayOfWeek.FRIDAY,
-                            DayOfWeek.SATURDAY,
-                            DayOfWeek.SUNDAY
-                        ),
-                        active = true
+                    AppLinkAlarmUiState(
+                        selected = true,
+                        appLinkAlarm = AppLinkAlarm(
+                            id = 1,
+                            hour = 10,
+                            minute = 3,
+                            periodOfDay = PeriodOfDay.AM,
+                            alarmName = "알람 테스트 1 입니다.",
+                            dayOfWeek = listOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                                DayOfWeek.SATURDAY,
+                                DayOfWeek.SUNDAY
+                            ),
+                            active = true
+                        )
                     ),
-                    AppLinkAlarm(
-                        id = 2,
-                        hour = 8,
-                        minute = 30,
-                        periodOfDay = PeriodOfDay.PM,
-                        alarmName = "알람 테스트 2 입니다.",
-                        dayOfWeek = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
-                        directAppLaunch = true,
-                        active = true
+                    AppLinkAlarmUiState(
+                        selected = false,
+                        appLinkAlarm = AppLinkAlarm(
+                            id = 2,
+                            hour = 10,
+                            minute = 3,
+                            periodOfDay = PeriodOfDay.AM,
+                            alarmName = "알람 테스트 1 입니다.",
+                            dayOfWeek = listOf(
+                                DayOfWeek.MONDAY,
+                                DayOfWeek.TUESDAY,
+                                DayOfWeek.WEDNESDAY,
+                                DayOfWeek.THURSDAY,
+                                DayOfWeek.FRIDAY,
+                                DayOfWeek.SATURDAY,
+                                DayOfWeek.SUNDAY
+                            ),
+                            active = true
+                        )
                     ),
                 )
             ),
             paddingValues = PaddingValues(),
             navigateToAlarmEdit = {},
-            updateAlarmActive = { _, _ -> }
+            updateAlarmActive = { _, _ -> },
+            updateSelectMode = { _, _ -> },
+            selectAlarm = { _, _ -> },
+            selectAllAlarm = {},
+            updateSelectedAlarmActive = {},
+            deleteSelectedAlarm = {}
         )
     }
 }
