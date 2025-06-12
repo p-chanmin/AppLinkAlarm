@@ -56,6 +56,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
+import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmFilterChip
@@ -71,6 +72,7 @@ import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -162,8 +164,8 @@ private fun AlarmEditContent(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .navigationBarsPadding()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -425,16 +427,37 @@ internal fun RepeatDays(
     dayOfWeek: ImmutableList<DayOfWeek>,
     updateDayOfWeek: (DayOfWeek) -> Unit,
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Text(
-            modifier = Modifier.padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
-            text = "Repeat Days",
-            style = MaterialTheme.typography.titleLarge.copy(
-                fontWeight = FontWeight.Bold
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier.padding(
+                    horizontal = Paddings.xlarge,
+                    vertical = Paddings.large
+                ),
+                text = "Repeat Days",
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
+
+            Text(
+                modifier = Modifier.padding(
+                    horizontal = Paddings.xlarge,
+                    vertical = Paddings.large
+                ),
+                text = dayOfWeekToString(context, dayOfWeek),
+                style = MaterialTheme.typography.labelMedium
+            )
+        }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -738,7 +761,8 @@ private fun AlarmEditContentPreview() {
     AppLinkAlarmTheme {
         AlarmEditContent(
             alarmEditUiState = AlarmEditUiState(
-                linkedAppPackage = null
+                linkedAppPackage = null,
+                dayOfWeek = persistentListOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY)
             ),
             paddingValues = PaddingValues(),
             popBackStack = {},
