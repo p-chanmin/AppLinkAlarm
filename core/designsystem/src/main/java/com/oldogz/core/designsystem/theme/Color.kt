@@ -5,7 +5,7 @@ import androidx.compose.ui.graphics.Color
 val EerieBlack = Color(0xFF0D1A12)
 val White = Color(0xFFFFFFFF)
 
-val Malachite = Color(0xFF38E078)
+val Emerald = Color(0xFF1AC97A)
 
 val SeaGreen = Color(0xFF52946B)
 val CambridgeBlue = Color(0xFF96C4A8)
