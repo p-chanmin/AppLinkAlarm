@@ -52,4 +52,8 @@ class AppLinkAlarmRepository @Inject constructor(
             active = appLinkAlarm.active,
         )
     }
+
+    suspend fun deleteAlarmById(id: Int) {
+        appLinkAlarmDataSource.deleteAlarmById(id)
+    }
 }
