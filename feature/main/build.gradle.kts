@@ -7,5 +7,6 @@ android {
 }
 dependencies {
     implementation(project(":feature:alarm"))
+    implementation(project(":feature:setting"))
 }
 

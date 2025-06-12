@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import com.oldogz.applinkalarm.feature.alarm.navigation.alarmNavGraph
+import com.oldogz.applinkalarm.feature.setting.navigation.settingNavGraph
 
 @Composable
 internal fun MainNavHost(
@@ -23,7 +24,14 @@ internal fun MainNavHost(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
             navigateToAlarmEdit = navigator::navigateToAlarmEdit,
-            popBackStack = navigator::popBackStackIfNotStartDestination
+            navigateToSetting = navigator::navigateToSetting,
+            popBackStack = navigator::popBackStackIfNotStartDestination,
+        )
+
+        settingNavGraph(
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            popBackStack = navigator::popBackStackIfNotStartDestination,
         )
     }
 }

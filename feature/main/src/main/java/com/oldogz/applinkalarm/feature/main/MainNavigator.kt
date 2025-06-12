@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToAlarmEdit
 import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToHome
+import com.oldogz.applinkalarm.feature.setting.navigation.navigationToSetting
 import com.oldogz.core.navigation.Route
 
 internal class MainNavigator(
@@ -19,6 +20,10 @@ internal class MainNavigator(
 
     fun navigateToAlarmEdit(id: Int?) {
         navController.navigationToAlarmEdit(id)
+    }
+
+    fun navigateToSetting() {
+        navController.navigationToSetting()
     }
 
     private fun popBackStack() {

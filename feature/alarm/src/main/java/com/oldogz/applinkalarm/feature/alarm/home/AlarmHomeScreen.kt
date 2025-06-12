@@ -51,6 +51,7 @@ internal fun AlarmHomeScreen(
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     navigateToAlarmEdit: (Int?) -> Unit,
+    navigateToSetting: () -> Unit,
     alarmHomeViewModel: AlarmHomeViewModel = hiltViewModel()
 ) {
 
@@ -66,6 +67,7 @@ internal fun AlarmHomeScreen(
         homeUiState = homeUiState,
         paddingValues = paddingValues,
         navigateToAlarmEdit = navigateToAlarmEdit,
+        navigateToSetting = navigateToSetting,
         updateAlarmActive = alarmHomeViewModel::updateAlarmActive,
         updateSelectMode = alarmHomeViewModel::updateSelectMode,
         selectAlarm = alarmHomeViewModel::selectAlarm,
@@ -80,6 +82,7 @@ private fun AlarmHomeContent(
     homeUiState: AlarmHomeUiState,
     paddingValues: PaddingValues,
     navigateToAlarmEdit: (Int?) -> Unit,
+    navigateToSetting: () -> Unit,
     updateAlarmActive: (AppLinkAlarm, Boolean) -> Unit,
     updateSelectMode: (Boolean, Int?) -> Unit,
     selectAlarm: (Boolean, Int) -> Unit,
@@ -101,6 +104,7 @@ private fun AlarmHomeContent(
                 isSelectMode = homeUiState.isSelectMode,
                 alarms = homeUiState.alarms,
                 navigateToAlarmEdit = navigateToAlarmEdit,
+                navigateToSetting = navigateToSetting,
                 updateSelectMode = updateSelectMode,
                 selectAllAlarm = selectAllAlarm
             )
@@ -141,6 +145,7 @@ private fun AlarmHomeTopAppBar(
     isSelectMode: Boolean,
     alarms: ImmutableList<AppLinkAlarmUiState>,
     navigateToAlarmEdit: (Int?) -> Unit,
+    navigateToSetting: () -> Unit,
     updateSelectMode: (Boolean, Int?) -> Unit,
     selectAllAlarm: (Boolean) -> Unit,
 ) {
@@ -205,7 +210,7 @@ private fun AlarmHomeTopAppBar(
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Settings,
                     contentDescription = "Settings",
-                    onClick = {}
+                    onClick = navigateToSetting
                 )
             },
             actions = {
@@ -333,6 +338,7 @@ private fun HomeContentPreview() {
             ),
             paddingValues = PaddingValues(),
             navigateToAlarmEdit = {},
+            navigateToSetting = {},
             updateAlarmActive = { _, _ -> },
             updateSelectMode = { _, _ -> },
             selectAlarm = { _, _ -> },

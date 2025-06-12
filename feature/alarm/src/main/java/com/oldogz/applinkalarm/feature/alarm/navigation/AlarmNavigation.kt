@@ -22,13 +22,15 @@ fun NavGraphBuilder.alarmNavGraph(
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     navigateToAlarmEdit: (Int?) -> Unit,
+    navigateToSetting: () -> Unit,
     popBackStack: () -> Unit,
 ) {
     composable<Route.AlarmHome> {
         AlarmHomeScreen(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            navigateToAlarmEdit = navigateToAlarmEdit
+            navigateToAlarmEdit = navigateToAlarmEdit,
+            navigateToSetting = navigateToSetting,
         )
     }
 
