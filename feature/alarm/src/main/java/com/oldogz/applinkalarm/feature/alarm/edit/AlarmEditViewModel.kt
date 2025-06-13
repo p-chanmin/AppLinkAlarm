@@ -141,6 +141,12 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
+    fun updateAlarmSound(uri: String) {
+        _alarmEditUiState.update {
+            it.copy(alarmSound = uri)
+        }
+    }
+
     fun updateVibrate(value: Boolean) {
         _alarmEditUiState.update {
             it.copy(vibrate = value)

@@ -1,6 +1,9 @@
 package com.oldogz.applinkalarm.feature.alarm.edit
 
+import android.content.Intent
 import android.content.res.Configuration
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
@@ -52,6 +55,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
@@ -59,6 +63,7 @@ import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
+import com.oldogz.applinkalarm.feature.alarm.util.getFileName
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmFilterChip
@@ -133,6 +138,7 @@ internal fun AlarmEditScreen(
         updateAlarmMode = alarmEditViewModel::updateAlarmMode,
         updateDirectAppLaunch = alarmEditViewModel::updateDirectAppLaunch,
         updateVibrate = alarmEditViewModel::updateVibrate,
+        updateAlarmSound = alarmEditViewModel::updateAlarmSound,
         updateAlarmVolume = alarmEditViewModel::updateAlarmVolume,
         selectAppDialog = alarmEditViewModel::selectAppDialog,
         saveAlarm = alarmEditViewModel::saveAlarm
@@ -157,6 +163,7 @@ private fun AlarmEditContent(
     updateAlarmMode: () -> Unit,
     updateDirectAppLaunch: (Boolean) -> Unit,
     updateVibrate: (Boolean) -> Unit,
+    updateAlarmSound: (String) -> Unit,
     updateAlarmVolume: (Float) -> Unit,
     selectAppDialog: () -> Unit,
     saveAlarm: () -> Unit,
@@ -231,6 +238,7 @@ private fun AlarmEditContent(
                     alarmMode = alarmEditUiState.alarmMode,
                     directAppLaunch = alarmEditUiState.directAppLaunch,
                     vibrate = alarmEditUiState.vibrate,
+                    alarmSound = alarmEditUiState.alarmSound,
                     alarmVolume = alarmEditUiState.alarmVolume,
                     updateAlarmMode = {
                         coroutineScope.launch {
@@ -241,6 +249,7 @@ private fun AlarmEditContent(
                     },
                     updateDirectAppLaunch = updateDirectAppLaunch,
                     updateVibrate = updateVibrate,
+                    updateAlarmSound = updateAlarmSound,
                     updateAlarmVolume = updateAlarmVolume,
                 )
             }
@@ -589,12 +598,24 @@ internal fun AlarmMode(
     alarmMode: AlarmMode,
     directAppLaunch: Boolean,
     vibrate: Boolean,
+    alarmSound: String?,
     alarmVolume: Int,
     updateAlarmMode: () -> Unit,
     updateDirectAppLaunch: (Boolean) -> Unit,
     updateVibrate: (Boolean) -> Unit,
+    updateAlarmSound: (String) -> Unit,
     updateAlarmVolume: (Float) -> Unit,
 ) {
+    val context = LocalContext.current
+    val filePickerLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+            uri?.let {
+                val flag = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                context.contentResolver.takePersistableUriPermission(it, flag)
+                updateAlarmSound(it.toString())
+            }
+        }
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -709,26 +730,23 @@ internal fun AlarmMode(
             enter = slideInVertically { fullHeight -> -fullHeight },
         ) {
             Column {
-                Row(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable { }
+                        .clickable { filePickerLauncher.launch(arrayOf("audio/*")) }
                         .padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    Column {
-                        Text(
-                            modifier = Modifier,
-                            text = stringResource(R.string.feature_alarm_text_alarm_sound),
-                            style = MaterialTheme.typography.bodyLarge
-                        )
-                        Text(
-                            modifier = Modifier.padding(top = Paddings.small),
-                            text = stringResource(R.string.feature_alarm_text_off),
-                            style = MaterialTheme.typography.bodySmall.copy(
-                                color = MaterialTheme.colorScheme.onSecondary
-                            )
+                    Text(
+                        modifier = Modifier,
+                        text = stringResource(R.string.feature_alarm_text_alarm_sound),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = Paddings.small),
+                        text = alarmSound?.toUri()?.getFileName(context)
+                            ?: stringResource(R.string.feature_alarm_text_default_sound),
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = MaterialTheme.colorScheme.onSecondary
                         )
                     )
                 }
@@ -814,6 +832,7 @@ private fun AlarmEditContentPreview() {
             updateAlarmMode = {},
             updateDirectAppLaunch = {},
             updateVibrate = {},
+            updateAlarmSound = {},
             updateAlarmVolume = {},
             selectAppDialog = {},
             saveAlarm = {}
