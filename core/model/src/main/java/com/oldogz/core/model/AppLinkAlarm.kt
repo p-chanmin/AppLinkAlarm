@@ -15,6 +15,7 @@ data class AppLinkAlarm(
     val alarmMode: AlarmMode = AlarmMode.ONLY_NOTIFICATION,
     val vibrate: Boolean = true,
     val alarmSound: String? = null,
+    val alarmVolume: Int = 80,
     val directAppLaunch: Boolean = false,
     val active: Boolean = true,
 )

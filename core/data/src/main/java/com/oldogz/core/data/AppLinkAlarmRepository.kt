@@ -30,6 +30,7 @@ class AppLinkAlarmRepository @Inject constructor(
             alarmMode = Json.encodeToString(appLinkAlarm.alarmMode),
             vibrate = appLinkAlarm.vibrate,
             alarmSound = appLinkAlarm.alarmSound,
+            alarmVolume = appLinkAlarm.alarmVolume,
             directAppLaunch = appLinkAlarm.directAppLaunch,
             active = appLinkAlarm.active,
         )
@@ -48,6 +49,7 @@ class AppLinkAlarmRepository @Inject constructor(
             alarmMode = Json.encodeToString(appLinkAlarm.alarmMode),
             vibrate = appLinkAlarm.vibrate,
             alarmSound = appLinkAlarm.alarmSound,
+            alarmVolume = appLinkAlarm.alarmVolume,
             directAppLaunch = appLinkAlarm.directAppLaunch,
             active = appLinkAlarm.active,
         )

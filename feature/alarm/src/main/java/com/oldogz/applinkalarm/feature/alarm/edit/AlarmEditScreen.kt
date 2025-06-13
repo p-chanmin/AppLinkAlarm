@@ -63,6 +63,7 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmFilterChip
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
+import com.oldogz.core.designsystem.component.AppLinkAlarmSlider
 import com.oldogz.core.designsystem.component.AppLinkAlarmSwitch
 import com.oldogz.core.designsystem.component.AppLinkAlarmTextField
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
@@ -132,6 +133,7 @@ internal fun AlarmEditScreen(
         updateAlarmMode = alarmEditViewModel::updateAlarmMode,
         updateDirectAppLaunch = alarmEditViewModel::updateDirectAppLaunch,
         updateVibrate = alarmEditViewModel::updateVibrate,
+        updateAlarmVolume = alarmEditViewModel::updateAlarmVolume,
         selectAppDialog = alarmEditViewModel::selectAppDialog,
         saveAlarm = alarmEditViewModel::saveAlarm
     )
@@ -155,6 +157,7 @@ private fun AlarmEditContent(
     updateAlarmMode: () -> Unit,
     updateDirectAppLaunch: (Boolean) -> Unit,
     updateVibrate: (Boolean) -> Unit,
+    updateAlarmVolume: (Float) -> Unit,
     selectAppDialog: () -> Unit,
     saveAlarm: () -> Unit,
 ) {
@@ -228,6 +231,7 @@ private fun AlarmEditContent(
                     alarmMode = alarmEditUiState.alarmMode,
                     directAppLaunch = alarmEditUiState.directAppLaunch,
                     vibrate = alarmEditUiState.vibrate,
+                    alarmVolume = alarmEditUiState.alarmVolume,
                     updateAlarmMode = {
                         coroutineScope.launch {
                             updateAlarmMode()
@@ -237,6 +241,7 @@ private fun AlarmEditContent(
                     },
                     updateDirectAppLaunch = updateDirectAppLaunch,
                     updateVibrate = updateVibrate,
+                    updateAlarmVolume = updateAlarmVolume,
                 )
             }
 
@@ -584,9 +589,11 @@ internal fun AlarmMode(
     alarmMode: AlarmMode,
     directAppLaunch: Boolean,
     vibrate: Boolean,
+    alarmVolume: Int,
     updateAlarmMode: () -> Unit,
     updateDirectAppLaunch: (Boolean) -> Unit,
     updateVibrate: (Boolean) -> Unit,
+    updateAlarmVolume: (Float) -> Unit,
 ) {
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -639,32 +646,28 @@ internal fun AlarmMode(
                 )
             }
         }
-        Row(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { updateAlarmMode() }
                 .padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column {
-                Text(
-                    modifier = Modifier,
-                    text = stringResource(R.string.feature_alarm_text_mode),
-                    style = MaterialTheme.typography.bodyLarge
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_alarm_text_mode),
+                style = MaterialTheme.typography.bodyLarge
+            )
+            Text(
+                modifier = Modifier.padding(top = Paddings.small),
+                text = if (alarmMode == AlarmMode.STANDARD) {
+                    stringResource(R.string.feature_alarm_text_standard)
+                } else {
+                    stringResource(R.string.feature_alarm_text_only_notification)
+                },
+                style = MaterialTheme.typography.bodySmall.copy(
+                    color = MaterialTheme.colorScheme.onSecondary
                 )
-                Text(
-                    modifier = Modifier.padding(top = Paddings.small),
-                    text = if (alarmMode == AlarmMode.STANDARD) {
-                        stringResource(R.string.feature_alarm_text_standard)
-                    } else {
-                        stringResource(R.string.feature_alarm_text_only_notification)
-                    },
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSecondary
-                    )
-                )
-            }
+            )
         }
 
         Row(
@@ -727,7 +730,24 @@ internal fun AlarmMode(
                                 color = MaterialTheme.colorScheme.onSecondary
                             )
                         )
-                    }
+                    )
+                }
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = stringResource(R.string.feature_alarm_text_volume, alarmVolume),
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                    AppLinkAlarmSlider(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = alarmVolume.toFloat() / 100,
+                        onValueChange = updateAlarmVolume
+                    )
                 }
 
                 Row(
@@ -768,14 +788,15 @@ internal fun AlarmMode(
     }
 }
 
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO, heightDp = 1200)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES, heightDp = 1200)
 @Composable
 private fun AlarmEditContentPreview() {
     AppLinkAlarmTheme {
         AlarmEditContent(
             alarmEditUiState = AlarmEditUiState(
                 linkedAppPackage = null,
+                alarmMode = AlarmMode.STANDARD,
                 dayOfWeek = persistentListOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY)
             ),
             paddingValues = PaddingValues(),
@@ -793,6 +814,7 @@ private fun AlarmEditContentPreview() {
             updateAlarmMode = {},
             updateDirectAppLaunch = {},
             updateVibrate = {},
+            updateAlarmVolume = {},
             selectAppDialog = {},
             saveAlarm = {}
         )

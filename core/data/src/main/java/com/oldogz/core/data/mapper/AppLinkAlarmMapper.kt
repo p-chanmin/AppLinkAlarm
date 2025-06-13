@@ -20,6 +20,7 @@ internal fun AlarmEntity.toData(): AppLinkAlarm {
         alarmMode = Json.decodeFromString<AlarmMode>(this.alarmMode),
         vibrate = this.vibrate,
         alarmSound = this.alarmSound,
+        alarmVolume = this.alarmVolume,
         directAppLaunch = this.directAppLaunch,
         active = this.active
     )

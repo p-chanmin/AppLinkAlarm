@@ -58,6 +58,7 @@
     <string name="feature_alarm_text_alarm_mode_tool_tip">Only Notification: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nStandard: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.\n\nDirect App Launch: At the set time, the app will open automatically.</string>
     <string name="feature_alarm_text_mode">Mode</string>
     <string name="feature_alarm_text_alarm_sound">Alarm Sound</string>
+    <string name="feature_alarm_text_volume">Volume : %1$s</string>
     <string name="feature_alarm_text_vibrate">Vibrate</string>
     <string name="feature_alarm_text_search">Search</string>
 </resources>

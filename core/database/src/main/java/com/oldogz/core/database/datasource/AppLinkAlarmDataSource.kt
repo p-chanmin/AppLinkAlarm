@@ -24,6 +24,7 @@ class AppLinkAlarmDataSource @Inject constructor(
         alarmMode: String = "",
         vibrate: Boolean = true,
         alarmSound: String? = null,
+        alarmVolume: Int = 80,
         directAppLaunch: Boolean = false,
         active: Boolean = true,
     ): Int {
@@ -39,6 +40,7 @@ class AppLinkAlarmDataSource @Inject constructor(
                 alarmMode = alarmMode,
                 vibrate = vibrate,
                 alarmSound = alarmSound,
+                alarmVolume = alarmVolume,
                 directAppLaunch = directAppLaunch,
                 active = active,
             )
@@ -57,6 +59,7 @@ class AppLinkAlarmDataSource @Inject constructor(
         alarmMode: String = "",
         vibrate: Boolean = true,
         alarmSound: String? = null,
+        alarmVolume: Int = 80,
         directAppLaunch: Boolean = false,
         active: Boolean = true,
     ) {
@@ -74,6 +77,7 @@ class AppLinkAlarmDataSource @Inject constructor(
                 alarmMode = alarmMode,
                 vibrate = vibrate,
                 alarmSound = alarmSound,
+                alarmVolume = alarmVolume,
                 directAppLaunch = directAppLaunch,
                 active = active,
             )

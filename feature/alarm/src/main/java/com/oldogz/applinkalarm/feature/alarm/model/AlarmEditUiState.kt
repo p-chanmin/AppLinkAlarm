@@ -21,6 +21,7 @@ data class AlarmEditUiState(
     val directAppLaunch: Boolean = false,
     val vibrate: Boolean = true,
     val alarmSound: String? = null,
+    val alarmVolume: Int = 80,
     val active: Boolean = true,
     val selectAppDialog: Boolean = false,
 )

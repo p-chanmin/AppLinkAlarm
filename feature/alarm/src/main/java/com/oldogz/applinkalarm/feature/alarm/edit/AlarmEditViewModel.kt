@@ -62,6 +62,7 @@ class AlarmEditViewModel @Inject constructor(
                         directAppLaunch = appLinkAlarm.directAppLaunch,
                         vibrate = appLinkAlarm.vibrate,
                         alarmSound = appLinkAlarm.alarmSound,
+                        alarmVolume = appLinkAlarm.alarmVolume,
                         active = appLinkAlarm.active
                     )
                 }
@@ -146,6 +147,12 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
+    fun updateAlarmVolume(value: Float) {
+        _alarmEditUiState.update {
+            it.copy(alarmVolume = (value * 100).toInt())
+        }
+    }
+
     fun selectAppDialog() {
         _alarmEditUiState.update {
             it.copy(selectAppDialog = !it.selectAppDialog)
@@ -166,6 +173,7 @@ class AlarmEditViewModel @Inject constructor(
             val directAppLaunch = _alarmEditUiState.value.directAppLaunch
             val vibrate = _alarmEditUiState.value.vibrate
             val alarmSound = _alarmEditUiState.value.alarmSound
+            val alarmVolume = _alarmEditUiState.value.alarmVolume
             val active = _alarmEditUiState.value.active
 
             if (linkedAppPackage != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
@@ -182,6 +190,7 @@ class AlarmEditViewModel @Inject constructor(
                     directAppLaunch = directAppLaunch,
                     vibrate = vibrate,
                     alarmSound = alarmSound,
+                    alarmVolume = alarmVolume,
                     active = active
                 )
                 if (id != null) {

@@ -17,6 +17,7 @@ data class AlarmEntity(
     val alarmMode: String = "",
     val vibrate: Boolean = true,
     val alarmSound: String? = null,
+    val alarmVolume: Int = 80,
     val directAppLaunch: Boolean = false,
     val active: Boolean = true,
 )
