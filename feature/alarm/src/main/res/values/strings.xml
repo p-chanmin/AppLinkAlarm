@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_alarm_top_app_bar_title_default">AppLink Alarms</string>
+    <string name="feature_alarm_top_app_bar_title_select_default">Select Alarms</string>
+    <string name="feature_alarm_top_app_bar_title_select_alarm">%1$s selected</string>
+    <string name="feature_alarm_top_app_bar_new_alarm">New Alarm</string>
+    <string name="feature_alarm_top_app_bar_edit_alarm">Edit Alarm</string>
+    <string name="feature_alarm_top_app_bar_select_app">Select App</string>
+
+    <string name="feature_alarm_icon_description_settings">Settings</string>
+    <string name="feature_alarm_icon_description_add_alarm">Add Alarm</string>
+    <string name="feature_alarm_icon_description_selected_alarm_on">selected alarm On</string>
+    <string name="feature_alarm_icon_description_selected_alarm_off">selected alarm Off</string>
+    <string name="feature_alarm_icon_description_selected_alarm_delete">selected alarm Delete</string>
+    <string name="feature_alarm_icon_description_close">Close</string>
+    <string name="feature_alarm_icon_description_app_icon">%1$s icon</string>
+    <string name="feature_alarm_icon_description_alarm_mode_info">Alarm Mode Info</string>
+
+    <string name="feature_alarm_text_select_all">All</string>
+    <string name="feature_alarm_text_select_cancel">Cancel</string>
+    <string name="feature_alarm_text_on">On</string>
+    <string name="feature_alarm_text_off">Off</string>
+    <string name="feature_alarm_text_selected_alarm_delete">Delete</string>
+    <string name="feature_alarm_text_alarm_save">Save</string>
+
+    <string name="feature_alarm_text_standard">Standard</string>
+    <string name="feature_alarm_text_only_notification">Only Notification</string>
+    <string name="feature_alarm_text_direct_app_launch">Direct App Launch</string>
+    <string name="feature_alarm_text_every_day">Every Day</string>
+
+    <string name="feature_alarm_text_sunday">Sun</string>
+    <string name="feature_alarm_text_monday">Mon</string>
+    <string name="feature_alarm_text_tuesday">Tue</string>
+    <string name="feature_alarm_text_wednesday">Wed</string>
+    <string name="feature_alarm_text_thursday">Thu</string>
+    <string name="feature_alarm_text_friday">Fri</string>
+    <string name="feature_alarm_text_saturday">Sat</string>
+
+    <string name="feature_alarm_text_sunday_simple">S</string>
+    <string name="feature_alarm_text_monday_simple">M</string>
+    <string name="feature_alarm_text_tuesday_simple">T</string>
+    <string name="feature_alarm_text_wednesday_simple">W</string>
+    <string name="feature_alarm_text_thursday_simple">T</string>
+    <string name="feature_alarm_text_friday_simple">F</string>
+    <string name="feature_alarm_text_saturday_simple">S</string>
+
+    <string name="feature_alarm_text_linked_app">Linked App</string>
+    <string name="feature_alarm_text_not_found">Not Found</string>
+    <string name="feature_alarm_text_choose_app">Choose App</string>
+    <string name="feature_alarm_text_time">Time</string>
+    <string name="feature_alarm_text_am">AM</string>
+    <string name="feature_alarm_text_pm">PM</string>
+    <string name="feature_alarm_text_repeat_days">Repeat Days</string>
+    <string name="feature_alarm_text_alarm_info">Alarm Info</string>
+    <string name="feature_alarm_text_alarm_name">Alarm Name</string>
+    <string name="feature_alarm_text_message">Message</string>
+    <string name="feature_alarm_text_alarm_mode">Alarm Mode</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">Only Notification: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nStandard: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.\n\nDirect App Launch: At the set time, the app will open automatically.</string>
+    <string name="feature_alarm_text_mode">Mode</string>
+    <string name="feature_alarm_text_alarm_sound">Alarm Sound</string>
+    <string name="feature_alarm_text_vibrate">Vibrate</string>
+    <string name="feature_alarm_text_search">Search</string>
+</resources>

@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -65,11 +66,11 @@ private fun SettingContent(
         ) {
             AppLinkAlarmTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                title = "Settings",
+                title = stringResource(R.string.feature_setting_top_app_bar_title),
                 navigationIcon = {
                     AppLinkAlarmIconButton(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.feature_setting_icon_description_close),
                         onClick = popBackStack
                     )
                 },

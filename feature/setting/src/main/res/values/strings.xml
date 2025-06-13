@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_setting_top_app_bar_title">Settings</string>
+
+    <string name="feature_setting_icon_description_close">Close</string>
+</resources>

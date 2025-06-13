@@ -29,11 +29,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.AppLinkAlarmItem
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
@@ -154,9 +156,12 @@ private fun AlarmHomeTopAppBar(
             modifier = Modifier
                 .fillMaxWidth(),
             title = if (alarms.none { it.selected }) {
-                "Select Alarms"
+                stringResource(R.string.feature_alarm_top_app_bar_title_select_default)
             } else {
-                "${alarms.count { it.selected }} selected"
+                stringResource(
+                    R.string.feature_alarm_top_app_bar_title_select_alarm,
+                    alarms.count { it.selected }
+                )
             },
             navigationIcon = {
                 Column(
@@ -183,7 +188,7 @@ private fun AlarmHomeTopAppBar(
                     )
                     Text(
                         modifier = Modifier.offset(y = (-10).dp),
-                        text = "All",
+                        text = stringResource(R.string.feature_alarm_text_select_all),
                         style = MaterialTheme.typography.labelMedium
                     )
                 }
@@ -193,7 +198,7 @@ private fun AlarmHomeTopAppBar(
                     onClick = { updateSelectMode(false, null) }
                 ) {
                     Text(
-                        text = "Cancel",
+                        text = stringResource(R.string.feature_alarm_text_select_cancel),
                         style = MaterialTheme.typography.labelLarge.copy(
                             MaterialTheme.colorScheme.onBackground
                         )
@@ -205,18 +210,18 @@ private fun AlarmHomeTopAppBar(
         AppLinkAlarmTopAppBar(
             modifier = Modifier
                 .fillMaxWidth(),
-            title = "AppLink Alarms",
+            title = stringResource(R.string.feature_alarm_top_app_bar_title_default),
             navigationIcon = {
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Settings,
-                    contentDescription = "Settings",
+                    contentDescription = stringResource(R.string.feature_alarm_icon_description_settings),
                     onClick = navigateToSetting
                 )
             },
             actions = {
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Add,
-                    contentDescription = "Add Alarm",
+                    contentDescription = stringResource(R.string.feature_alarm_icon_description_add_alarm),
                     onClick = { navigateToAlarmEdit(null) }
                 )
             }
@@ -241,12 +246,12 @@ private fun AlarmSelectController(
             AppLinkAlarmIconButton(
                 modifier = Modifier,
                 imageVector = Icons.Filled.AlarmOn,
-                contentDescription = "selected alarm On",
+                contentDescription = stringResource(R.string.feature_alarm_icon_description_selected_alarm_on),
                 onClick = { updateSelectedAlarmActive(true) }
             )
             Text(
                 modifier = Modifier.offset(y = (-8).dp),
-                text = "On",
+                text = stringResource(R.string.feature_alarm_text_on),
                 style = MaterialTheme.typography.labelMedium
             )
         }
@@ -257,12 +262,12 @@ private fun AlarmSelectController(
             AppLinkAlarmIconButton(
                 modifier = Modifier,
                 imageVector = Icons.Filled.AlarmOff,
-                contentDescription = "selected alarm Off",
+                contentDescription = stringResource(R.string.feature_alarm_icon_description_selected_alarm_off),
                 onClick = { updateSelectedAlarmActive(false) }
             )
             Text(
                 modifier = Modifier.offset(y = (-8).dp),
-                text = "Off",
+                text = stringResource(R.string.feature_alarm_text_off),
                 style = MaterialTheme.typography.labelMedium
             )
         }
@@ -273,12 +278,12 @@ private fun AlarmSelectController(
             AppLinkAlarmIconButton(
                 modifier = Modifier,
                 imageVector = Icons.Filled.DeleteOutline,
-                contentDescription = "selected alarm Delete",
+                contentDescription = stringResource(R.string.feature_alarm_icon_description_selected_alarm_delete),
                 onClick = deleteSelectedAlarm
             )
             Text(
                 modifier = Modifier.offset(y = (-8).dp),
-                text = "Delete",
+                text = stringResource(R.string.feature_alarm_text_selected_alarm_delete),
                 style = MaterialTheme.typography.labelMedium
             )
         }

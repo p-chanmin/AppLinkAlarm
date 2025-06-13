@@ -47,12 +47,14 @@ import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
@@ -83,7 +85,6 @@ internal fun AlarmEditScreen(
     popBackStack: () -> Unit,
     alarmEditViewModel: AlarmEditViewModel = hiltViewModel()
 ) {
-
     val alarmEditUiState by alarmEditViewModel.alarmEditUiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 5)
@@ -181,14 +182,14 @@ private fun AlarmEditContent(
                 modifier = Modifier
                     .fillMaxWidth(),
                 title = if (alarmEditUiState.id == null) {
-                    "New Alarm"
+                    stringResource(R.string.feature_alarm_top_app_bar_new_alarm)
                 } else {
-                    "Edit Alarm"
+                    stringResource(R.string.feature_alarm_top_app_bar_edit_alarm)
                 },
                 navigationIcon = {
                     AppLinkAlarmIconButton(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.feature_alarm_icon_description_close),
                         onClick = popBackStack
                     )
                 },
@@ -243,7 +244,7 @@ private fun AlarmEditContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(Paddings.large),
-                content = "Save",
+                content = stringResource(R.string.feature_alarm_text_alarm_save),
                 enabled = (alarmEditUiState.linkedAppPackage != null &&
                         alarmEditUiState.dayOfWeek.isNotEmpty() &&
                         alarmEditUiState.alarmName.isNotEmpty() &&
@@ -274,7 +275,7 @@ internal fun ChooseApp(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
-            text = "App",
+            text = stringResource(R.string.feature_alarm_text_linked_app),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             )
@@ -285,7 +286,8 @@ internal fun ChooseApp(
             } catch (e: Exception) {
                 null
             }
-            val label = appInfo?.loadLabel(packageManager) ?: "Not Found"
+            val label = appInfo?.loadLabel(packageManager)
+                ?: stringResource(R.string.feature_alarm_text_not_found)
             val icon = appInfo?.loadIcon(packageManager)
             Row(
                 modifier = Modifier
@@ -302,7 +304,10 @@ internal fun ChooseApp(
                             .size(32.dp)
                             .clip(RoundedCornerShape(8.dp)),
                         drawable = icon,
-                        contentDescription = "$label icon",
+                        contentDescription = stringResource(
+                            R.string.feature_alarm_icon_description_app_icon,
+                            label
+                        ),
                     )
                     Column(
                         modifier = Modifier.padding(start = Paddings.xlarge),
@@ -316,7 +321,8 @@ internal fun ChooseApp(
                         )
                         Text(
                             modifier = Modifier.padding(top = Paddings.small),
-                            text = appInfo?.packageName ?: "Not Found",
+                            text = appInfo?.packageName
+                                ?: stringResource(R.string.feature_alarm_text_not_found),
                             style = MaterialTheme.typography.labelLarge.copy(
                                 color = MaterialTheme.colorScheme.onSecondary
                             )
@@ -336,13 +342,13 @@ internal fun ChooseApp(
             ) {
                 Text(
                     modifier = Modifier,
-                    text = "Choose App",
+                    text = stringResource(R.string.feature_alarm_text_choose_app),
                     style = MaterialTheme.typography.bodyLarge
                 )
 
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.ChevronRight,
-                    contentDescription = "Choose App",
+                    contentDescription = stringResource(R.string.feature_alarm_text_choose_app),
                     onClick = selectAppDialog
                 )
             }
@@ -364,7 +370,7 @@ internal fun AlarmTimer(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
-            text = "Time",
+            text = stringResource(R.string.feature_alarm_text_time),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             )
@@ -402,14 +408,18 @@ internal fun AlarmTimer(
                     itemHeight = 50.dp,
                     selectedItem = { it?.let { minute -> updateMinute(minute) } }
                 )
+                val dayOfWeek = listOf(
+                    stringResource(R.string.feature_alarm_text_am),
+                    stringResource(R.string.feature_alarm_text_pm)
+                )
                 WheelPicker(
                     modifier = Modifier.weight(1f),
                     state = periodOfDayState,
-                    list = listOf("AM", "PM"),
+                    list = dayOfWeek,
                     itemHeight = 50.dp,
                     selectedItem = {
                         it?.let { periodOfDay ->
-                            if (periodOfDay == "AM") {
+                            if (periodOfDay == dayOfWeek[0]) {
                                 updatePeriodOfDay(PeriodOfDay.AM)
                             } else {
                                 updatePeriodOfDay(PeriodOfDay.PM)
@@ -442,7 +452,7 @@ internal fun RepeatDays(
                     horizontal = Paddings.xlarge,
                     vertical = Paddings.large
                 ),
-                text = "Repeat Days",
+                text = stringResource(R.string.feature_alarm_text_repeat_days),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold
                 )
@@ -467,7 +477,7 @@ internal fun RepeatDays(
         ) {
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "S",
+                labelText = stringResource(R.string.feature_alarm_text_sunday_simple),
                 labelColor = BitterSweet,
                 enabled = true,
                 selected = DayOfWeek.SUNDAY in dayOfWeek,
@@ -475,42 +485,42 @@ internal fun RepeatDays(
             )
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "M",
+                labelText = stringResource(R.string.feature_alarm_text_monday_simple),
                 enabled = true,
                 selected = DayOfWeek.MONDAY in dayOfWeek,
                 onClick = { updateDayOfWeek(DayOfWeek.MONDAY) }
             )
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "T",
+                labelText = stringResource(R.string.feature_alarm_text_tuesday_simple),
                 enabled = true,
                 selected = DayOfWeek.TUESDAY in dayOfWeek,
                 onClick = { updateDayOfWeek(DayOfWeek.TUESDAY) }
             )
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "W",
+                labelText = stringResource(R.string.feature_alarm_text_wednesday_simple),
                 enabled = true,
                 selected = DayOfWeek.WEDNESDAY in dayOfWeek,
                 onClick = { updateDayOfWeek(DayOfWeek.WEDNESDAY) }
             )
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "T",
+                labelText = stringResource(R.string.feature_alarm_text_thursday_simple),
                 enabled = true,
                 selected = DayOfWeek.THURSDAY in dayOfWeek,
                 onClick = { updateDayOfWeek(DayOfWeek.THURSDAY) }
             )
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "F",
+                labelText = stringResource(R.string.feature_alarm_text_friday_simple),
                 enabled = true,
                 selected = DayOfWeek.FRIDAY in dayOfWeek,
                 onClick = { updateDayOfWeek(DayOfWeek.FRIDAY) }
             )
             AppLinkAlarmFilterChip(
                 modifier = Modifier,
-                labelText = "S",
+                labelText = stringResource(R.string.feature_alarm_text_saturday_simple),
                 labelColor = NeonBlue,
                 enabled = true,
                 selected = DayOfWeek.SATURDAY in dayOfWeek,
@@ -534,7 +544,7 @@ internal fun AlarmInfo(
     ) {
         Text(
             modifier = Modifier.padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
-            text = "Alarm Info",
+            text = stringResource(R.string.feature_alarm_text_alarm_info),
             style = MaterialTheme.typography.titleLarge.copy(
                 fontWeight = FontWeight.Bold
             )
@@ -545,7 +555,7 @@ internal fun AlarmInfo(
                 .padding(horizontal = Paddings.xlarge),
             value = alarmName,
             onValueChange = updateAlarmName,
-            placeholder = "Alarm Name",
+            placeholder = stringResource(R.string.feature_alarm_text_alarm_name),
             singleLine = true,
             keyboardActions = KeyboardActions(onNext = {
                 focusManager.moveFocus(FocusDirection.Next)
@@ -559,7 +569,7 @@ internal fun AlarmInfo(
                 .padding(top = Paddings.large),
             value = message,
             onValueChange = updateMessage,
-            placeholder = "Message",
+            placeholder = stringResource(R.string.feature_alarm_text_message),
             keyboardActions = KeyboardActions(onDone = {
                 focusManager.clearFocus()
             }),
@@ -592,7 +602,7 @@ internal fun AlarmMode(
             val tooltipState = rememberTooltipState()
             Text(
                 modifier = Modifier,
-                text = "Alarm Mode",
+                text = stringResource(R.string.feature_alarm_text_alarm_mode),
                 style = MaterialTheme.typography.titleLarge.copy(
                     fontWeight = FontWeight.Bold
                 )
@@ -602,21 +612,25 @@ internal fun AlarmMode(
                 positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
                 tooltip = {
                     RichTooltip(
-                        title = { Text("Alarm Mode") },
+                        title = {
+                            Text(
+                                text = stringResource(R.string.feature_alarm_text_alarm_mode)
+                            )
+                        },
                         colors = TooltipDefaults.richTooltipColors().copy(
                             containerColor = MaterialTheme.colorScheme.secondary,
                             titleContentColor = MaterialTheme.colorScheme.onBackground,
                             contentColor = MaterialTheme.colorScheme.onSecondary
                         )
                     ) {
-                        Text("Flexible Alarm: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nInstant Alarm: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.\n\nDirect App Launch: At the set time, the app will open automatically.")
+                        Text(stringResource(R.string.feature_alarm_text_alarm_mode_tool_tip))
                     }
                 },
                 state = tooltipState
             ) {
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Info,
-                    contentDescription = "Alarm Mode Info",
+                    contentDescription = stringResource(R.string.feature_alarm_icon_description_alarm_mode_info),
                     onClick = {
                         coroutineScope.launch {
                             tooltipState.show()
@@ -636,15 +650,15 @@ internal fun AlarmMode(
             Column {
                 Text(
                     modifier = Modifier,
-                    text = "Mode",
+                    text = stringResource(R.string.feature_alarm_text_mode),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
                     modifier = Modifier.padding(top = Paddings.small),
-                    text = if (alarmMode == AlarmMode.INSTANT) {
-                        "Instant Alarm Mode"
+                    text = if (alarmMode == AlarmMode.STANDARD) {
+                        stringResource(R.string.feature_alarm_text_standard)
                     } else {
-                        "Flexible Alarm Mode"
+                        stringResource(R.string.feature_alarm_text_only_notification)
                     },
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onSecondary
@@ -664,15 +678,15 @@ internal fun AlarmMode(
             Column {
                 Text(
                     modifier = Modifier,
-                    text = "Direct App Launch",
+                    text = stringResource(R.string.feature_alarm_text_direct_app_launch),
                     style = MaterialTheme.typography.bodyLarge
                 )
                 Text(
                     modifier = Modifier.padding(top = Paddings.small),
                     text = if (directAppLaunch) {
-                        "On"
+                        stringResource(R.string.feature_alarm_text_on)
                     } else {
-                        "Off"
+                        stringResource(R.string.feature_alarm_text_off)
                     },
                     style = MaterialTheme.typography.bodySmall.copy(
                         color = MaterialTheme.colorScheme.onSecondary
@@ -688,7 +702,7 @@ internal fun AlarmMode(
         }
 
         AnimatedVisibility(
-            visible = alarmMode == AlarmMode.INSTANT,
+            visible = alarmMode == AlarmMode.STANDARD,
             enter = slideInVertically { fullHeight -> -fullHeight },
         ) {
             Column {
@@ -703,12 +717,12 @@ internal fun AlarmMode(
                     Column {
                         Text(
                             modifier = Modifier,
-                            text = "Alarm Sound",
+                            text = stringResource(R.string.feature_alarm_text_alarm_sound),
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Text(
                             modifier = Modifier.padding(top = Paddings.small),
-                            text = "Off",
+                            text = stringResource(R.string.feature_alarm_text_off),
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = MaterialTheme.colorScheme.onSecondary
                             )
@@ -727,15 +741,15 @@ internal fun AlarmMode(
                     Column {
                         Text(
                             modifier = Modifier,
-                            text = "Vibrate",
+                            text = stringResource(R.string.feature_alarm_text_vibrate),
                             style = MaterialTheme.typography.bodyLarge
                         )
                         Text(
                             modifier = Modifier.padding(top = Paddings.small),
                             text = if (vibrate) {
-                                "On"
+                                stringResource(R.string.feature_alarm_text_on)
                             } else {
-                                "Off"
+                                stringResource(R.string.feature_alarm_text_off)
                             },
                             style = MaterialTheme.typography.bodySmall.copy(
                                 color = MaterialTheme.colorScheme.onSecondary

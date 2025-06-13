@@ -37,6 +37,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.core.graphics.drawable.toDrawable
+import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.model.AppInfo
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
@@ -106,11 +108,11 @@ fun AppSelectDialog(
             AppLinkAlarmTopAppBar(
                 modifier = Modifier
                     .fillMaxWidth(),
-                title = "Select App",
+                title = stringResource(R.string.feature_alarm_top_app_bar_select_app),
                 navigationIcon = {
                     AppLinkAlarmIconButton(
                         imageVector = Icons.Filled.Close,
-                        contentDescription = "Close",
+                        contentDescription = stringResource(R.string.feature_alarm_icon_description_close),
                         onClick = onDismiss
                     )
                 },
@@ -122,7 +124,7 @@ fun AppSelectDialog(
                     .padding(horizontal = Paddings.xlarge),
                 value = searchKeyWords,
                 onValueChange = { searchKeyWords = it },
-                placeholder = "Search",
+                placeholder = stringResource(R.string.feature_alarm_text_search),
                 singleLine = true,
                 keyboardActions = KeyboardActions(onDone = {
                     focusManager.clearFocus()
@@ -176,7 +178,10 @@ internal fun AppInfoItem(
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
             drawable = appInfo.icon,
-            contentDescription = "${appInfo.appName} icon",
+            contentDescription = stringResource(
+                R.string.feature_alarm_icon_description_app_icon,
+                appInfo.appName
+            ),
         )
         Column(
             modifier = Modifier.padding(start = Paddings.xlarge),

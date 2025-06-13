@@ -125,10 +125,10 @@ class AlarmEditViewModel @Inject constructor(
     fun updateAlarmMode() {
         _alarmEditUiState.update {
             it.copy(
-                alarmMode = if (it.alarmMode == AlarmMode.FLEXIBLE) {
-                    AlarmMode.INSTANT
+                alarmMode = if (it.alarmMode == AlarmMode.ONLY_NOTIFICATION) {
+                    AlarmMode.STANDARD
                 } else {
-                    AlarmMode.FLEXIBLE
+                    AlarmMode.ONLY_NOTIFICATION
                 }
             )
         }
