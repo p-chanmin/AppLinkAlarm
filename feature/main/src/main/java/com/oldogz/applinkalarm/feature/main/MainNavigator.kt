@@ -26,6 +26,10 @@ internal class MainNavigator(
         navController.navigationToSetting()
     }
 
+    fun navigateToOpenApp(id: Int) {
+        navController.navigationToAlarmEdit(id)
+    }
+
     private fun popBackStack() {
         navController.popBackStack()
     }

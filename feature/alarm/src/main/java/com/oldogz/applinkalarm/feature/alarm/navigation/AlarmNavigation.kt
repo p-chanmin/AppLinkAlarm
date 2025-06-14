@@ -6,8 +6,11 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import com.oldogz.applinkalarm.feature.alarm.edit.AlarmEditScreen
 import com.oldogz.applinkalarm.feature.alarm.home.AlarmHomeScreen
+import com.oldogz.applinkalarm.feature.alarm.open.OpenAppScreen
+import com.oldogz.core.navigation.DEEP_LINK_BASE_PATH
 import com.oldogz.core.navigation.Route
 
 fun NavController.navigationToHome() {
@@ -46,6 +49,16 @@ fun NavGraphBuilder.alarmNavGraph(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
             popBackStack = popBackStack
+        )
+    }
+
+    composable<Route.OpenApp>(
+        deepLinks = listOf(navDeepLink<Route.OpenApp>(basePath = "$DEEP_LINK_BASE_PATH/open"))
+    ) {
+        OpenAppScreen(
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            popBackStack = popBackStack,
         )
     }
 }

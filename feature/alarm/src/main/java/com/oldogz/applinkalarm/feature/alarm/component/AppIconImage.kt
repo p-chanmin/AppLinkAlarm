@@ -9,6 +9,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
@@ -16,7 +17,8 @@ import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 
 @Composable
 internal fun AppIconImage(
-    linkedAppPackage: String
+    linkedAppPackage: String,
+    size: Dp = 48.dp
 ) {
     val context = LocalContext.current
     val packageManager = context.packageManager
@@ -26,12 +28,13 @@ internal fun AppIconImage(
     } catch (e: Exception) {
         null
     }
-    val label = appInfo?.loadLabel(packageManager) ?: stringResource(R.string.feature_alarm_text_not_found)
+    val label =
+        appInfo?.loadLabel(packageManager) ?: stringResource(R.string.feature_alarm_text_not_found)
     val icon = appInfo?.loadIcon(packageManager)
 
     AppLinkAlarmAsyncImage(
         modifier = Modifier
-            .size(48.dp)
+            .size(size)
             .clip(RoundedCornerShape(8.dp)),
         drawable = icon,
         contentDescription = stringResource(
