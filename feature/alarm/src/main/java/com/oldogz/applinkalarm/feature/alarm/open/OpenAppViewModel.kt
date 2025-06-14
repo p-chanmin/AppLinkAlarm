@@ -22,7 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class OpenAppViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
-    private val repository: AppLinkAlarmRepository
+    private val appLinkAlarmRepository: AppLinkAlarmRepository
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -37,7 +37,7 @@ class OpenAppViewModel @Inject constructor(
 
     init {
         val id = savedStateHandle.toRoute<Route.OpenApp>().id
-        repository.getAlarmById(id)
+        appLinkAlarmRepository.getAlarmById(id)
             .onEach { linkedAlarm ->
                 _openAppUiState.update {
                     it.copy(

@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -47,44 +48,58 @@ class AlarmHomeViewModel @Inject constructor(
                             .toPersistentList()
                     )
                 }
+            }.catch {
+                _errorFlow.emit(it)
             }.launchIn(viewModelScope)
     }
 
     fun updateAlarmActive(appLinkAlarm: AppLinkAlarm, active: Boolean) {
         viewModelScope.launch {
-            appLinkAlarmRepository.updateAlarm(
-                appLinkAlarm.copy(
-                    active = active
+            try {
+                appLinkAlarmRepository.updateAlarm(
+                    appLinkAlarm.copy(
+                        active = active
+                    )
                 )
-            )
+            } catch (e: Exception) {
+                _errorFlow.emit(e)
+            }
         }
     }
 
     fun updateSelectedAlarmActive(active: Boolean) {
         viewModelScope.launch {
-            _homeUiState.value.alarms
-                .filter { it.selected }
-                .map { it.appLinkAlarm }
-                .forEach { appLinkAlarm ->
-                    appLinkAlarmRepository.updateAlarm(
-                        appLinkAlarm.copy(
-                            active = active
+            try {
+                _homeUiState.value.alarms
+                    .filter { it.selected }
+                    .map { it.appLinkAlarm }
+                    .forEach { appLinkAlarm ->
+                        appLinkAlarmRepository.updateAlarm(
+                            appLinkAlarm.copy(
+                                active = active
+                            )
                         )
-                    )
-                }
-            updateSelectMode(false)
+                    }
+                updateSelectMode(false)
+            } catch (e: Exception) {
+                _errorFlow.emit(e)
+            }
         }
     }
 
     fun deleteSelectedAlarm() {
         viewModelScope.launch {
-            _homeUiState.value.alarms
-                .filter { it.selected }
-                .map { it.appLinkAlarm.id }
-                .forEach { id ->
-                    appLinkAlarmRepository.deleteAlarmById(id)
-                }
-            updateSelectMode(false)
+            try {
+                _homeUiState.value.alarms
+                    .filter { it.selected }
+                    .map { it.appLinkAlarm.id }
+                    .forEach { id ->
+                        appLinkAlarmRepository.deleteAlarmById(id)
+                    }
+                updateSelectMode(false)
+            } catch (e: Exception) {
+                _errorFlow.emit(e)
+            }
         }
     }
 

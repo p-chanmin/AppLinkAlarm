@@ -47,32 +47,36 @@ class AlarmEditViewModel @Inject constructor(
         val id = savedStateHandle.toRoute<Route.AlarmEdit>().id
         if (id != null) {
             viewModelScope.launch {
-                val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()
-                _alarmEditUiState.update {
-                    it.copy(
-                        id = id,
-                        linkedAppPackage = appLinkAlarm.linkedAppPackage,
-                        hour = appLinkAlarm.hour,
-                        minute = appLinkAlarm.minute,
-                        periodOfDay = appLinkAlarm.periodOfDay,
-                        dayOfWeek = appLinkAlarm.dayOfWeek.toPersistentList(),
-                        alarmName = appLinkAlarm.alarmName,
-                        message = appLinkAlarm.alarmMessage,
-                        alarmMode = appLinkAlarm.alarmMode,
-                        directAppLaunch = appLinkAlarm.directAppLaunch,
-                        vibrate = appLinkAlarm.vibrate,
-                        alarmSound = appLinkAlarm.alarmSound,
-                        alarmVolume = appLinkAlarm.alarmVolume,
-                        active = appLinkAlarm.active
+                try {
+                    val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()
+                    _alarmEditUiState.update {
+                        it.copy(
+                            id = id,
+                            linkedAppPackage = appLinkAlarm.linkedAppPackage,
+                            hour = appLinkAlarm.hour,
+                            minute = appLinkAlarm.minute,
+                            periodOfDay = appLinkAlarm.periodOfDay,
+                            dayOfWeek = appLinkAlarm.dayOfWeek.toPersistentList(),
+                            alarmName = appLinkAlarm.alarmName,
+                            message = appLinkAlarm.alarmMessage,
+                            alarmMode = appLinkAlarm.alarmMode,
+                            directAppLaunch = appLinkAlarm.directAppLaunch,
+                            vibrate = appLinkAlarm.vibrate,
+                            alarmSound = appLinkAlarm.alarmSound,
+                            alarmVolume = appLinkAlarm.alarmVolume,
+                            active = appLinkAlarm.active
+                        )
+                    }
+                    _event.emit(
+                        AlarmEditUiEvent.AlarmLoad(
+                            appLinkAlarm.hour,
+                            appLinkAlarm.minute,
+                            appLinkAlarm.periodOfDay
+                        )
                     )
+                } catch (e: Exception) {
+                    _errorFlow.emit(e)
                 }
-                _event.emit(
-                    AlarmEditUiEvent.AlarmLoad(
-                        appLinkAlarm.hour,
-                        appLinkAlarm.minute,
-                        appLinkAlarm.periodOfDay
-                    )
-                )
             }
         }
     }
@@ -167,44 +171,48 @@ class AlarmEditViewModel @Inject constructor(
 
     fun saveAlarm() {
         viewModelScope.launch {
-            val id = _alarmEditUiState.value.id
-            val linkedAppPackage = _alarmEditUiState.value.linkedAppPackage
-            val hour = _alarmEditUiState.value.hour
-            val minute = _alarmEditUiState.value.minute
-            val periodOfDay = _alarmEditUiState.value.periodOfDay
-            val dayOfWeek = _alarmEditUiState.value.dayOfWeek
-            val alarmName = _alarmEditUiState.value.alarmName
-            val message = _alarmEditUiState.value.message
-            val alarmMode = _alarmEditUiState.value.alarmMode
-            val directAppLaunch = _alarmEditUiState.value.directAppLaunch
-            val vibrate = _alarmEditUiState.value.vibrate
-            val alarmSound = _alarmEditUiState.value.alarmSound
-            val alarmVolume = _alarmEditUiState.value.alarmVolume
-            val active = _alarmEditUiState.value.active
+            try {
+                val id = _alarmEditUiState.value.id
+                val linkedAppPackage = _alarmEditUiState.value.linkedAppPackage
+                val hour = _alarmEditUiState.value.hour
+                val minute = _alarmEditUiState.value.minute
+                val periodOfDay = _alarmEditUiState.value.periodOfDay
+                val dayOfWeek = _alarmEditUiState.value.dayOfWeek
+                val alarmName = _alarmEditUiState.value.alarmName
+                val message = _alarmEditUiState.value.message
+                val alarmMode = _alarmEditUiState.value.alarmMode
+                val directAppLaunch = _alarmEditUiState.value.directAppLaunch
+                val vibrate = _alarmEditUiState.value.vibrate
+                val alarmSound = _alarmEditUiState.value.alarmSound
+                val alarmVolume = _alarmEditUiState.value.alarmVolume
+                val active = _alarmEditUiState.value.active
 
-            if (linkedAppPackage != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
-                val appLinkAlarm = AppLinkAlarm(
-                    id = id ?: 0,
-                    linkedAppPackage = linkedAppPackage,
-                    hour = hour,
-                    minute = minute,
-                    periodOfDay = periodOfDay,
-                    dayOfWeek = dayOfWeek,
-                    alarmName = alarmName,
-                    alarmMessage = message,
-                    alarmMode = alarmMode,
-                    directAppLaunch = directAppLaunch,
-                    vibrate = vibrate,
-                    alarmSound = alarmSound,
-                    alarmVolume = alarmVolume,
-                    active = active
-                )
-                if (id != null) {
-                    appLinkAlarmRepository.updateAlarm(appLinkAlarm)
-                } else {
-                    appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                if (linkedAppPackage != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
+                    val appLinkAlarm = AppLinkAlarm(
+                        id = id ?: 0,
+                        linkedAppPackage = linkedAppPackage,
+                        hour = hour,
+                        minute = minute,
+                        periodOfDay = periodOfDay,
+                        dayOfWeek = dayOfWeek,
+                        alarmName = alarmName,
+                        alarmMessage = message,
+                        alarmMode = alarmMode,
+                        directAppLaunch = directAppLaunch,
+                        vibrate = vibrate,
+                        alarmSound = alarmSound,
+                        alarmVolume = alarmVolume,
+                        active = active
+                    )
+                    if (id != null) {
+                        appLinkAlarmRepository.updateAlarm(appLinkAlarm)
+                    } else {
+                        appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                    }
+                    _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                 }
-                _event.emit(AlarmEditUiEvent.AlarmEditComplete)
+            } catch (e: Exception) {
+                _errorFlow.emit(e)
             }
         }
     }
