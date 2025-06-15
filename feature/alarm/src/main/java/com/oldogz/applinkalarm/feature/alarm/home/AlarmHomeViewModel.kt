@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
+import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AppLinkAlarm
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -138,6 +139,17 @@ class AlarmHomeViewModel @Inject constructor(
                 alarms = _homeUiState.value.alarms.map { it.copy(selected = value) }
                     .toPersistentList()
             )
+        }
+    }
+
+    fun updateNotificationPermissionState(permissionState: PermissionState, dialogState: Boolean) {
+        viewModelScope.launch {
+            _homeUiState.update {
+                it.copy(
+                    notificationPermissionState = permissionState,
+                    deniedNotificationDialog = dialogState
+                )
+            }
         }
     }
 }

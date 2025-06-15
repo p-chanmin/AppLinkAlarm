@@ -64,5 +64,11 @@
     <string name="feature_alarm_text_search">Search</string>
     <string name="feature_alarm_text_default_sound">Default Sound</string>
 
+    <string name="feature_alarm_text_permission_denied">Permission Denied</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">Notification permission is required for alarms to work properly. Without it, you may miss important alerts. Please allow notifications.</string>
+    <string name="feature_alarm_text_confirm">Confirm</string>
+    <string name="feature_alarm_text_dismiss">Dismiss</string>
+
     <string name="feature_alarm_error_text_app_not_found">App not found: %1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">Notification permission has been denied.\nTo enable notifications, please go to Settings</string>
 </resources>
