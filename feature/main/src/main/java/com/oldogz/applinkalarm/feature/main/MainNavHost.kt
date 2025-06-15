@@ -5,7 +5,8 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
-import com.oldogz.applinkalarm.feature.home.navigation.homeNavGraph
+import com.oldogz.applinkalarm.feature.alarm.navigation.alarmNavGraph
+import com.oldogz.applinkalarm.feature.setting.navigation.settingNavGraph
 
 @Composable
 internal fun MainNavHost(
@@ -19,9 +20,18 @@ internal fun MainNavHost(
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None }
     ) {
-        homeNavGraph(
+        alarmNavGraph(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToAlarmEdit = navigator::navigateToAlarmEdit,
+            navigateToSetting = navigator::navigateToSetting,
+            popBackStack = navigator::popBackStackIfNotStartDestination,
+        )
+
+        settingNavGraph(
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            popBackStack = navigator::popBackStackIfNotStartDestination,
         )
     }
 }

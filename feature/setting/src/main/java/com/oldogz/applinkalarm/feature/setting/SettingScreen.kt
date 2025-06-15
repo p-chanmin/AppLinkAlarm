@@ -1,0 +1,372 @@
+package com.oldogz.applinkalarm.feature.setting
+
+import android.content.res.Configuration
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RichTooltip
+import androidx.compose.material3.Text
+import androidx.compose.material3.TooltipBox
+import androidx.compose.material3.TooltipDefaults
+import androidx.compose.material3.rememberTooltipState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
+import com.oldogz.core.designsystem.component.AppLinkAlarmButton
+import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
+import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
+import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
+import com.oldogz.core.designsystem.theme.Paddings
+import kotlinx.coroutines.launch
+
+@Composable
+internal fun SettingScreen(
+    paddingValues: PaddingValues,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    popBackStack: () -> Unit,
+    settingViewModel: SettingViewModel = hiltViewModel(),
+) {
+
+    val settingUiState by settingViewModel.settingUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        settingViewModel.errorFlow.collect { throwable ->
+            onShowErrorSnackBar(throwable)
+        }
+    }
+
+    SettingContent(
+        settingUiState = settingUiState,
+        paddingValues = paddingValues,
+        popBackStack = popBackStack,
+    )
+}
+
+@Composable
+private fun SettingContent(
+    settingUiState: SettingUiState,
+    paddingValues: PaddingValues,
+    popBackStack: () -> Unit,
+) {
+    val scrollState = rememberScrollState()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .navigationBarsPadding(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            AppLinkAlarmTopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                title = stringResource(R.string.feature_setting_top_app_bar_title),
+                navigationIcon = {
+                    AppLinkAlarmIconButton(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = stringResource(R.string.feature_setting_icon_description_close),
+                        onClick = popBackStack
+                    )
+                },
+                actions = {}
+            )
+
+            Column(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth()
+                    .verticalScroll(scrollState)
+            ) {
+                PermissionSetting()
+                SubscriptionSetting()
+                SupportSetting()
+            }
+        }
+    }
+}
+
+@Composable
+private fun PermissionSetting() {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_permission),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { }
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.xlarge),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_notification_status),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_granted),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { }
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.xlarge),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_alarms_reminders_status),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_denied),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SubscriptionSetting() {
+    val coroutineScope = rememberCoroutineScope()
+    val tooltipState = rememberTooltipState()
+
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_subscription),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+
+            TooltipBox(
+                modifier = Modifier,
+                positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+                tooltip = {
+                    RichTooltip(
+                        title = {
+                            Text(
+                                text = stringResource(R.string.feature_setting_text_premium_subscription)
+                            )
+                        },
+                        colors = TooltipDefaults.richTooltipColors().copy(
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            titleContentColor = MaterialTheme.colorScheme.onBackground,
+                            contentColor = MaterialTheme.colorScheme.onSecondary
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.feature_setting_text_premium_subscription_tool_tip)
+                        )
+                    }
+                },
+                state = tooltipState
+            ) {
+                AppLinkAlarmIconButton(
+                    imageVector = Icons.Filled.Info,
+                    contentDescription = stringResource(R.string.feature_setting_icon_description_subscription_info),
+                    onClick = {
+                        coroutineScope.launch {
+                            tooltipState.show()
+                        }
+                    }
+                )
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_premium_subscription),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_not_subscribed),
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
+
+        AppLinkAlarmButton(
+            modifier = Modifier
+                .padding(horizontal = Paddings.xlarge)
+                .padding(top = Paddings.medium),
+            enabled = true,
+            content = stringResource(R.string.feature_setting_text_purchase_premium),
+            onClick = {}
+        )
+
+        AppLinkAlarmButton(
+            modifier = Modifier
+                .padding(horizontal = Paddings.xlarge)
+                .padding(bottom = Paddings.medium),
+            enabled = true,
+            containerColor = MaterialTheme.colorScheme.secondary,
+            contentColor = MaterialTheme.colorScheme.onBackground,
+            content = stringResource(R.string.feature_setting_text_restore_purchases),
+            onClick = {}
+        )
+    }
+}
+
+@Composable
+private fun SupportSetting() {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.large),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_support),
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { }
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_review),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            AppLinkAlarmIconButton(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = stringResource(R.string.feature_setting_text_review),
+                onClick = { }
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { }
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_privacy_policy),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            AppLinkAlarmIconButton(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = stringResource(R.string.feature_setting_text_privacy_policy),
+                onClick = { }
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { }
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_open_source_license),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            AppLinkAlarmIconButton(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = stringResource(R.string.feature_setting_text_open_source_license),
+                onClick = { }
+            )
+        }
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun SettingContentPreview() {
+    AppLinkAlarmTheme {
+        SettingContent(
+            settingUiState = SettingUiState(),
+            paddingValues = PaddingValues(),
+            popBackStack = {}
+        )
+    }
+}

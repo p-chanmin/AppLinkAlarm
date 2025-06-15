@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_setting_top_app_bar_title">Settings</string>
+
+    <string name="feature_setting_icon_description_close">Close</string>
+    <string name="feature_setting_icon_description_subscription_info">Premium subscription info</string>
+
+    <string name="feature_setting_text_permission">Permission</string>
+    <string name="feature_setting_text_notification_status">Notification Status</string>
+    <string name="feature_setting_text_alarms_reminders_status">Alarms &amp; Reminders Status</string>
+
+    <string name="feature_setting_text_granted">Allowed</string>
+    <string name="feature_setting_text_denied">Blocked</string>
+
+    <string name="feature_setting_text_subscription">Subscription</string>
+    <string name="feature_setting_text_premium_subscription">Premium Subscription</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">The Premium Subscription offers an ad-free experience and allows you to instantly launch a specific app when your alarm rings.</string>
+
+    <string name="feature_setting_text_not_subscribed">Not Subscribed</string>
+    <string name="feature_setting_text_subscribed">Subscribed</string>
+
+    <string name="feature_setting_text_purchase_premium">Purchase Premium</string>
+    <string name="feature_setting_text_restore_purchases">Restore Purchases</string>
+
+    <string name="feature_setting_text_support">Support</string>
+    <string name="feature_setting_text_review">Review</string>
+    <string name="feature_setting_text_privacy_policy">Privacy Policy</string>
+    <string name="feature_setting_text_open_source_license">Open Source License</string>
+</resources>

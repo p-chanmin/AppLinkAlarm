@@ -54,5 +54,10 @@ gradlePlugin {
             id = "oldogz.android.kotlin.serialization"
             implementationClass = "AndroidKotlinSerializationConventionPlugin"
         }
+
+        register("androidRoom") {
+            id = "oldogz.android.room"
+            implementationClass = "AndroidRoomConventionPlugin"
+        }
     }
 }

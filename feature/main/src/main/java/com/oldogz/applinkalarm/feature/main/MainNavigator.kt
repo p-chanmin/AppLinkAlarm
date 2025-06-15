@@ -4,16 +4,30 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToAlarmEdit
+import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToHome
+import com.oldogz.applinkalarm.feature.setting.navigation.navigationToSetting
 import com.oldogz.core.navigation.Route
-import com.oldogz.applinkalarm.feature.home.navigation.navigationToHome
 
 internal class MainNavigator(
     val navController: NavHostController,
 ) {
-    val startDestination = Route.Home
+    val startDestination = Route.AlarmHome
 
     fun navigateToHome() {
         navController.navigationToHome()
+    }
+
+    fun navigateToAlarmEdit(id: Int?) {
+        navController.navigationToAlarmEdit(id)
+    }
+
+    fun navigateToSetting() {
+        navController.navigationToSetting()
+    }
+
+    fun navigateToOpenApp(id: Int) {
+        navController.navigationToAlarmEdit(id)
     }
 
     private fun popBackStack() {
@@ -21,7 +35,7 @@ internal class MainNavigator(
     }
 
     fun popBackStackIfNotStartDestination() {
-        if (!isSameCurrentDestination<Route.Home>()) {
+        if (!isSameCurrentDestination<Route.AlarmHome>()) {
             popBackStack()
         }
     }
