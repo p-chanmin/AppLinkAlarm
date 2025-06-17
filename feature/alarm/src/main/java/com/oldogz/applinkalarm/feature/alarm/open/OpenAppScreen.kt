@@ -24,6 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -127,7 +128,7 @@ private fun OpenAppInfo(
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier,
+        modifier = Modifier.padding(horizontal = Paddings.xlarge),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -155,13 +156,13 @@ private fun OpenAppInfo(
         Text(
             modifier = Modifier.padding(vertical = Paddings.large),
             text = alarmMessage,
-            style = MaterialTheme.typography.titleMedium
+            style = MaterialTheme.typography.titleMedium,
+            textAlign = TextAlign.Center
         )
 
         AppLinkAlarmButton(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = Paddings.xlarge),
+                .fillMaxWidth(),
             content = "Open App",
             onClick = {
                 val launchIntent =
