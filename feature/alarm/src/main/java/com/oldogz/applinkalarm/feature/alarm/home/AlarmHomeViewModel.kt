@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
+import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AppLinkAlarm
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -24,6 +25,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AlarmHomeViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
+    private val appLinkAlarmManager: AppLinkAlarmManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -57,6 +59,11 @@ class AlarmHomeViewModel @Inject constructor(
     fun updateAlarmActive(appLinkAlarm: AppLinkAlarm, active: Boolean) {
         viewModelScope.launch {
             try {
+                if (active) {
+                    appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
+                } else {
+                    appLinkAlarmManager.cancelAlarm(appLinkAlarm.id)
+                }
                 appLinkAlarmRepository.updateAlarm(
                     appLinkAlarm.copy(
                         active = active
@@ -75,6 +82,11 @@ class AlarmHomeViewModel @Inject constructor(
                     .filter { it.selected }
                     .map { it.appLinkAlarm }
                     .forEach { appLinkAlarm ->
+                        if (active) {
+                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
+                        } else {
+                            appLinkAlarmManager.cancelAlarm(appLinkAlarm.id)
+                        }
                         appLinkAlarmRepository.updateAlarm(
                             appLinkAlarm.copy(
                                 active = active
@@ -95,6 +107,7 @@ class AlarmHomeViewModel @Inject constructor(
                     .filter { it.selected }
                     .map { it.appLinkAlarm.id }
                     .forEach { id ->
+                        appLinkAlarmManager.cancelAlarm(id)
                         appLinkAlarmRepository.deleteAlarmById(id)
                     }
                 updateSelectMode(false)

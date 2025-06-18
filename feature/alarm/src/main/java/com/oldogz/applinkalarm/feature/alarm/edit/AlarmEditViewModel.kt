@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
+import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
@@ -28,6 +29,7 @@ import javax.inject.Inject
 class AlarmEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
+    private val appLinkAlarmManager: AppLinkAlarmManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -206,8 +208,10 @@ class AlarmEditViewModel @Inject constructor(
                     )
                     if (id != null) {
                         appLinkAlarmRepository.updateAlarm(appLinkAlarm)
+                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
                     } else {
-                        appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                        val alarmId = appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
                     }
                     _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                 }
