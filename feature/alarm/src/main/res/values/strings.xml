@@ -26,7 +26,6 @@
 
     <string name="feature_alarm_text_standard">Standard</string>
     <string name="feature_alarm_text_only_notification">Only Notification</string>
-    <string name="feature_alarm_text_direct_app_launch">Direct App Launch</string>
     <string name="feature_alarm_text_every_day">Every Day</string>
 
     <string name="feature_alarm_text_sunday">Sun</string>
@@ -56,7 +55,7 @@
     <string name="feature_alarm_text_alarm_name">Alarm Name</string>
     <string name="feature_alarm_text_message">Message</string>
     <string name="feature_alarm_text_alarm_mode">Alarm Mode</string>
-    <string name="feature_alarm_text_alarm_mode_tool_tip">Only Notification: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nStandard: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.\n\nDirect App Launch: At the set time, the app will open automatically.</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">Only Notification: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nStandard: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.</string>
     <string name="feature_alarm_text_mode">Mode</string>
     <string name="feature_alarm_text_alarm_sound">Alarm Sound</string>
     <string name="feature_alarm_text_volume">Volume : %1$s</string>

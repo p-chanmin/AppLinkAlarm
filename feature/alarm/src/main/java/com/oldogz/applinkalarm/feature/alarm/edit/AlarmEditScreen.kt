@@ -136,7 +136,6 @@ internal fun AlarmEditScreen(
         updateAlarmName = alarmEditViewModel::updateAlarmName,
         updateMessage = alarmEditViewModel::updateMessage,
         updateAlarmMode = alarmEditViewModel::updateAlarmMode,
-        updateDirectAppLaunch = alarmEditViewModel::updateDirectAppLaunch,
         updateVibrate = alarmEditViewModel::updateVibrate,
         updateAlarmSound = alarmEditViewModel::updateAlarmSound,
         updateAlarmVolume = alarmEditViewModel::updateAlarmVolume,
@@ -161,7 +160,6 @@ private fun AlarmEditContent(
     updateAlarmName: (String) -> Unit,
     updateMessage: (String) -> Unit,
     updateAlarmMode: () -> Unit,
-    updateDirectAppLaunch: (Boolean) -> Unit,
     updateVibrate: (Boolean) -> Unit,
     updateAlarmSound: (String) -> Unit,
     updateAlarmVolume: (Float) -> Unit,
@@ -236,7 +234,6 @@ private fun AlarmEditContent(
                 )
                 AlarmMode(
                     alarmMode = alarmEditUiState.alarmMode,
-                    directAppLaunch = alarmEditUiState.directAppLaunch,
                     vibrate = alarmEditUiState.vibrate,
                     alarmSound = alarmEditUiState.alarmSound,
                     alarmVolume = alarmEditUiState.alarmVolume,
@@ -247,7 +244,6 @@ private fun AlarmEditContent(
                             scrollState.animateScrollTo(scrollState.maxValue)
                         }
                     },
-                    updateDirectAppLaunch = updateDirectAppLaunch,
                     updateVibrate = updateVibrate,
                     updateAlarmSound = updateAlarmSound,
                     updateAlarmVolume = updateAlarmVolume,
@@ -596,12 +592,10 @@ internal fun AlarmInfo(
 @Composable
 internal fun AlarmMode(
     alarmMode: AlarmMode,
-    directAppLaunch: Boolean,
     vibrate: Boolean,
     alarmSound: String?,
     alarmVolume: Int,
     updateAlarmMode: () -> Unit,
-    updateDirectAppLaunch: (Boolean) -> Unit,
     updateVibrate: (Boolean) -> Unit,
     updateAlarmSound: (String) -> Unit,
     updateAlarmVolume: (Float) -> Unit,
@@ -688,40 +682,6 @@ internal fun AlarmMode(
                 style = MaterialTheme.typography.bodySmall.copy(
                     color = MaterialTheme.colorScheme.onSecondary
                 )
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable { updateDirectAppLaunch(!directAppLaunch) }
-                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Text(
-                    modifier = Modifier,
-                    text = stringResource(R.string.feature_alarm_text_direct_app_launch),
-                    style = MaterialTheme.typography.bodyLarge
-                )
-                Text(
-                    modifier = Modifier.padding(top = Paddings.small),
-                    text = if (directAppLaunch) {
-                        stringResource(R.string.feature_alarm_text_on)
-                    } else {
-                        stringResource(R.string.feature_alarm_text_off)
-                    },
-                    style = MaterialTheme.typography.bodySmall.copy(
-                        color = MaterialTheme.colorScheme.onSecondary
-                    )
-                )
-            }
-
-            AppLinkAlarmSwitch(
-                modifier = Modifier,
-                checked = directAppLaunch,
-                onCheckedChange = updateDirectAppLaunch
             )
         }
 
@@ -830,7 +790,6 @@ private fun AlarmEditContentPreview() {
             updateAlarmName = {},
             updateMessage = {},
             updateAlarmMode = {},
-            updateDirectAppLaunch = {},
             updateVibrate = {},
             updateAlarmSound = {},
             updateAlarmVolume = {},

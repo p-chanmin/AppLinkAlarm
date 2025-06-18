@@ -21,7 +21,6 @@ internal fun AlarmEntity.toData(): AppLinkAlarm {
         vibrate = this.vibrate,
         alarmSound = this.alarmSound,
         alarmVolume = this.alarmVolume,
-        directAppLaunch = this.directAppLaunch,
         active = this.active
     )
 }

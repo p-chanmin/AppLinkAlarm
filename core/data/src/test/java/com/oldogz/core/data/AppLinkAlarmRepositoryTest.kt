@@ -97,7 +97,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
                         vibrate = alarm2.vibrate,
                         alarmSound = alarm2.alarmSound,
                         alarmVolume = alarm2.alarmVolume,
-                        directAppLaunch = alarm2.directAppLaunch,
                         active = alarm2.active,
                     )
                 } answers {
@@ -146,7 +145,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
                         vibrate = alarm1.vibrate,
                         alarmSound = alarm1.alarmSound,
                         alarmVolume = alarm1.alarmVolume,
-                        directAppLaunch = alarm1.directAppLaunch,
                         active = alarm1.active,
                     )
                 } answers {
@@ -220,7 +218,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             vibrate = true,
             alarmSound = "android.resource://com.example.app/raw/alarm_sound",
             alarmVolume = 50,
-            directAppLaunch = true,
             active = true
         )
 
@@ -237,7 +234,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             vibrate = alarmEntity1.vibrate,
             alarmSound = alarmEntity1.alarmSound,
             alarmVolume = alarmEntity1.alarmVolume,
-            directAppLaunch = alarmEntity1.directAppLaunch,
             active = alarmEntity1.active
         )
 
@@ -254,7 +250,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             vibrate = false,
             alarmSound = null,
             alarmVolume = 80,
-            directAppLaunch = false,
             active = false
         )
 
@@ -276,7 +271,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             vibrate = alarmEntity2.vibrate,
             alarmSound = alarmEntity2.alarmSound,
             alarmVolume = alarmEntity2.alarmVolume,
-            directAppLaunch = alarmEntity2.directAppLaunch,
             active = alarmEntity2.active
         )
     }

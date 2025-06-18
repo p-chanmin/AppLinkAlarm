@@ -62,7 +62,6 @@ class AlarmEditViewModel @Inject constructor(
                             alarmName = appLinkAlarm.alarmName,
                             message = appLinkAlarm.alarmMessage,
                             alarmMode = appLinkAlarm.alarmMode,
-                            directAppLaunch = appLinkAlarm.directAppLaunch,
                             vibrate = appLinkAlarm.vibrate,
                             alarmSound = appLinkAlarm.alarmSound,
                             alarmVolume = appLinkAlarm.alarmVolume,
@@ -141,12 +140,6 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
-    fun updateDirectAppLaunch(value: Boolean) {
-        _alarmEditUiState.update {
-            it.copy(directAppLaunch = value)
-        }
-    }
-
     fun updateAlarmSound(uri: String) {
         _alarmEditUiState.update {
             it.copy(alarmSound = uri)
@@ -183,7 +176,6 @@ class AlarmEditViewModel @Inject constructor(
                 val alarmName = _alarmEditUiState.value.alarmName
                 val message = _alarmEditUiState.value.message
                 val alarmMode = _alarmEditUiState.value.alarmMode
-                val directAppLaunch = _alarmEditUiState.value.directAppLaunch
                 val vibrate = _alarmEditUiState.value.vibrate
                 val alarmSound = _alarmEditUiState.value.alarmSound
                 val alarmVolume = _alarmEditUiState.value.alarmVolume
@@ -200,7 +192,6 @@ class AlarmEditViewModel @Inject constructor(
                         alarmName = alarmName,
                         alarmMessage = message,
                         alarmMode = alarmMode,
-                        directAppLaunch = directAppLaunch,
                         vibrate = vibrate,
                         alarmSound = alarmSound,
                         alarmVolume = alarmVolume,

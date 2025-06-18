@@ -3,6 +3,7 @@ package com.oldogz.applinkalarm.feature.home
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.edit.AlarmEditViewModel
+import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
@@ -21,11 +22,13 @@ internal class AlarmEditViewModelTest {
     var mainCoroutineRule = MainDispatcherRule()
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
+    private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
     private lateinit var alarmEditViewModel: AlarmEditViewModel
 
     @Before
     fun setUp() {
-        alarmEditViewModel = AlarmEditViewModel(SavedStateHandle(), appLinkAlarmRepository)
+        alarmEditViewModel =
+            AlarmEditViewModel(SavedStateHandle(), appLinkAlarmRepository, appLinkAlarmManager)
     }
 
     @Test
@@ -146,7 +149,6 @@ internal class AlarmEditViewModelTest {
             // Then
             var uiState = awaitItem()
             assertEquals(AlarmMode.ONLY_NOTIFICATION, uiState.alarmMode)
-            assertEquals(false, uiState.directAppLaunch)
 
             // When
             alarmEditViewModel.updateAlarmMode()
@@ -154,13 +156,6 @@ internal class AlarmEditViewModelTest {
             // Then
             uiState = awaitItem()
             assertEquals(AlarmMode.STANDARD, uiState.alarmMode)
-
-            // When
-            alarmEditViewModel.updateDirectAppLaunch(true)
-
-            // Then
-            uiState = awaitItem()
-            assertEquals(true, uiState.directAppLaunch)
         }
     }
 

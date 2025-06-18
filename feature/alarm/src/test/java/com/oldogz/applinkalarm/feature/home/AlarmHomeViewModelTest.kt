@@ -3,6 +3,7 @@ package com.oldogz.applinkalarm.feature.home
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.home.AlarmHomeViewModel
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
+import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
@@ -25,6 +26,7 @@ internal class AlarmHomeViewModelTest {
     var mainCoroutineRule = MainDispatcherRule()
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
+    private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
     private lateinit var alarmHomeViewModel: AlarmHomeViewModel
 
     @Test
@@ -34,7 +36,7 @@ internal class AlarmHomeViewModelTest {
         val alarms = listOf(alarm1, alarm2)
 
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         // When
         alarmHomeViewModel.homeUiState.test {
@@ -68,7 +70,7 @@ internal class AlarmHomeViewModelTest {
             alarms.value = listOf(alarm1.copy(active = false))
         }
 
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         alarmHomeViewModel.homeUiState.test {
 
@@ -97,7 +99,7 @@ internal class AlarmHomeViewModelTest {
         // Given
         val alarms = listOf(alarm1, alarm2)
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         // When
         alarmHomeViewModel.updateSelectMode(true, alarm1.id)
@@ -127,7 +129,7 @@ internal class AlarmHomeViewModelTest {
         // Given
         val alarms = listOf(alarm1, alarm2)
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         // When
         alarmHomeViewModel.selectAlarm(true, alarm2.id)
@@ -156,7 +158,7 @@ internal class AlarmHomeViewModelTest {
         // Given
         val alarms = listOf(alarm1, alarm2)
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         // When
         alarmHomeViewModel.selectAllAlarm(true)
@@ -193,7 +195,7 @@ internal class AlarmHomeViewModelTest {
             alarms.value = listOf(alarm1.copy(active = false), alarm2)
         }
 
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         // Given
         alarmHomeViewModel.selectAlarm(true, alarm1.id)
@@ -246,7 +248,7 @@ internal class AlarmHomeViewModelTest {
             alarms.value = listOf(alarm2)
         }
 
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository)
+        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
 
         // Given
         alarmHomeViewModel.selectAlarm(true, alarm1.id)
@@ -298,7 +300,6 @@ internal class AlarmHomeViewModelTest {
             vibrate = true,
             alarmSound = "alarm_sound_2.mp3",
             alarmVolume = 80,
-            directAppLaunch = false,
             active = true,
         )
 
@@ -315,7 +316,6 @@ internal class AlarmHomeViewModelTest {
             vibrate = true,
             alarmSound = "alarm_sound_2.mp3",
             alarmVolume = 80,
-            directAppLaunch = true,
             active = true,
         )
     }
