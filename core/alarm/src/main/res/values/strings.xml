@@ -1,2 +1,4 @@
 <resources>
+    <string name="core_alarm_notification_channel_name">AppLink Alarm Notification Channel</string>
+    <string name="core_alarm_notification_channel_description">Notification Channel for AppLink Alarm</string>
 </resources>
