@@ -10,6 +10,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import androidx.annotation.StringRes
+import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
@@ -31,7 +32,6 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     }
 
     fun registerNotificationChannels() {
-        println("registerNotificationChannels")
         createNotificationChannel(
             R.string.core_alarm_notification_channel_name,
             R.string.core_alarm_notification_channel_description,
@@ -51,7 +51,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     fun createNotification(appLinkAlarm: AppLinkAlarm, includeAds: Boolean): Notification {
         return when (appLinkAlarm.alarmMode) {
             AlarmMode.ONLY_NOTIFICATION -> createNotificationOnly(appLinkAlarm, includeAds)
-            AlarmMode.STANDARD -> createNotificationStandard(appLinkAlarm, includeAds)
+            AlarmMode.STANDARD -> createNotificationStandard(appLinkAlarm)
         }
     }
 
@@ -59,28 +59,72 @@ class AppLinkAlarmNotificationManager @Inject constructor(
         appLinkAlarm: AppLinkAlarm,
         includeAds: Boolean
     ): Notification {
-        return Notification.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
+        return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
             .setContentTitle(appLinkAlarm.alarmName)
             .setContentText(appLinkAlarm.alarmMessage)
-            .setStyle(Notification.BigTextStyle().bigText(appLinkAlarm.alarmMessage))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(appLinkAlarm.alarmMessage))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(createPendingIntent(appLinkAlarm, includeAds))
-            .setDeleteIntent(createPendingIntent(appLinkAlarm, includeAds))
             .setAutoCancel(true)
             .build()
     }
 
     private fun createNotificationStandard(
         appLinkAlarm: AppLinkAlarm,
-        includeAds: Boolean
     ): Notification {
-        return Notification.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
+
+        val alarmStopIntent =
+            Intent(context, AppLinkAlarmPlayingService::class.java).apply {
+                action =
+                    AppLinkAlarmPlayingService.INTENT_ACTION_SERVICE_APP_LINK_ALARM_OFF
+            }
+
+        val deletePendingIntent = PendingIntent.getService(
+            context,
+            appLinkAlarm.id,
+            alarmStopIntent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
             .setContentTitle(appLinkAlarm.alarmName)
+            .setContentText(context.getString(R.string.core_alarm_text_click_to_dismiss_alarm, ""))
+            .setStyle(
+                NotificationCompat.BigTextStyle().bigText(
+                    context.getString(
+                        R.string.core_alarm_text_click_to_dismiss_alarm,
+                        appLinkAlarm.alarmMessage
+                    )
+                )
+            )
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setContentIntent(createDefaultPendingIntent(appLinkAlarm))
+            .setDeleteIntent(deletePendingIntent)
+            .setFullScreenIntent(createDefaultPendingIntent(appLinkAlarm), true)
+            .setOngoing(true)
+            .build()
+    }
+
+    fun createMissedAlarmNotification(
+        appLinkAlarm: AppLinkAlarm,
+        includeAds: Boolean
+    ): Notification {
+        return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+            .setContentTitle(
+                context.getString(
+                    R.string.core_alarm_text_missed_alarm,
+                    appLinkAlarm.alarmName
+                )
+            )
             .setContentText(appLinkAlarm.alarmMessage)
-            .setStyle(Notification.BigTextStyle().bigText(appLinkAlarm.alarmMessage))
+            .setStyle(NotificationCompat.BigTextStyle().bigText(appLinkAlarm.alarmMessage))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(createPendingIntent(appLinkAlarm, includeAds))
             .setAutoCancel(true)
             .build()
@@ -100,40 +144,36 @@ class AppLinkAlarmNotificationManager @Inject constructor(
         return bitmap
     }
 
-    private fun createShowIntent(appLinkAlarm: AppLinkAlarm, includeAds: Boolean): Intent? {
-        return when (includeAds) {
-            true -> Intent(Intent.ACTION_VIEW, getDeepLinkOf("open/${appLinkAlarm.id}"))
-            false -> context.packageManager.getLaunchIntentForPackage(appLinkAlarm.linkedAppPackage)
-        }
-    }
-
     private fun createPendingIntent(
         appLinkAlarm: AppLinkAlarm,
         includeAds: Boolean
     ): PendingIntent {
-
-        val intent = createShowIntent(appLinkAlarm, includeAds)
-
         return when (includeAds) {
-            true -> {
-                TaskStackBuilder.create(context).run {
-                    addNextIntentWithParentStack(intent)
-                    getPendingIntent(
-                        appLinkAlarm.id,
-                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                    )
-                }
-            }
+            true -> createDefaultPendingIntent(appLinkAlarm)
 
-            false -> {
-                PendingIntent.getActivity(
-                    context,
-                    appLinkAlarm.id,
-                    intent,
-                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-                )
-            }
+            false -> createLinkedAppPendingIntent(appLinkAlarm)
         }
+    }
+
+    private fun createDefaultPendingIntent(appLinkAlarm: AppLinkAlarm): PendingIntent {
+        val intent = Intent(Intent.ACTION_VIEW, getDeepLinkOf("open/${appLinkAlarm.id}"))
+        return TaskStackBuilder.create(context).run {
+            addNextIntentWithParentStack(intent)
+            getPendingIntent(
+                appLinkAlarm.id,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        }
+    }
+
+    private fun createLinkedAppPendingIntent(appLinkAlarm: AppLinkAlarm): PendingIntent {
+        val intent = context.packageManager.getLaunchIntentForPackage(appLinkAlarm.linkedAppPackage)
+        return PendingIntent.getActivity(
+            context,
+            appLinkAlarm.id,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
     }
 
     private fun createNotificationChannel(

@@ -5,6 +5,8 @@ import android.content.Context
 import android.content.Intent
 import com.oldogz.core.alarm.AppLinkAlarmManager.Companion.INTENT_ACTION_APP_LINK_ALARM
 import com.oldogz.core.alarm.AppLinkAlarmManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_ID
+import com.oldogz.core.alarm.AppLinkAlarmPlayingService.Companion.INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON
+import com.oldogz.core.alarm.AppLinkAlarmPlayingService.Companion.INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AlarmMode
 import dagger.hilt.android.AndroidEntryPoint
@@ -34,7 +36,9 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                 CoroutineScope(Dispatchers.IO).launch {
                     val appLinkAlarms = appLinkAlarmRepository.alarms.first()
                     appLinkAlarms.forEach { appLinkAlarm ->
-                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                        if (appLinkAlarmManager.checkScheduleExactAlarms()) {
+                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                        }
                     }
                 }
             }
@@ -43,7 +47,6 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                 appLinkAlarmNotificationManager.registerNotificationChannels()
                 val id = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
                 if (id == -1) return
-                // 알림 출력 or 서비스 실행
                 println("onReceive INTENT_ACTION_APP_LINK_ALARM($id)")
 
                 CoroutineScope(Dispatchers.IO).launch {
@@ -51,25 +54,25 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
 
                     when (appLinkAlarm.alarmMode) {
                         AlarmMode.ONLY_NOTIFICATION -> {
-                            println("AlarmMode.ONLY_NOTIFICATION")
                             appLinkAlarmNotificationManager.notify(
                                 appLinkAlarm.id,
                                 appLinkAlarmNotificationManager.createNotification(
                                     appLinkAlarm,
                                     true
-                                )
+                                ) // 광고
                             )
                         }
 
                         AlarmMode.STANDARD -> {
-                            println("AlarmMode.STANDARD")
-                            appLinkAlarmNotificationManager.notify(
-                                appLinkAlarm.id,
-                                appLinkAlarmNotificationManager.createNotification(
-                                    appLinkAlarm,
-                                    true
-                                )
-                            )
+                            val serviceIntent =
+                                Intent(context, AppLinkAlarmPlayingService::class.java).apply {
+                                    action = INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON
+                                    putExtra(
+                                        INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID,
+                                        appLinkAlarm.id
+                                    )
+                                }
+                            context.startForegroundService(serviceIntent)
                         }
                     }
 
