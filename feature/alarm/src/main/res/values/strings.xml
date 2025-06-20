@@ -70,4 +70,7 @@
 
     <string name="feature_alarm_error_text_app_not_found">App not found: %1$s</string>
     <string name="feature_alarm_error_text_notification_permission_denied">Notification permission has been denied.\nTo enable notifications, please go to Settings</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">Dismiss and Open App</string>
+    <string name="feature_alarm_text_open_app">Open App</string>
 </resources>

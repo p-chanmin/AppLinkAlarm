@@ -1,5 +1,7 @@
 package com.oldogz.applinkalarm.feature.alarm.open
 
+import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,11 +34,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.AppIconImage
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
+import com.oldogz.core.alarm.AppLinkAlarmPlayingService
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
@@ -67,6 +71,7 @@ private fun OpenAppContent(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     popBackStack: () -> Unit,
 ) {
+    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     Box(
@@ -90,7 +95,12 @@ private fun OpenAppContent(
                     AppLinkAlarmIconButton(
                         imageVector = Icons.Filled.Close,
                         contentDescription = stringResource(R.string.feature_alarm_icon_description_close),
-                        onClick = popBackStack
+                        onClick = {
+                            if (openAppUiState.alarmMode == AlarmMode.STANDARD) {
+                                alarmStop(context)
+                            }
+                            popBackStack()
+                        }
                     )
                 }
             )
@@ -103,10 +113,12 @@ private fun OpenAppContent(
             ) {
                 OpenAppInfo(
                     onShowErrorSnackBar = onShowErrorSnackBar,
+                    popBackStack = popBackStack,
                     alarmName = openAppUiState.alarmName,
                     alarmMessage = openAppUiState.alarmMessage,
                     hour = openAppUiState.hour,
                     minute = openAppUiState.minute,
+                    alarmMode = openAppUiState.alarmMode,
                     periodOfDay = openAppUiState.periodOfDay,
                     linkedAppPackage = openAppUiState.linkedAppPackage
                 )
@@ -118,10 +130,12 @@ private fun OpenAppContent(
 @Composable
 private fun OpenAppInfo(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    popBackStack: () -> Unit,
     alarmName: String,
     alarmMessage: String,
     hour: Int,
     minute: Int,
+    alarmMode: AlarmMode,
     periodOfDay: PeriodOfDay,
     linkedAppPackage: String,
 ) {
@@ -163,8 +177,14 @@ private fun OpenAppInfo(
         AppLinkAlarmButton(
             modifier = Modifier
                 .fillMaxWidth(),
-            content = "Open App",
+            content = when (alarmMode) {
+                AlarmMode.STANDARD -> stringResource(R.string.feature_alarm_text_dismiss_and_open_app)
+                AlarmMode.ONLY_NOTIFICATION -> stringResource(R.string.feature_alarm_text_open_app)
+            },
             onClick = {
+                if (alarmMode == AlarmMode.STANDARD) {
+                    alarmStop(context)
+                }
                 val launchIntent =
                     context.packageManager.getLaunchIntentForPackage(linkedAppPackage)
                 if (launchIntent != null) {
@@ -179,9 +199,19 @@ private fun OpenAppInfo(
                         )
                     )
                 }
+                popBackStack()
             }
         )
     }
+}
+
+private fun alarmStop(context: Context) {
+    val alarmStopIntent =
+        Intent(context, AppLinkAlarmPlayingService::class.java).apply {
+            action =
+                AppLinkAlarmPlayingService.INTENT_ACTION_SERVICE_APP_LINK_ALARM_OFF
+        }
+    context.startService(alarmStopIntent)
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
