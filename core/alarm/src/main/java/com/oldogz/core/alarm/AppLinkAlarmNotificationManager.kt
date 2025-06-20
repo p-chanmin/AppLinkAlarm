@@ -102,9 +102,14 @@ class AppLinkAlarmNotificationManager @Inject constructor(
                 )
             )
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(createDefaultPendingIntent(appLinkAlarm))
+            .setContentIntent(
+                createDefaultPendingIntent(appLinkAlarm, "open/${appLinkAlarm.id}")
+            )
             .setDeleteIntent(deletePendingIntent)
-            .setFullScreenIntent(createDefaultPendingIntent(appLinkAlarm), true)
+            .setFullScreenIntent(
+                createDefaultPendingIntent(appLinkAlarm, "open/${appLinkAlarm.id}"),
+                true
+            )
             .setOngoing(true)
             .build()
     }
@@ -130,6 +135,28 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             .build()
     }
 
+    fun createNoLinkedAppNotification(
+        appLinkAlarm: AppLinkAlarm
+    ): Notification {
+        return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle(
+                context.getString(
+                    R.string.core_alarm_text_no_linked_apps_found,
+                    appLinkAlarm.alarmName
+                )
+            )
+            .setContentText(context.getString(R.string.core_alarm_text_no_linked_apps_content_text))
+            .setStyle(
+                NotificationCompat.BigTextStyle()
+                    .bigText(context.getString(R.string.core_alarm_text_no_linked_apps_content_text))
+            )
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setContentIntent(createDefaultPendingIntent(appLinkAlarm, "home"))
+            .setAutoCancel(true)
+            .build()
+    }
+
     private fun createAppIconBitmap(linkedAppPackage: String): Bitmap {
         val packageManager = context.packageManager
         val appInfo = packageManager.getApplicationInfo(linkedAppPackage, 0)
@@ -149,14 +176,17 @@ class AppLinkAlarmNotificationManager @Inject constructor(
         includeAds: Boolean
     ): PendingIntent {
         return when (includeAds) {
-            true -> createDefaultPendingIntent(appLinkAlarm)
+            true -> createDefaultPendingIntent(appLinkAlarm, "open/${appLinkAlarm.id}")
 
             false -> createLinkedAppPendingIntent(appLinkAlarm)
         }
     }
 
-    private fun createDefaultPendingIntent(appLinkAlarm: AppLinkAlarm): PendingIntent {
-        val intent = Intent(Intent.ACTION_VIEW, getDeepLinkOf("open/${appLinkAlarm.id}"))
+    private fun createDefaultPendingIntent(
+        appLinkAlarm: AppLinkAlarm,
+        path: String
+    ): PendingIntent {
+        val intent = Intent(Intent.ACTION_VIEW, getDeepLinkOf(path))
         return TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(intent)
             getPendingIntent(

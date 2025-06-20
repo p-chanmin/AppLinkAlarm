@@ -28,7 +28,9 @@ fun NavGraphBuilder.alarmNavGraph(
     navigateToSetting: () -> Unit,
     popBackStack: () -> Unit,
 ) {
-    composable<Route.AlarmHome> {
+    composable<Route.AlarmHome>(
+        deepLinks = listOf(navDeepLink<Route.AlarmHome>(basePath = "$DEEP_LINK_BASE_PATH/home"))
+    ) {
         AlarmHomeScreen(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,

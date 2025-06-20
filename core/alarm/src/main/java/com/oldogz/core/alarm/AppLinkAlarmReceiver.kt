@@ -52,33 +52,51 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                 CoroutineScope(Dispatchers.IO).launch {
                     val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()
 
-                    when (appLinkAlarm.alarmMode) {
-                        AlarmMode.ONLY_NOTIFICATION -> {
-                            appLinkAlarmNotificationManager.notify(
-                                appLinkAlarm.id,
-                                appLinkAlarmNotificationManager.createNotification(
-                                    appLinkAlarm,
-                                    true
-                                ) // 광고
+                    if (isAppInstalled(context, appLinkAlarm.linkedAppPackage)) {
+                        when (appLinkAlarm.alarmMode) {
+                            AlarmMode.ONLY_NOTIFICATION -> {
+                                appLinkAlarmNotificationManager.notify(
+                                    appLinkAlarm.id,
+                                    appLinkAlarmNotificationManager.createNotification(
+                                        appLinkAlarm,
+                                        true
+                                    ) // 광고
+                                )
+                            }
+
+                            AlarmMode.STANDARD -> {
+                                val serviceIntent =
+                                    Intent(context, AppLinkAlarmPlayingService::class.java).apply {
+                                        action = INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON
+                                        putExtra(
+                                            INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID,
+                                            appLinkAlarm.id
+                                        )
+                                    }
+                                context.startForegroundService(serviceIntent)
+                            }
+                        }
+                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                    } else {
+                        appLinkAlarmRepository.updateAlarm(appLinkAlarm.copy(active = false))
+                        appLinkAlarmNotificationManager.notify(
+                            appLinkAlarm.id,
+                            appLinkAlarmNotificationManager.createNoLinkedAppNotification(
+                                appLinkAlarm
                             )
-                        }
-
-                        AlarmMode.STANDARD -> {
-                            val serviceIntent =
-                                Intent(context, AppLinkAlarmPlayingService::class.java).apply {
-                                    action = INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON
-                                    putExtra(
-                                        INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID,
-                                        appLinkAlarm.id
-                                    )
-                                }
-                            context.startForegroundService(serviceIntent)
-                        }
+                        )
                     }
-
-                    appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
                 }
             }
+        }
+    }
+
+    private fun isAppInstalled(context: Context, linkedAppPackage: String): Boolean {
+        return try {
+            context.packageManager.getPackageInfo(linkedAppPackage, 0)
+            true
+        } catch (e: Exception) {
+            false
         }
     }
 }
