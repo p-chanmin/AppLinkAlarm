@@ -50,6 +50,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.AppLinkAlarmItem
+import com.oldogz.applinkalarm.feature.alarm.edit.ExactAlarmPermissionDialog
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
@@ -93,6 +94,7 @@ internal fun AlarmHomeScreen(
         updateSelectedAlarmActive = alarmHomeViewModel::updateSelectedAlarmActive,
         deleteSelectedAlarm = alarmHomeViewModel::deleteSelectedAlarm,
         updateNotificationPermissionState = alarmHomeViewModel::updateNotificationPermissionState,
+        cancelExactAlarmPermissionDialog = alarmHomeViewModel::cancelExactAlarmPermissionDialog,
     )
 }
 
@@ -110,11 +112,12 @@ private fun AlarmHomeContent(
     updateSelectedAlarmActive: (Boolean) -> Unit,
     deleteSelectedAlarm: () -> Unit,
     updateNotificationPermissionState: (PermissionState, Boolean) -> Unit,
+    cancelExactAlarmPermissionDialog: () -> Unit,
 ) {
 
     CheckPermission(
         updateNotificationPermissionState = updateNotificationPermissionState,
-        deniedNotificationDialog = homeUiState.deniedNotificationDialog,
+        visibleNotificationPermissionDialog = homeUiState.visibleNotificationPermissionDialog,
         onShowErrorSnackBar = onShowErrorSnackBar
     )
 
@@ -166,11 +169,17 @@ private fun AlarmHomeContent(
             }
         }
     }
+
+    if (homeUiState.visibleExactAlarmPermissionDialog) {
+        ExactAlarmPermissionDialog(
+            onDismiss = cancelExactAlarmPermissionDialog
+        )
+    }
 }
 
 @Composable
 private fun CheckPermission(
-    deniedNotificationDialog: Boolean,
+    visibleNotificationPermissionDialog: Boolean,
     updateNotificationPermissionState: (PermissionState, Boolean) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
@@ -215,14 +224,14 @@ private fun CheckPermission(
         }
     }
 
-    if (deniedNotificationDialog) {
+    if (visibleNotificationPermissionDialog) {
         AppLinkAlarmDialog(
             dialogTitle = stringResource(R.string.feature_alarm_text_permission_denied),
             dialogText = stringResource(R.string.feature_alarm_text_notification_permission_denied_content),
             imageVector = Icons.Filled.AppBlocking,
             contentDescription = stringResource(R.string.feature_alarm_text_permission_denied),
-            confirmText = stringResource(R.string.feature_alarm_text_confirm),
-            dismissText = stringResource(R.string.feature_alarm_text_dismiss),
+            confirmText = stringResource(R.string.feature_alarm_text_permission_allow),
+            dismissText = stringResource(R.string.feature_alarm_text_permission_do_not_allow),
             onConfirmation = {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                     val requiredPermissions = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
@@ -394,7 +403,7 @@ private fun HomeContentPreview() {
         AlarmHomeContent(
             homeUiState = AlarmHomeUiState(
                 isSelectMode = true,
-                deniedNotificationDialog = true,
+                visibleNotificationPermissionDialog = true,
                 alarms = persistentListOf(
                     AppLinkAlarmUiState(
                         selected = true,
@@ -449,6 +458,7 @@ private fun HomeContentPreview() {
             updateSelectedAlarmActive = {},
             deleteSelectedAlarm = {},
             updateNotificationPermissionState = { _, _ -> },
+            cancelExactAlarmPermissionDialog = {},
         )
     }
 }

@@ -139,8 +139,9 @@ internal fun AlarmEditScreen(
         updateVibrate = alarmEditViewModel::updateVibrate,
         updateAlarmSound = alarmEditViewModel::updateAlarmSound,
         updateAlarmVolume = alarmEditViewModel::updateAlarmVolume,
-        selectAppDialog = alarmEditViewModel::selectAppDialog,
-        saveAlarm = alarmEditViewModel::saveAlarm
+        updateVisibleSelectAppDialog = alarmEditViewModel::updateVisibleSelectAppDialog,
+        saveAlarm = alarmEditViewModel::saveAlarm,
+        cancelExactAlarmPermissionDialog = alarmEditViewModel::cancelExactAlarmPermissionDialog,
     )
 }
 
@@ -163,8 +164,9 @@ private fun AlarmEditContent(
     updateVibrate: (Boolean) -> Unit,
     updateAlarmSound: (String) -> Unit,
     updateAlarmVolume: (Float) -> Unit,
-    selectAppDialog: () -> Unit,
+    updateVisibleSelectAppDialog: () -> Unit,
     saveAlarm: () -> Unit,
+    cancelExactAlarmPermissionDialog: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
@@ -212,7 +214,7 @@ private fun AlarmEditContent(
             ) {
                 ChooseApp(
                     linkedAppPackage = alarmEditUiState.linkedAppPackage,
-                    selectAppDialog = selectAppDialog
+                    updateVisibleSelectAppDialog = updateVisibleSelectAppDialog
                 )
                 AlarmTimer(
                     hourState = hourState,
@@ -264,10 +266,16 @@ private fun AlarmEditContent(
         }
     }
 
-    if (alarmEditUiState.selectAppDialog) {
+    if (alarmEditUiState.visibleSelectAppDialog) {
         AppSelectDialog(
             updateLinkedAppPackage = updateLinkedAppPackage,
-            onDismiss = selectAppDialog
+            onDismiss = updateVisibleSelectAppDialog
+        )
+    }
+
+    if (alarmEditUiState.visibleExactAlarmPermissionDialog) {
+        ExactAlarmPermissionDialog(
+            onDismiss = cancelExactAlarmPermissionDialog
         )
     }
 }
@@ -275,7 +283,7 @@ private fun AlarmEditContent(
 @Composable
 internal fun ChooseApp(
     linkedAppPackage: String?,
-    selectAppDialog: () -> Unit,
+    updateVisibleSelectAppDialog: () -> Unit,
 ) {
     val context = LocalContext.current
     val packageManager = context.packageManager
@@ -303,7 +311,7 @@ internal fun ChooseApp(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(MaterialTheme.colorScheme.background)
-                    .clickable { selectAppDialog() }
+                    .clickable { updateVisibleSelectAppDialog() }
                     .padding(Paddings.xlarge),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
@@ -344,7 +352,7 @@ internal fun ChooseApp(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { selectAppDialog() }
+                    .clickable { updateVisibleSelectAppDialog() }
                     .padding(start = Paddings.xlarge)
                     .padding(vertical = Paddings.small),
                 verticalAlignment = Alignment.CenterVertically,
@@ -359,7 +367,7 @@ internal fun ChooseApp(
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.ChevronRight,
                     contentDescription = stringResource(R.string.feature_alarm_text_choose_app),
-                    onClick = selectAppDialog
+                    onClick = updateVisibleSelectAppDialog
                 )
             }
         }
@@ -793,8 +801,9 @@ private fun AlarmEditContentPreview() {
             updateVibrate = {},
             updateAlarmSound = {},
             updateAlarmVolume = {},
-            selectAppDialog = {},
-            saveAlarm = {}
+            updateVisibleSelectAppDialog = {},
+            saveAlarm = {},
+            cancelExactAlarmPermissionDialog = {},
         )
     }
 }

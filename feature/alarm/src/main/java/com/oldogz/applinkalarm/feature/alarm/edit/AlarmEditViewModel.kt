@@ -158,9 +158,15 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
-    fun selectAppDialog() {
+    fun updateVisibleSelectAppDialog() {
         _alarmEditUiState.update {
-            it.copy(selectAppDialog = !it.selectAppDialog)
+            it.copy(visibleSelectAppDialog = !it.visibleSelectAppDialog)
+        }
+    }
+
+    fun cancelExactAlarmPermissionDialog() {
+        _alarmEditUiState.update {
+            it.copy(visibleExactAlarmPermissionDialog = false)
         }
     }
 
@@ -197,14 +203,20 @@ class AlarmEditViewModel @Inject constructor(
                         alarmVolume = alarmVolume,
                         active = active
                     )
-                    if (id != null) {
-                        appLinkAlarmRepository.updateAlarm(appLinkAlarm)
-                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                    if (appLinkAlarmManager.checkScheduleExactAlarms()) {
+                        if (id != null) {
+                            appLinkAlarmRepository.updateAlarm(appLinkAlarm)
+                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                        } else {
+                            val alarmId = appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
+                        }
+                        _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                     } else {
-                        val alarmId = appLinkAlarmRepository.addAlarm(appLinkAlarm)
-                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
+                        _alarmEditUiState.update {
+                            it.copy(visibleExactAlarmPermissionDialog = true)
+                        }
                     }
-                    _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                 }
             } catch (e: Exception) {
                 _errorFlow.emit(e)

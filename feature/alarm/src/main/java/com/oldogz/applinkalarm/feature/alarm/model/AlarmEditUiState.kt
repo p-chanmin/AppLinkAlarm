@@ -22,7 +22,8 @@ data class AlarmEditUiState(
     val alarmSound: String? = null,
     val alarmVolume: Int = 80,
     val active: Boolean = true,
-    val selectAppDialog: Boolean = false,
+    val visibleSelectAppDialog: Boolean = false,
+    val visibleExactAlarmPermissionDialog: Boolean = false,
 )
 
 sealed interface AlarmEditUiEvent {

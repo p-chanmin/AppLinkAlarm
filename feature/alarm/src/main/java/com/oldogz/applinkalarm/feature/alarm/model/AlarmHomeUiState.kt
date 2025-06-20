@@ -10,7 +10,8 @@ data class AlarmHomeUiState(
     val isSelectMode: Boolean = false,
     val alarms: ImmutableList<AppLinkAlarmUiState> = persistentListOf(),
     val notificationPermissionState: PermissionState = PermissionState.GRANTED,
-    val deniedNotificationDialog: Boolean = false,
+    val visibleNotificationPermissionDialog: Boolean = false,
+    val visibleExactAlarmPermissionDialog: Boolean = false,
 )
 
 @Immutable
