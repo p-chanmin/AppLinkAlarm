@@ -90,8 +90,7 @@ private fun OpenAppContent(
                 modifier = Modifier
                     .fillMaxWidth(),
                 title = stringResource(R.string.feature_alarm_top_app_bar_open_alarm),
-                navigationIcon = {},
-                actions = {
+                navigationIcon = {
                     AppLinkAlarmIconButton(
                         imageVector = Icons.Filled.Close,
                         contentDescription = stringResource(R.string.feature_alarm_icon_description_close),
@@ -102,7 +101,8 @@ private fun OpenAppContent(
                             popBackStack()
                         }
                     )
-                }
+                },
+                actions = {}
             )
 
             Box(
