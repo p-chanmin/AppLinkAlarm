@@ -32,7 +32,6 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
 
         when (intent.action) {
             Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_TIMEZONE_CHANGED -> {
-                println("onReceiveACTION_BOOT_COMPLETED, ACTION_TIMEZONE_CHANGED(${intent.action})")
                 CoroutineScope(Dispatchers.IO).launch {
                     val appLinkAlarms = appLinkAlarmRepository.alarms.first()
                     appLinkAlarms.forEach { appLinkAlarm ->
@@ -47,7 +46,6 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                 appLinkAlarmNotificationManager.registerNotificationChannels()
                 val id = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
                 if (id == -1) return
-                println("onReceive INTENT_ACTION_APP_LINK_ALARM($id)")
 
                 CoroutineScope(Dispatchers.IO).launch {
                     val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()

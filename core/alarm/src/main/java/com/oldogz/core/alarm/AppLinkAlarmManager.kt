@@ -40,16 +40,10 @@ class AppLinkAlarmManager @Inject constructor(
             nextAlarmTime,
             pendingIntent
         )
-
-        val sdf = java.text.SimpleDateFormat("yyyyMMdd E HH:mm")
-        val yyyymmdd = sdf.format(java.util.Date(nextAlarmTime))
-        println("scheduleAlarm(${alarm.id}): $yyyymmdd")
-
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
     }
 
     fun cancelAlarm(alarmId: Int) {
-        println("cancelAlarm($alarmId)")
         alarmManager.cancel(createPendingIntent(alarmId))
     }
 
