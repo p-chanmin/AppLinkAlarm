@@ -22,6 +22,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -33,7 +34,9 @@ class AppLinkAlarmPlayingService : Service() {
 
     private val binder: IBinder = LocalBinder()
     override fun onBind(intent: Intent): IBinder = binder
-    inner class LocalBinder : Binder()
+    inner class LocalBinder : Binder() {
+        fun getService(): AppLinkAlarmPlayingService = this@AppLinkAlarmPlayingService
+    }
 
     @Inject
     lateinit var appLinkAlarmRepository: AppLinkAlarmRepository
@@ -47,7 +50,10 @@ class AppLinkAlarmPlayingService : Service() {
     private lateinit var vibrator: Vibrator
 
     private val mutex = Mutex()
-    private val currentAppLinkAlarmId: MutableStateFlow<Int?> = MutableStateFlow(null)
+
+    private val _currentAppLinkAlarmId: MutableStateFlow<Int?> = MutableStateFlow(null)
+    val currentAppLinkAlarmId = _currentAppLinkAlarmId.asStateFlow()
+
     private var mediaPlayer: MediaPlayer? = null
     private var mediaVolumeBeforeAlarm: Int = 0
 
@@ -106,14 +112,14 @@ class AppLinkAlarmPlayingService : Service() {
 
         startForeground(
             appLinkAlarm.id,
-            appLinkAlarmNotificationManager.createNotification(appLinkAlarm, false) // 광고
+            appLinkAlarmNotificationManager.createNotification(appLinkAlarm, true) // 광고
         )
 
-        currentAppLinkAlarmId.value?.let { id ->
+        _currentAppLinkAlarmId.value?.let { id ->
             notifyMissedAlarm(id)
         }
 
-        currentAppLinkAlarmId.value = alarmId
+        _currentAppLinkAlarmId.value = alarmId
 
         initMediaPlayer(appLinkAlarm)
 
@@ -166,7 +172,6 @@ class AppLinkAlarmPlayingService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-
         mediaPlayer?.let {
             it.stop()
             it.release()
