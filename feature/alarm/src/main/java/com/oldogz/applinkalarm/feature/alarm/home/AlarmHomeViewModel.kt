@@ -2,10 +2,13 @@ package com.oldogz.applinkalarm.feature.alarm.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.AppLinkAlarmPlayingService
+import com.oldogz.core.alarm.AppLinkAlarmStateManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AppLinkAlarm
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -28,10 +32,14 @@ import javax.inject.Inject
 class AlarmHomeViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
     private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
+
+    private val _service = MutableStateFlow<AppLinkAlarmPlayingService?>(null)
+    val service get() = _service.asStateFlow()
 
     private val _homeUiState = MutableStateFlow(AlarmHomeUiState())
     val homeUiState = _homeUiState.stateIn(
@@ -40,7 +48,17 @@ class AlarmHomeViewModel @Inject constructor(
         _homeUiState.value
     )
 
+    private val _event = MutableSharedFlow<AlarmHomeUiEvent>()
+    val event get() = _event.asSharedFlow()
+
     init {
+        appLinkAlarmStateManager.appLinkAlarmPlayingService
+            .onStart {
+                appLinkAlarmStateManager.bindService()
+            }.onEach { service ->
+                _service.value = service
+            }.launchIn(viewModelScope)
+
         loadAlarm()
     }
 
@@ -195,5 +213,17 @@ class AlarmHomeViewModel @Inject constructor(
         _homeUiState.update {
             it.copy(visibleExactAlarmPermissionDialog = false)
         }
+    }
+
+    fun dismissAlarm(linkedAppPackage: String) {
+        viewModelScope.launch {
+            _service.value?.stopSelf()
+            _event.emit(AlarmHomeUiEvent.LinkedAppOpen(linkedAppPackage))
+        }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        appLinkAlarmStateManager.unbindService()
     }
 }

@@ -51,9 +51,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.AppLinkAlarmItem
 import com.oldogz.applinkalarm.feature.alarm.edit.ExactAlarmPermissionDialog
+import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
+import com.oldogz.applinkalarm.feature.alarm.open.DismissAlarmScreen
 import com.oldogz.core.designsystem.component.AppLinkAlarmDialog
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
@@ -72,8 +74,9 @@ internal fun AlarmHomeScreen(
     navigateToSetting: () -> Unit,
     alarmHomeViewModel: AlarmHomeViewModel = hiltViewModel()
 ) {
-
+    val context = LocalContext.current
     val homeUiState by alarmHomeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val service by alarmHomeViewModel.service.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         alarmHomeViewModel.errorFlow.collect { throwable ->
@@ -81,21 +84,53 @@ internal fun AlarmHomeScreen(
         }
     }
 
-    AlarmHomeContent(
-        homeUiState = homeUiState,
-        paddingValues = paddingValues,
-        onShowErrorSnackBar = onShowErrorSnackBar,
-        navigateToAlarmEdit = navigateToAlarmEdit,
-        navigateToSetting = navigateToSetting,
-        updateAlarmActive = alarmHomeViewModel::updateAlarmActive,
-        updateSelectMode = alarmHomeViewModel::updateSelectMode,
-        selectAlarm = alarmHomeViewModel::selectAlarm,
-        selectAllAlarm = alarmHomeViewModel::selectAllAlarm,
-        updateSelectedAlarmActive = alarmHomeViewModel::updateSelectedAlarmActive,
-        deleteSelectedAlarm = alarmHomeViewModel::deleteSelectedAlarm,
-        updateNotificationPermissionState = alarmHomeViewModel::updateNotificationPermissionState,
-        cancelExactAlarmPermissionDialog = alarmHomeViewModel::cancelExactAlarmPermissionDialog,
-    )
+    LaunchedEffect(Unit) {
+        alarmHomeViewModel.event.collect { event ->
+            when (event) {
+                is AlarmHomeUiEvent.LinkedAppOpen -> {
+                    val launchIntent =
+                        context.packageManager.getLaunchIntentForPackage(event.linkedAppPackage)
+                    if (launchIntent != null) {
+                        context.startActivity(launchIntent)
+                    } else {
+                        onShowErrorSnackBar(
+                            Throwable(
+                                context.getString(
+                                    R.string.feature_alarm_error_text_app_not_found,
+                                    event.linkedAppPackage
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (service == null) {
+        AlarmHomeContent(
+            homeUiState = homeUiState,
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToAlarmEdit = navigateToAlarmEdit,
+            navigateToSetting = navigateToSetting,
+            updateAlarmActive = alarmHomeViewModel::updateAlarmActive,
+            updateSelectMode = alarmHomeViewModel::updateSelectMode,
+            selectAlarm = alarmHomeViewModel::selectAlarm,
+            selectAllAlarm = alarmHomeViewModel::selectAllAlarm,
+            updateSelectedAlarmActive = alarmHomeViewModel::updateSelectedAlarmActive,
+            deleteSelectedAlarm = alarmHomeViewModel::deleteSelectedAlarm,
+            updateNotificationPermissionState = alarmHomeViewModel::updateNotificationPermissionState,
+            cancelExactAlarmPermissionDialog = alarmHomeViewModel::cancelExactAlarmPermissionDialog,
+        )
+    } else {
+        DismissAlarmScreen(
+            service = service,
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            dismissAlarm = alarmHomeViewModel::dismissAlarm,
+        )
+    }
 }
 
 @Composable
@@ -403,7 +438,7 @@ private fun HomeContentPreview() {
         AlarmHomeContent(
             homeUiState = AlarmHomeUiState(
                 isSelectMode = true,
-                visibleNotificationPermissionDialog = true,
+                visibleNotificationPermissionDialog = false,
                 alarms = persistentListOf(
                     AppLinkAlarmUiState(
                         selected = true,

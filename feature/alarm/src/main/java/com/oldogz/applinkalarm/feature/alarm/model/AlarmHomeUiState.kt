@@ -19,3 +19,7 @@ data class AppLinkAlarmUiState(
     val selected: Boolean = false,
     val appLinkAlarm: AppLinkAlarm
 )
+
+sealed interface AlarmHomeUiEvent {
+    data class LinkedAppOpen(val linkedAppPackage: String) : AlarmHomeUiEvent
+}
