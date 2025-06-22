@@ -85,8 +85,10 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             context,
             appLinkAlarm.id,
             alarmStopIntent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
         )
+
+        val pendingIntent = createDefaultPendingIntent(appLinkAlarm, "home")
 
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -102,14 +104,9 @@ class AppLinkAlarmNotificationManager @Inject constructor(
                 )
             )
             .setPriority(NotificationCompat.PRIORITY_MAX)
-            .setContentIntent(
-                createDefaultPendingIntent(appLinkAlarm, "open/${appLinkAlarm.id}")
-            )
+            .setContentIntent(pendingIntent)
             .setDeleteIntent(deletePendingIntent)
-            .setFullScreenIntent(
-                createDefaultPendingIntent(appLinkAlarm, "open/${appLinkAlarm.id}"),
-                true
-            )
+            .setFullScreenIntent(pendingIntent, true)
             .setOngoing(true)
             .build()
     }
@@ -191,7 +188,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             addNextIntentWithParentStack(intent)
             getPendingIntent(
                 appLinkAlarm.id,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
             )
         }
     }
@@ -202,7 +199,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             context,
             appLinkAlarm.id,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
         )
     }
 
