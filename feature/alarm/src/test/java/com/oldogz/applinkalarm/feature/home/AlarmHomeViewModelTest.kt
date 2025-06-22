@@ -2,8 +2,11 @@ package com.oldogz.applinkalarm.feature.home
 
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.home.AlarmHomeViewModel
+import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
+import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.AppLinkAlarmStateManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
@@ -27,6 +30,7 @@ internal class AlarmHomeViewModelTest {
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
     private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
+    private val appLinkAlarmStateManager: AppLinkAlarmStateManager = mockk(relaxed = true)
     private lateinit var alarmHomeViewModel: AlarmHomeViewModel
 
     @Test
@@ -36,7 +40,11 @@ internal class AlarmHomeViewModelTest {
         val alarms = listOf(alarm1, alarm2)
 
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         // When
         alarmHomeViewModel.homeUiState.test {
@@ -61,6 +69,7 @@ internal class AlarmHomeViewModelTest {
 
         // Given
         val alarms = MutableStateFlow(listOf(alarm1))
+        println(alarms.value)
 
         coEvery { appLinkAlarmRepository.alarms } returns alarms
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = true)) } answers {
@@ -69,12 +78,18 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = false)) } answers {
             alarms.value = listOf(alarm1.copy(active = false))
         }
+        coEvery { appLinkAlarmManager.checkScheduleExactAlarms() } returns true
 
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         alarmHomeViewModel.homeUiState.test {
 
             var uiState = awaitItem()
+            println(uiState)
             assertEquals(true, uiState.alarms.first().appLinkAlarm.active)
 
             // When
@@ -99,7 +114,11 @@ internal class AlarmHomeViewModelTest {
         // Given
         val alarms = listOf(alarm1, alarm2)
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         // When
         alarmHomeViewModel.updateSelectMode(true, alarm1.id)
@@ -129,7 +148,11 @@ internal class AlarmHomeViewModelTest {
         // Given
         val alarms = listOf(alarm1, alarm2)
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         // When
         alarmHomeViewModel.selectAlarm(true, alarm2.id)
@@ -158,7 +181,11 @@ internal class AlarmHomeViewModelTest {
         // Given
         val alarms = listOf(alarm1, alarm2)
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         // When
         alarmHomeViewModel.selectAllAlarm(true)
@@ -194,8 +221,13 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = false)) } answers {
             alarms.value = listOf(alarm1.copy(active = false), alarm2)
         }
+        coEvery { appLinkAlarmManager.checkScheduleExactAlarms() } returns true
 
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         // Given
         alarmHomeViewModel.selectAlarm(true, alarm1.id)
@@ -248,7 +280,11 @@ internal class AlarmHomeViewModelTest {
             alarms.value = listOf(alarm2)
         }
 
-        alarmHomeViewModel = AlarmHomeViewModel(appLinkAlarmRepository, appLinkAlarmManager)
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
 
         // Given
         alarmHomeViewModel.selectAlarm(true, alarm1.id)
@@ -283,6 +319,83 @@ internal class AlarmHomeViewModelTest {
             ).toPersistentList()
 
             assertEquals(expected, uiState.alarms)
+        }
+    }
+
+    @Test
+    fun `알림 권한 다이얼로그 상태를 변경할 수 있다`() = runTest {
+        // Given
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
+
+        alarmHomeViewModel.homeUiState.test {
+            var uiState = awaitItem()
+            assertEquals(PermissionState.GRANTED, uiState.notificationPermissionState)
+            assertEquals(false, uiState.visibleNotificationPermissionDialog)
+
+            // When
+            alarmHomeViewModel.updateNotificationPermissionState(
+                PermissionState.DENIED,
+                true
+            )
+
+            // Then
+            uiState = awaitItem()
+            println(uiState)
+            assertEquals(PermissionState.DENIED, uiState.notificationPermissionState)
+            assertEquals(true, uiState.visibleNotificationPermissionDialog)
+        }
+    }
+
+    @Test
+    fun `알람 및 리마인더 권한 다이얼로그 상태를 변경할 수 있다`() = runTest {
+        // Given
+
+        coEvery { appLinkAlarmManager.checkScheduleExactAlarms() } returns false
+
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
+
+        // When
+        alarmHomeViewModel.updateAlarmActive(alarm1, true)
+
+        // Then
+        alarmHomeViewModel.homeUiState.test {
+            var uiState = awaitItem()
+            assertEquals(true, uiState.visibleExactAlarmPermissionDialog)
+
+            // When
+            alarmHomeViewModel.cancelExactAlarmPermissionDialog()
+
+            // Then
+            uiState = awaitItem()
+            assertEquals(false, uiState.visibleExactAlarmPermissionDialog)
+        }
+    }
+
+    @Test
+    fun `알람을 해제할 수 있다`() = runTest {
+        // Given
+        alarmHomeViewModel = AlarmHomeViewModel(
+            appLinkAlarmRepository,
+            appLinkAlarmManager,
+            appLinkAlarmStateManager
+        )
+
+        alarmHomeViewModel.event.test {
+
+            // When
+            alarmHomeViewModel.dismissAlarm(alarm1.linkedAppPackage)
+
+            // Then
+            val event = awaitItem()
+            assertEquals(AlarmHomeUiEvent.LinkedAppOpen(alarm1.linkedAppPackage), event)
         }
     }
 
