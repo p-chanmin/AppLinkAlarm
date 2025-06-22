@@ -21,6 +21,10 @@ fun NavController.navigationToAlarmEdit(id: Int?) {
     navigate(Route.AlarmEdit(id))
 }
 
+fun NavController.navigationToOpen(id: Int) {
+    navigate(Route.OpenApp(id))
+}
+
 fun NavGraphBuilder.alarmNavGraph(
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,

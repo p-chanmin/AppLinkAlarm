@@ -10,15 +10,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,41 +23,50 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.OpenAppInfo
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
-import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
+import com.oldogz.core.alarm.AppLinkAlarmPlayingService
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.PeriodOfDay
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-internal fun OpenAppScreen(
+fun DismissAlarmScreen(
+    service: AppLinkAlarmPlayingService?,
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    popBackStack: () -> Unit,
-    openAppViewModel: OpenAppViewModel = hiltViewModel()
+    dismissAlarm: (String) -> Unit,
+    dismissAlarmViewModel: DismissAlarmViewModel = hiltViewModel()
 ) {
-    val openAppUiState by openAppViewModel.openAppUiState.collectAsStateWithLifecycle()
+    val openAppUiState by dismissAlarmViewModel.openAppUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        openAppViewModel.errorFlow.collect { throwable ->
+        dismissAlarmViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
         }
     }
 
-    OpenAppContent(
+    LaunchedEffect(Unit) {
+        service?.currentAppLinkAlarmId?.collectLatest { id ->
+            id?.let {
+                dismissAlarmViewModel.updateAppLinkAlarm(it)
+            }
+        }
+    }
+
+    DismissAlarmContent(
         openAppUiState = openAppUiState,
         onShowErrorSnackBar = onShowErrorSnackBar,
-        popBackStack = popBackStack,
+        dismissAlarm = dismissAlarm
     )
 }
 
 @Composable
-private fun OpenAppContent(
+private fun DismissAlarmContent(
     openAppUiState: OpenAppUiState,
+    dismissAlarm: (String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    popBackStack: () -> Unit,
 ) {
-    val context = LocalContext.current
     val scrollState = rememberScrollState()
 
     Box(
@@ -78,14 +84,8 @@ private fun OpenAppContent(
             AppLinkAlarmTopAppBar(
                 modifier = Modifier
                     .fillMaxWidth(),
-                title = stringResource(R.string.feature_alarm_top_app_bar_title_default),
-                navigationIcon = {
-                    AppLinkAlarmIconButton(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = stringResource(R.string.feature_alarm_icon_description_close),
-                        onClick = popBackStack
-                    )
-                },
+                title = stringResource(R.string.feature_alarm_top_app_bar_dismiss_alarm),
+                navigationIcon = {},
                 actions = {}
             )
 
@@ -100,26 +100,10 @@ private fun OpenAppContent(
                     alarmMessage = openAppUiState.alarmMessage,
                     hour = openAppUiState.hour,
                     minute = openAppUiState.minute,
-                    alarmMode = AlarmMode.ONLY_NOTIFICATION,
+                    alarmMode = AlarmMode.STANDARD,
                     periodOfDay = openAppUiState.periodOfDay,
                     linkedAppPackage = openAppUiState.linkedAppPackage,
-                    onClick = {
-                        val launchIntent =
-                            context.packageManager.getLaunchIntentForPackage(openAppUiState.linkedAppPackage)
-                        if (launchIntent != null) {
-                            context.startActivity(launchIntent)
-                        } else {
-                            onShowErrorSnackBar(
-                                Throwable(
-                                    context.getString(
-                                        R.string.feature_alarm_error_text_app_not_found,
-                                        openAppUiState.linkedAppPackage
-                                    )
-                                )
-                            )
-                        }
-                        popBackStack()
-                    }
+                    onClick = { dismissAlarm(openAppUiState.linkedAppPackage) },
                 )
             }
         }
@@ -129,20 +113,19 @@ private fun OpenAppContent(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
-private fun OpenAppContentPreview() {
+private fun DismissAlarmContentPreview() {
     AppLinkAlarmTheme {
-        OpenAppContent(
+        DismissAlarmContent(
             openAppUiState = OpenAppUiState(
                 alarmName = "Alarm Name",
                 alarmMessage = "Alarm Message",
                 hour = 12,
                 minute = 30,
-                alarmMode = AlarmMode.ONLY_NOTIFICATION,
                 periodOfDay = PeriodOfDay.AM,
                 linkedAppPackage = "com.example.app"
             ),
-            popBackStack = {},
-            onShowErrorSnackBar = {}
+            onShowErrorSnackBar = {},
+            dismissAlarm = {}
         )
     }
 }
