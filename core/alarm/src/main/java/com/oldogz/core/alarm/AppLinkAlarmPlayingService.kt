@@ -46,7 +46,7 @@ class AppLinkAlarmPlayingService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
-    private val includeAds = false // 광고
+    private val includeAds = true // 광고
 
     private lateinit var audioManager: AudioManager
     private lateinit var vibrator: Vibrator
