@@ -46,6 +46,8 @@ class AppLinkAlarmPlayingService : Service() {
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private val includeAds = false // 광고
+
     private lateinit var audioManager: AudioManager
     private lateinit var vibrator: Vibrator
 
@@ -112,7 +114,7 @@ class AppLinkAlarmPlayingService : Service() {
 
         startForeground(
             appLinkAlarm.id,
-            appLinkAlarmNotificationManager.createNotification(appLinkAlarm, true) // 광고
+            appLinkAlarmNotificationManager.createNotification(appLinkAlarm, includeAds)
         )
 
         _currentAppLinkAlarmId.value?.let { id ->
@@ -165,8 +167,8 @@ class AppLinkAlarmPlayingService : Service() {
         val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()
         val notification = appLinkAlarmNotificationManager.createMissedAlarmNotification(
             appLinkAlarm,
-            true
-        ) // 광고
+            includeAds
+        )
         appLinkAlarmNotificationManager.notify(appLinkAlarm.id, notification)
     }
 

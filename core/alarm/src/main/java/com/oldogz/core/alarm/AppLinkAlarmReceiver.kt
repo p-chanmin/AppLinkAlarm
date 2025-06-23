@@ -28,6 +28,8 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var appLinkAlarmNotificationManager: AppLinkAlarmNotificationManager
 
+    private val includeAds = false // 광고
+
     override fun onReceive(context: Context, intent: Intent) {
 
         when (intent.action) {
@@ -57,8 +59,8 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                                     appLinkAlarm.id,
                                     appLinkAlarmNotificationManager.createNotification(
                                         appLinkAlarm,
-                                        true
-                                    ) // 광고
+                                        includeAds
+                                    )
                                 )
                             }
 
