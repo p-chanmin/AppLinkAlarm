@@ -100,7 +100,7 @@ private fun OpenAppContent(
                     alarmMessage = openAppUiState.alarmMessage,
                     hour = openAppUiState.hour,
                     minute = openAppUiState.minute,
-                    alarmMode = AlarmMode.ONLY_NOTIFICATION,
+                    alarmMode = AlarmMode.NOTIFICATION_ONLY,
                     periodOfDay = openAppUiState.periodOfDay,
                     linkedAppPackage = openAppUiState.linkedAppPackage,
                     onClick = {
@@ -137,7 +137,7 @@ private fun OpenAppContentPreview() {
                 alarmMessage = "Alarm Message",
                 hour = 12,
                 minute = 30,
-                alarmMode = AlarmMode.ONLY_NOTIFICATION,
+                alarmMode = AlarmMode.NOTIFICATION_ONLY,
                 periodOfDay = PeriodOfDay.AM,
                 linkedAppPackage = "com.example.app"
             ),

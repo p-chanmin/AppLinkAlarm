@@ -103,7 +103,7 @@ internal fun AppLinkAlarmItem(
                         modifier = Modifier.padding(top = Paddings.small),
                         text = when (appLinkAlarm.alarmMode) {
                             AlarmMode.STANDARD -> context.getString(R.string.feature_alarm_text_standard)
-                            AlarmMode.ONLY_NOTIFICATION -> context.getString(R.string.feature_alarm_text_only_notification)
+                            AlarmMode.NOTIFICATION_ONLY -> context.getString(R.string.feature_alarm_text_notification_only)
                         },
                         style = MaterialTheme.typography.labelLarge.copy(
                             color = MaterialTheme.colorScheme.onSecondary

@@ -685,7 +685,7 @@ internal fun AlarmMode(
                 text = if (alarmMode == AlarmMode.STANDARD) {
                     stringResource(R.string.feature_alarm_text_standard)
                 } else {
-                    stringResource(R.string.feature_alarm_text_only_notification)
+                    stringResource(R.string.feature_alarm_text_notification_only)
                 },
                 style = MaterialTheme.typography.bodySmall.copy(
                     color = MaterialTheme.colorScheme.onSecondary

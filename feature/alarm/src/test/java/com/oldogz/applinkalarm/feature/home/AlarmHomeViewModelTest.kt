@@ -425,7 +425,7 @@ internal class AlarmHomeViewModelTest {
             dayOfWeek = listOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY),
             alarmName = "테스트 알람2",
             alarmMessage = "테스트 메시지2",
-            alarmMode = AlarmMode.ONLY_NOTIFICATION,
+            alarmMode = AlarmMode.NOTIFICATION_ONLY,
             vibrate = true,
             alarmSound = "alarm_sound_2.mp3",
             alarmVolume = 80,

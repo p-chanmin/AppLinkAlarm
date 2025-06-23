@@ -54,7 +54,7 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
 
                     if (isAppInstalled(context, appLinkAlarm.linkedAppPackage)) {
                         when (appLinkAlarm.alarmMode) {
-                            AlarmMode.ONLY_NOTIFICATION -> {
+                            AlarmMode.NOTIFICATION_ONLY -> {
                                 appLinkAlarmNotificationManager.notify(
                                     appLinkAlarm.id,
                                     appLinkAlarmNotificationManager.createNotification(

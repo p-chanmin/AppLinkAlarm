@@ -68,7 +68,7 @@ internal fun OpenAppInfo(
                 .fillMaxWidth(),
             content = when (alarmMode) {
                 AlarmMode.STANDARD -> stringResource(R.string.feature_alarm_text_dismiss_and_open_app)
-                AlarmMode.ONLY_NOTIFICATION -> stringResource(R.string.feature_alarm_text_open_app)
+                AlarmMode.NOTIFICATION_ONLY -> stringResource(R.string.feature_alarm_text_open_app)
             },
             onClick = onClick
         )

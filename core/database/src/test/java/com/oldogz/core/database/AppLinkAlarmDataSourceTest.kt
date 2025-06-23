@@ -219,7 +219,7 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
             dayOfWeek = "[\"SUNDAY\", \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]",
             alarmName = "Test Alarm 2",
             alarmMessage = "This is a test alarm 2",
-            alarmMode = "\"ONLY_NOTIFICATION\"",
+            alarmMode = "\"NOTIFICATION_ONLY\"",
             vibrate = false,
             alarmSound = null,
             alarmVolume = 80,

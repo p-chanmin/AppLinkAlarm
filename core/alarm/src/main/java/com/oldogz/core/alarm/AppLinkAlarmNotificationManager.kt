@@ -50,7 +50,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
 
     fun createNotification(appLinkAlarm: AppLinkAlarm, includeAds: Boolean): Notification {
         return when (appLinkAlarm.alarmMode) {
-            AlarmMode.ONLY_NOTIFICATION -> createNotificationOnly(appLinkAlarm, includeAds)
+            AlarmMode.NOTIFICATION_ONLY -> createNotificationOnly(appLinkAlarm, includeAds)
             AlarmMode.STANDARD -> createNotificationStandard(appLinkAlarm)
         }
     }

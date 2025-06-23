@@ -148,7 +148,7 @@ internal class AlarmEditViewModelTest {
 
             // Then
             var uiState = awaitItem()
-            assertEquals(AlarmMode.ONLY_NOTIFICATION, uiState.alarmMode)
+            assertEquals(AlarmMode.NOTIFICATION_ONLY, uiState.alarmMode)
 
             // When
             alarmEditViewModel.updateAlarmMode()

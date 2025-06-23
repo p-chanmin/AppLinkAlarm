@@ -17,7 +17,7 @@ data class AlarmEditUiState(
     val dayOfWeek: ImmutableList<DayOfWeek> = persistentListOf(),
     val alarmName: String = "",
     val message: String = "",
-    val alarmMode: AlarmMode = AlarmMode.ONLY_NOTIFICATION,
+    val alarmMode: AlarmMode = AlarmMode.NOTIFICATION_ONLY,
     val vibrate: Boolean = true,
     val alarmSound: String? = null,
     val alarmVolume: Int = 80,
