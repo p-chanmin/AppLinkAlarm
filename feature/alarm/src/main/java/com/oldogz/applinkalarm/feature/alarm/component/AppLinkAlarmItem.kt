@@ -21,11 +21,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.oldogz.applinkalarm.feature.alarm.util.alarmModeToString
+import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
 import com.oldogz.core.designsystem.component.AppLinkAlarmSwitch
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
 
@@ -100,11 +101,10 @@ internal fun AppLinkAlarmItem(
                     )
                     Text(
                         modifier = Modifier.padding(top = Paddings.small),
-                        text = alarmModeToString(
-                            context,
-                            appLinkAlarm.alarmMode,
-                            appLinkAlarm.directAppLaunch
-                        ),
+                        text = when (appLinkAlarm.alarmMode) {
+                            AlarmMode.STANDARD -> context.getString(R.string.feature_alarm_text_standard)
+                            AlarmMode.NOTIFICATION_ONLY -> context.getString(R.string.feature_alarm_text_notification_only)
+                        },
                         style = MaterialTheme.typography.labelLarge.copy(
                             color = MaterialTheme.colorScheme.onSecondary
                         )

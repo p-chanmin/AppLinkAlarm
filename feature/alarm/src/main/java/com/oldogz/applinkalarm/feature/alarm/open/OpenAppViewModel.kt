@@ -46,6 +46,7 @@ class OpenAppViewModel @Inject constructor(
                         alarmMessage = linkedAlarm.alarmMessage,
                         hour = linkedAlarm.hour,
                         minute = linkedAlarm.minute,
+                        alarmMode = linkedAlarm.alarmMode,
                         periodOfDay = linkedAlarm.periodOfDay,
                         linkedAppPackage = linkedAlarm.linkedAppPackage
                     )

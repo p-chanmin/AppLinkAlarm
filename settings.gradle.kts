@@ -25,6 +25,7 @@ include(":app")
 
 include(":feature:main")
 include(":feature:alarm")
+include(":feature:setting")
 
 include(":core:navigation")
 include(":core:model")
@@ -32,4 +33,4 @@ include(":core:data")
 include(":core:designsystem")
 include(":core:testing")
 include(":core:database")
-include(":feature:setting")
+include(":core:alarm")

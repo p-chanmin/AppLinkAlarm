@@ -1,6 +1,11 @@
 package com.oldogz.applinkalarm.feature.alarm.home
 
+import android.Manifest
+import android.app.Activity
 import android.content.res.Configuration
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
@@ -18,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlarmOff
 import androidx.compose.material.icons.filled.AlarmOn
+import androidx.compose.material.icons.filled.AppBlocking
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.MaterialTheme
@@ -25,20 +31,32 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.AppLinkAlarmItem
+import com.oldogz.applinkalarm.feature.alarm.edit.ExactAlarmPermissionDialog
+import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
+import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
+import com.oldogz.applinkalarm.feature.alarm.open.DismissAlarmScreen
+import com.oldogz.core.designsystem.component.AppLinkAlarmDialog
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
@@ -56,8 +74,9 @@ internal fun AlarmHomeScreen(
     navigateToSetting: () -> Unit,
     alarmHomeViewModel: AlarmHomeViewModel = hiltViewModel()
 ) {
-
+    val context = LocalContext.current
     val homeUiState by alarmHomeViewModel.homeUiState.collectAsStateWithLifecycle()
+    val service by alarmHomeViewModel.service.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         alarmHomeViewModel.errorFlow.collect { throwable ->
@@ -65,24 +84,60 @@ internal fun AlarmHomeScreen(
         }
     }
 
-    AlarmHomeContent(
-        homeUiState = homeUiState,
-        paddingValues = paddingValues,
-        navigateToAlarmEdit = navigateToAlarmEdit,
-        navigateToSetting = navigateToSetting,
-        updateAlarmActive = alarmHomeViewModel::updateAlarmActive,
-        updateSelectMode = alarmHomeViewModel::updateSelectMode,
-        selectAlarm = alarmHomeViewModel::selectAlarm,
-        selectAllAlarm = alarmHomeViewModel::selectAllAlarm,
-        updateSelectedAlarmActive = alarmHomeViewModel::updateSelectedAlarmActive,
-        deleteSelectedAlarm = alarmHomeViewModel::deleteSelectedAlarm,
-    )
+    LaunchedEffect(Unit) {
+        alarmHomeViewModel.event.collect { event ->
+            when (event) {
+                is AlarmHomeUiEvent.LinkedAppOpen -> {
+                    val launchIntent =
+                        context.packageManager.getLaunchIntentForPackage(event.linkedAppPackage)
+                    if (launchIntent != null) {
+                        context.startActivity(launchIntent)
+                    } else {
+                        onShowErrorSnackBar(
+                            Throwable(
+                                context.getString(
+                                    R.string.feature_alarm_error_text_app_not_found,
+                                    event.linkedAppPackage
+                                )
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+
+    if (service == null) {
+        AlarmHomeContent(
+            homeUiState = homeUiState,
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToAlarmEdit = navigateToAlarmEdit,
+            navigateToSetting = navigateToSetting,
+            updateAlarmActive = alarmHomeViewModel::updateAlarmActive,
+            updateSelectMode = alarmHomeViewModel::updateSelectMode,
+            selectAlarm = alarmHomeViewModel::selectAlarm,
+            selectAllAlarm = alarmHomeViewModel::selectAllAlarm,
+            updateSelectedAlarmActive = alarmHomeViewModel::updateSelectedAlarmActive,
+            deleteSelectedAlarm = alarmHomeViewModel::deleteSelectedAlarm,
+            updateNotificationPermissionState = alarmHomeViewModel::updateNotificationPermissionState,
+            cancelExactAlarmPermissionDialog = alarmHomeViewModel::cancelExactAlarmPermissionDialog,
+        )
+    } else {
+        DismissAlarmScreen(
+            service = service,
+            paddingValues = paddingValues,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            dismissAlarm = alarmHomeViewModel::dismissAlarm,
+        )
+    }
 }
 
 @Composable
 private fun AlarmHomeContent(
     homeUiState: AlarmHomeUiState,
     paddingValues: PaddingValues,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     navigateToAlarmEdit: (Int?) -> Unit,
     navigateToSetting: () -> Unit,
     updateAlarmActive: (AppLinkAlarm, Boolean) -> Unit,
@@ -91,7 +146,16 @@ private fun AlarmHomeContent(
     selectAllAlarm: (Boolean) -> Unit,
     updateSelectedAlarmActive: (Boolean) -> Unit,
     deleteSelectedAlarm: () -> Unit,
+    updateNotificationPermissionState: (PermissionState, Boolean) -> Unit,
+    cancelExactAlarmPermissionDialog: () -> Unit,
 ) {
+
+    CheckPermission(
+        updateNotificationPermissionState = updateNotificationPermissionState,
+        visibleNotificationPermissionDialog = homeUiState.visibleNotificationPermissionDialog,
+        onShowErrorSnackBar = onShowErrorSnackBar
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -139,6 +203,82 @@ private fun AlarmHomeContent(
                 )
             }
         }
+    }
+
+    if (homeUiState.visibleExactAlarmPermissionDialog) {
+        ExactAlarmPermissionDialog(
+            onDismiss = cancelExactAlarmPermissionDialog
+        )
+    }
+}
+
+@Composable
+private fun CheckPermission(
+    visibleNotificationPermissionDialog: Boolean,
+    updateNotificationPermissionState: (PermissionState, Boolean) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+) {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val isPreview = LocalInspectionMode.current
+
+    val permissionsLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        if (permissions.values.all { it }) {
+            updateNotificationPermissionState(PermissionState.GRANTED, false)
+        } else {
+            val shouldShowRationale = permissions.keys.any {
+                shouldShowRequestPermissionRationale(context as Activity, it)
+            }
+            if (shouldShowRationale) {
+                updateNotificationPermissionState(PermissionState.DENIED, true)
+            } else {
+                updateNotificationPermissionState(PermissionState.DENIED, false)
+            }
+        }
+    }
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !isPreview) {
+        DisposableEffect(lifecycleOwner) {
+            val observer = LifecycleEventObserver { _, event ->
+                when (event) {
+                    Lifecycle.Event.ON_START -> {
+                        val requiredPermissions = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+                        permissionsLauncher.launch(requiredPermissions)
+                    }
+
+                    else -> {}
+                }
+            }
+            lifecycleOwner.lifecycle.addObserver(observer)
+
+            onDispose {
+                lifecycleOwner.lifecycle.removeObserver(observer)
+            }
+        }
+    }
+
+    if (visibleNotificationPermissionDialog) {
+        AppLinkAlarmDialog(
+            dialogTitle = stringResource(R.string.feature_alarm_text_permission_denied),
+            dialogText = stringResource(R.string.feature_alarm_text_notification_permission_denied_content),
+            imageVector = Icons.Filled.AppBlocking,
+            contentDescription = stringResource(R.string.feature_alarm_text_permission_denied),
+            confirmText = stringResource(R.string.feature_alarm_text_permission_allow),
+            dismissText = stringResource(R.string.feature_alarm_text_permission_do_not_allow),
+            onConfirmation = {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                    val requiredPermissions = arrayOf(Manifest.permission.POST_NOTIFICATIONS)
+                    permissionsLauncher.launch(requiredPermissions)
+                }
+                updateNotificationPermissionState(PermissionState.DENIED, false)
+            },
+            onDismissRequest = {
+                updateNotificationPermissionState(PermissionState.DENIED, false)
+                onShowErrorSnackBar(Throwable(context.getString(R.string.feature_alarm_error_text_notification_permission_denied)))
+            }
+        )
     }
 }
 
@@ -298,6 +438,7 @@ private fun HomeContentPreview() {
         AlarmHomeContent(
             homeUiState = AlarmHomeUiState(
                 isSelectMode = true,
+                visibleNotificationPermissionDialog = false,
                 alarms = persistentListOf(
                     AppLinkAlarmUiState(
                         selected = true,
@@ -342,6 +483,7 @@ private fun HomeContentPreview() {
                 )
             ),
             paddingValues = PaddingValues(),
+            onShowErrorSnackBar = {},
             navigateToAlarmEdit = {},
             navigateToSetting = {},
             updateAlarmActive = { _, _ -> },
@@ -349,7 +491,9 @@ private fun HomeContentPreview() {
             selectAlarm = { _, _ -> },
             selectAllAlarm = {},
             updateSelectedAlarmActive = {},
-            deleteSelectedAlarm = {}
+            deleteSelectedAlarm = {},
+            updateNotificationPermissionState = { _, _ -> },
+            cancelExactAlarmPermissionDialog = {},
         )
     }
 }

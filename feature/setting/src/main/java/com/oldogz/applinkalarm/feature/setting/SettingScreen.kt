@@ -1,6 +1,11 @@
 package com.oldogz.applinkalarm.feature.setting
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
+import android.provider.Settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,10 +36,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
@@ -64,6 +74,7 @@ internal fun SettingScreen(
         settingUiState = settingUiState,
         paddingValues = paddingValues,
         popBackStack = popBackStack,
+        updatePermission = settingViewModel::updatePermission,
     )
 }
 
@@ -72,6 +83,7 @@ private fun SettingContent(
     settingUiState: SettingUiState,
     paddingValues: PaddingValues,
     popBackStack: () -> Unit,
+    updatePermission: (Boolean) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -104,7 +116,11 @@ private fun SettingContent(
                     .fillMaxWidth()
                     .verticalScroll(scrollState)
             ) {
-                PermissionSetting()
+                PermissionSetting(
+                    notificationPermission = settingUiState.notificationPermission,
+                    exactAlarmPermission = settingUiState.exactAlarmPermission,
+                    updatePermission = updatePermission
+                )
                 SubscriptionSetting()
                 SupportSetting()
             }
@@ -113,7 +129,31 @@ private fun SettingContent(
 }
 
 @Composable
-private fun PermissionSetting() {
+private fun PermissionSetting(
+    notificationPermission: Boolean?,
+    exactAlarmPermission: Boolean?,
+    updatePermission: (Boolean) -> Unit,
+) {
+
+    val context = LocalContext.current
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    val lifecycleState by lifecycle.currentStateFlow.collectAsStateWithLifecycle()
+
+    LaunchedEffect(lifecycleState) {
+        if (lifecycleState == Lifecycle.State.RESUMED) {
+            val notificationState = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                ContextCompat.checkSelfPermission(
+                    context,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) == PackageManager.PERMISSION_GRANTED
+            } else {
+                true
+            }
+
+            updatePermission(notificationState)
+        }
+    }
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -135,7 +175,14 @@ private fun PermissionSetting() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }
+                .clickable {
+                    val intent =
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                    context.startActivity(intent)
+                }
                 .padding(horizontal = Paddings.xlarge, vertical = Paddings.xlarge),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -148,14 +195,30 @@ private fun PermissionSetting() {
 
             Text(
                 modifier = Modifier,
-                text = stringResource(R.string.feature_setting_text_granted),
+                text = notificationPermission?.let {
+                    if (it) {
+                        stringResource(R.string.feature_setting_text_granted)
+                    } else {
+                        stringResource(R.string.feature_setting_text_denied)
+                    }
+                } ?: "",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }
+                .clickable {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val intent = Intent(
+                            Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM,
+                            "package:${context.packageName}".toUri(),
+                        ).apply {
+                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                        }
+                        context.startActivity(intent)
+                    }
+                }
                 .padding(horizontal = Paddings.xlarge, vertical = Paddings.xlarge),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -168,7 +231,13 @@ private fun PermissionSetting() {
 
             Text(
                 modifier = Modifier,
-                text = stringResource(R.string.feature_setting_text_denied),
+                text = exactAlarmPermission?.let {
+                    if (it) {
+                        stringResource(R.string.feature_setting_text_granted)
+                    } else {
+                        stringResource(R.string.feature_setting_text_denied)
+                    }
+                } ?: "",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
@@ -364,9 +433,13 @@ private fun SupportSetting() {
 private fun SettingContentPreview() {
     AppLinkAlarmTheme {
         SettingContent(
-            settingUiState = SettingUiState(),
+            settingUiState = SettingUiState(
+                notificationPermission = true,
+                exactAlarmPermission = false,
+            ),
             paddingValues = PaddingValues(),
-            popBackStack = {}
+            popBackStack = {},
+            updatePermission = {}
         )
     }
 }

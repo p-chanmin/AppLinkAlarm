@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">AppLink Alarm Notification Channel</string>
+    <string name="core_alarm_notification_channel_description">Notification Channel for AppLink Alarm</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">Click to dismiss alarm\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">Missed alarm: %1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">No linked apps found: %1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">This alarm will be disabled because the linked app cannot be found.</string>
+</resources>

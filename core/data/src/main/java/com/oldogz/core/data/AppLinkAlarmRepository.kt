@@ -13,7 +13,11 @@ class AppLinkAlarmRepository @Inject constructor(
 ) {
 
     val alarms = appLinkAlarmDataSource.alarms.map { entities ->
-        entities.map { it.toData() }
+        entities.map { it.toData() }.sortedWith(
+            compareBy<AppLinkAlarm> { it.periodOfDay.ordinal }
+                .thenBy { it.hour }
+                .thenBy { it.minute }
+        )
     }
 
     fun getAlarmById(id: Int) = appLinkAlarmDataSource.getAlarmById(id).map { it.toData() }
@@ -31,7 +35,6 @@ class AppLinkAlarmRepository @Inject constructor(
             vibrate = appLinkAlarm.vibrate,
             alarmSound = appLinkAlarm.alarmSound,
             alarmVolume = appLinkAlarm.alarmVolume,
-            directAppLaunch = appLinkAlarm.directAppLaunch,
             active = appLinkAlarm.active,
         )
     }
@@ -50,7 +53,6 @@ class AppLinkAlarmRepository @Inject constructor(
             vibrate = appLinkAlarm.vibrate,
             alarmSound = appLinkAlarm.alarmSound,
             alarmVolume = appLinkAlarm.alarmVolume,
-            directAppLaunch = appLinkAlarm.directAppLaunch,
             active = appLinkAlarm.active,
         )
     }

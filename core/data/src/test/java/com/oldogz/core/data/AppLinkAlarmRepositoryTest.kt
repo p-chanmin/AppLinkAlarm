@@ -53,6 +53,29 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             }
         }
 
+        "alarms 조회 정렬 테스트" {
+            runTest(testDispatcher) {
+
+                // Given
+                coEvery { appLinkAlarmDataSource.alarms } returns flowOf(
+                    listOf(alarmEntity2, alarmEntity1)
+                )
+
+                val appLinkAlarmRepository = AppLinkAlarmRepository(appLinkAlarmDataSource)
+
+                // When
+                appLinkAlarmRepository.alarms.test {
+
+                    // Then
+                    val alarms = awaitItem()
+
+                    alarms shouldBe listOf(alarm1, alarm2)
+
+                    cancelAndConsumeRemainingEvents()
+                }
+            }
+        }
+
         "getAlarmById 조회 테스트" {
             runTest(testDispatcher) {
 
@@ -97,7 +120,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
                         vibrate = alarm2.vibrate,
                         alarmSound = alarm2.alarmSound,
                         alarmVolume = alarm2.alarmVolume,
-                        directAppLaunch = alarm2.directAppLaunch,
                         active = alarm2.active,
                     )
                 } answers {
@@ -146,7 +168,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
                         vibrate = alarm1.vibrate,
                         alarmSound = alarm1.alarmSound,
                         alarmVolume = alarm1.alarmVolume,
-                        directAppLaunch = alarm1.directAppLaunch,
                         active = alarm1.active,
                     )
                 } answers {
@@ -210,9 +231,9 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
         val alarmEntity1 = AlarmEntity(
             id = 1,
             linkedAppPackage = "com.example.app.a",
-            hour = 12,
-            minute = 0,
-            periodOfDay = "\"PM\"",
+            hour = 10,
+            minute = 30,
+            periodOfDay = "\"AM\"",
             dayOfWeek = "[\"THURSDAY\", \"FRIDAY\", \"SATURDAY\"]",
             alarmName = "Test Alarm 1",
             alarmMessage = "This is a test alarm 1",
@@ -220,7 +241,6 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             vibrate = true,
             alarmSound = "android.resource://com.example.app/raw/alarm_sound",
             alarmVolume = 50,
-            directAppLaunch = true,
             active = true
         )
 
@@ -229,7 +249,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             linkedAppPackage = alarmEntity1.linkedAppPackage,
             hour = alarmEntity1.hour,
             minute = alarmEntity1.minute,
-            periodOfDay = PeriodOfDay.PM,
+            periodOfDay = PeriodOfDay.AM,
             dayOfWeek = listOf(DayOfWeek.THURSDAY, DayOfWeek.FRIDAY, DayOfWeek.SATURDAY),
             alarmName = alarmEntity1.alarmName,
             alarmMessage = alarmEntity1.alarmMessage,
@@ -237,24 +257,22 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             vibrate = alarmEntity1.vibrate,
             alarmSound = alarmEntity1.alarmSound,
             alarmVolume = alarmEntity1.alarmVolume,
-            directAppLaunch = alarmEntity1.directAppLaunch,
             active = alarmEntity1.active
         )
 
         val alarmEntity2 = AlarmEntity(
             id = 2,
             linkedAppPackage = "com.example.app.b",
-            hour = 3,
-            minute = 40,
-            periodOfDay = "\"AM\"",
+            hour = 8,
+            minute = 10,
+            periodOfDay = "\"PM\"",
             dayOfWeek = "[\"SUNDAY\", \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]",
             alarmName = "Test Alarm 2",
             alarmMessage = "This is a test alarm 2",
-            alarmMode = "\"ONLY_NOTIFICATION\"",
+            alarmMode = "\"NOTIFICATION_ONLY\"",
             vibrate = false,
             alarmSound = null,
             alarmVolume = 80,
-            directAppLaunch = false,
             active = false
         )
 
@@ -263,7 +281,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             linkedAppPackage = alarmEntity2.linkedAppPackage,
             hour = alarmEntity2.hour,
             minute = alarmEntity2.minute,
-            periodOfDay = PeriodOfDay.AM,
+            periodOfDay = PeriodOfDay.PM,
             dayOfWeek = listOf(
                 DayOfWeek.SUNDAY,
                 DayOfWeek.MONDAY,
@@ -272,11 +290,10 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
             ),
             alarmName = alarmEntity2.alarmName,
             alarmMessage = alarmEntity2.alarmMessage,
-            alarmMode = AlarmMode.ONLY_NOTIFICATION,
+            alarmMode = AlarmMode.NOTIFICATION_ONLY,
             vibrate = alarmEntity2.vibrate,
             alarmSound = alarmEntity2.alarmSound,
             alarmVolume = alarmEntity2.alarmVolume,
-            directAppLaunch = alarmEntity2.directAppLaunch,
             active = alarmEntity2.active
         )
     }

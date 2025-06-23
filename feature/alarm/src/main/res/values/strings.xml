@@ -6,7 +6,7 @@
     <string name="feature_alarm_top_app_bar_new_alarm">New Alarm</string>
     <string name="feature_alarm_top_app_bar_edit_alarm">Edit Alarm</string>
     <string name="feature_alarm_top_app_bar_select_app">Select App</string>
-    <string name="feature_alarm_top_app_bar_open_alarm">Open Alarm</string>
+    <string name="feature_alarm_top_app_bar_dismiss_alarm">Dismiss Alarm</string>
 
     <string name="feature_alarm_icon_description_settings">Settings</string>
     <string name="feature_alarm_icon_description_add_alarm">Add Alarm</string>
@@ -25,8 +25,7 @@
     <string name="feature_alarm_text_alarm_save">Save</string>
 
     <string name="feature_alarm_text_standard">Standard</string>
-    <string name="feature_alarm_text_only_notification">Only Notification</string>
-    <string name="feature_alarm_text_direct_app_launch">Direct App Launch</string>
+    <string name="feature_alarm_text_notification_only">Notification Only</string>
     <string name="feature_alarm_text_every_day">Every Day</string>
 
     <string name="feature_alarm_text_sunday">Sun</string>
@@ -56,7 +55,7 @@
     <string name="feature_alarm_text_alarm_name">Alarm Name</string>
     <string name="feature_alarm_text_message">Message</string>
     <string name="feature_alarm_text_alarm_mode">Alarm Mode</string>
-    <string name="feature_alarm_text_alarm_mode_tool_tip">Only Notification: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nStandard: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.\n\nDirect App Launch: At the set time, the app will open automatically.</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">Notification Only: At the set time, you will receive a notification on your phone. Tapping the notification will open a specific app.\n\nStandard: At the set time, an alarm will sound with a ringtone. You can open a specific app when dismissing the alarm.</string>
     <string name="feature_alarm_text_mode">Mode</string>
     <string name="feature_alarm_text_alarm_sound">Alarm Sound</string>
     <string name="feature_alarm_text_volume">Volume : %1$s</string>
@@ -64,5 +63,15 @@
     <string name="feature_alarm_text_search">Search</string>
     <string name="feature_alarm_text_default_sound">Default Sound</string>
 
+    <string name="feature_alarm_text_permission_denied">Permission Denied</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">Notification permission is required for alarms to work properly. Without it, you may miss important alerts. Please allow notifications.</string>
+    <string name="feature_alarm_text_exact_alarm_permission_denied_content">This app requires the Alarms &amp; Reminders permission to function correctly. Do you want to allow it?</string>
+    <string name="feature_alarm_text_permission_allow">Allow</string>
+    <string name="feature_alarm_text_permission_do_not_allow">Don\'t Allow</string>
+
     <string name="feature_alarm_error_text_app_not_found">App not found: %1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">Notification permission has been denied.\nTo enable notifications, please go to Settings</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">Dismiss and Open App</string>
+    <string name="feature_alarm_text_open_app">Open App</string>
 </resources>

@@ -8,7 +8,10 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class AlarmHomeUiState(
     val isSelectMode: Boolean = false,
-    val alarms: ImmutableList<AppLinkAlarmUiState> = persistentListOf()
+    val alarms: ImmutableList<AppLinkAlarmUiState> = persistentListOf(),
+    val notificationPermissionState: PermissionState = PermissionState.GRANTED,
+    val visibleNotificationPermissionDialog: Boolean = false,
+    val visibleExactAlarmPermissionDialog: Boolean = false,
 )
 
 @Immutable
@@ -16,3 +19,7 @@ data class AppLinkAlarmUiState(
     val selected: Boolean = false,
     val appLinkAlarm: AppLinkAlarm
 )
+
+sealed interface AlarmHomeUiEvent {
+    data class LinkedAppOpen(val linkedAppPackage: String) : AlarmHomeUiEvent
+}

@@ -17,13 +17,13 @@ data class AlarmEditUiState(
     val dayOfWeek: ImmutableList<DayOfWeek> = persistentListOf(),
     val alarmName: String = "",
     val message: String = "",
-    val alarmMode: AlarmMode = AlarmMode.ONLY_NOTIFICATION,
-    val directAppLaunch: Boolean = false,
+    val alarmMode: AlarmMode = AlarmMode.NOTIFICATION_ONLY,
     val vibrate: Boolean = true,
     val alarmSound: String? = null,
     val alarmVolume: Int = 80,
     val active: Boolean = true,
-    val selectAppDialog: Boolean = false,
+    val visibleSelectAppDialog: Boolean = false,
+    val visibleExactAlarmPermissionDialog: Boolean = false,
 )
 
 sealed interface AlarmEditUiEvent {

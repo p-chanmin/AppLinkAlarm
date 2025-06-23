@@ -101,7 +101,6 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
                         vibrate = alarmEntity2.vibrate,
                         alarmSound = alarmEntity2.alarmSound,
                         alarmVolume = alarmEntity2.alarmVolume,
-                        directAppLaunch = alarmEntity2.directAppLaunch,
                         active = alarmEntity2.active,
                     )
 
@@ -150,7 +149,6 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
                         vibrate = alarmEntity1.vibrate,
                         alarmSound = alarmEntity1.alarmSound,
                         alarmVolume = alarmEntity1.alarmVolume,
-                        directAppLaunch = alarmEntity1.directAppLaunch,
                         active = alarmEntity1.active,
                     )
 
@@ -209,7 +207,6 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
             vibrate = true,
             alarmSound = "android.resource://com.example.app/raw/alarm_sound",
             alarmVolume = 50,
-            directAppLaunch = true,
             active = true
         )
 
@@ -222,11 +219,10 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
             dayOfWeek = "[\"SUNDAY\", \"MONDAY\", \"TUESDAY\", \"WEDNESDAY\"]",
             alarmName = "Test Alarm 2",
             alarmMessage = "This is a test alarm 2",
-            alarmMode = "\"ONLY_NOTIFICATION\"",
+            alarmMode = "\"NOTIFICATION_ONLY\"",
             vibrate = false,
             alarmSound = null,
             alarmVolume = 80,
-            directAppLaunch = false,
             active = false
         )
     }

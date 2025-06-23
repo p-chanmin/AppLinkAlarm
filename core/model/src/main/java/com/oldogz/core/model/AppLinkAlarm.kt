@@ -12,10 +12,9 @@ data class AppLinkAlarm(
     val dayOfWeek: List<DayOfWeek> = listOf(),
     val alarmName: String = "",
     val alarmMessage: String = "",
-    val alarmMode: AlarmMode = AlarmMode.ONLY_NOTIFICATION,
+    val alarmMode: AlarmMode = AlarmMode.NOTIFICATION_ONLY,
     val vibrate: Boolean = true,
     val alarmSound: String? = null,
     val alarmVolume: Int = 80,
-    val directAppLaunch: Boolean = false,
     val active: Boolean = true,
 )

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
+import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
@@ -28,6 +29,7 @@ import javax.inject.Inject
 class AlarmEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
+    private val appLinkAlarmManager: AppLinkAlarmManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -60,7 +62,6 @@ class AlarmEditViewModel @Inject constructor(
                             alarmName = appLinkAlarm.alarmName,
                             message = appLinkAlarm.alarmMessage,
                             alarmMode = appLinkAlarm.alarmMode,
-                            directAppLaunch = appLinkAlarm.directAppLaunch,
                             vibrate = appLinkAlarm.vibrate,
                             alarmSound = appLinkAlarm.alarmSound,
                             alarmVolume = appLinkAlarm.alarmVolume,
@@ -130,18 +131,12 @@ class AlarmEditViewModel @Inject constructor(
     fun updateAlarmMode() {
         _alarmEditUiState.update {
             it.copy(
-                alarmMode = if (it.alarmMode == AlarmMode.ONLY_NOTIFICATION) {
+                alarmMode = if (it.alarmMode == AlarmMode.NOTIFICATION_ONLY) {
                     AlarmMode.STANDARD
                 } else {
-                    AlarmMode.ONLY_NOTIFICATION
+                    AlarmMode.NOTIFICATION_ONLY
                 }
             )
-        }
-    }
-
-    fun updateDirectAppLaunch(value: Boolean) {
-        _alarmEditUiState.update {
-            it.copy(directAppLaunch = value)
         }
     }
 
@@ -163,9 +158,15 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
-    fun selectAppDialog() {
+    fun updateVisibleSelectAppDialog() {
         _alarmEditUiState.update {
-            it.copy(selectAppDialog = !it.selectAppDialog)
+            it.copy(visibleSelectAppDialog = !it.visibleSelectAppDialog)
+        }
+    }
+
+    fun cancelExactAlarmPermissionDialog() {
+        _alarmEditUiState.update {
+            it.copy(visibleExactAlarmPermissionDialog = false)
         }
     }
 
@@ -181,7 +182,6 @@ class AlarmEditViewModel @Inject constructor(
                 val alarmName = _alarmEditUiState.value.alarmName
                 val message = _alarmEditUiState.value.message
                 val alarmMode = _alarmEditUiState.value.alarmMode
-                val directAppLaunch = _alarmEditUiState.value.directAppLaunch
                 val vibrate = _alarmEditUiState.value.vibrate
                 val alarmSound = _alarmEditUiState.value.alarmSound
                 val alarmVolume = _alarmEditUiState.value.alarmVolume
@@ -198,18 +198,25 @@ class AlarmEditViewModel @Inject constructor(
                         alarmName = alarmName,
                         alarmMessage = message,
                         alarmMode = alarmMode,
-                        directAppLaunch = directAppLaunch,
                         vibrate = vibrate,
                         alarmSound = alarmSound,
                         alarmVolume = alarmVolume,
                         active = active
                     )
-                    if (id != null) {
-                        appLinkAlarmRepository.updateAlarm(appLinkAlarm)
+                    if (appLinkAlarmManager.checkScheduleExactAlarms()) {
+                        if (id != null) {
+                            appLinkAlarmRepository.updateAlarm(appLinkAlarm)
+                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                        } else {
+                            val alarmId = appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
+                        }
+                        _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                     } else {
-                        appLinkAlarmRepository.addAlarm(appLinkAlarm)
+                        _alarmEditUiState.update {
+                            it.copy(visibleExactAlarmPermissionDialog = true)
+                        }
                     }
-                    _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                 }
             } catch (e: Exception) {
                 _errorFlow.emit(e)

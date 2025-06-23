@@ -25,7 +25,6 @@ class AppLinkAlarmDataSource @Inject constructor(
         vibrate: Boolean = true,
         alarmSound: String? = null,
         alarmVolume: Int = 80,
-        directAppLaunch: Boolean = false,
         active: Boolean = true,
     ): Int {
         return alarmEntityDao.insert(
@@ -41,7 +40,6 @@ class AppLinkAlarmDataSource @Inject constructor(
                 vibrate = vibrate,
                 alarmSound = alarmSound,
                 alarmVolume = alarmVolume,
-                directAppLaunch = directAppLaunch,
                 active = active,
             )
         ).toInt()
@@ -60,7 +58,6 @@ class AppLinkAlarmDataSource @Inject constructor(
         vibrate: Boolean = true,
         alarmSound: String? = null,
         alarmVolume: Int = 80,
-        directAppLaunch: Boolean = false,
         active: Boolean = true,
     ) {
         val alarmEntity = getAlarmById(id).first()
@@ -78,7 +75,6 @@ class AppLinkAlarmDataSource @Inject constructor(
                 vibrate = vibrate,
                 alarmSound = alarmSound,
                 alarmVolume = alarmVolume,
-                directAppLaunch = directAppLaunch,
                 active = active,
             )
         )

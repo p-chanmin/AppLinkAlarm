@@ -42,10 +42,7 @@ fun AppLinkAlarmDialog(
         onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
-                onClick = {
-                    onConfirmation()
-                    onDismissRequest()
-                }
+                onClick = onConfirmation
             ) {
                 Text(text = confirmText)
             }
