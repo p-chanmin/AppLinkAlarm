@@ -2,6 +2,7 @@ package com.oldogz.applinkalarm.feature.alarm.edit
 
 import android.content.Intent
 import android.content.res.Configuration
+import androidx.activity.compose.LocalActivity
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -64,6 +65,7 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
 import com.oldogz.applinkalarm.feature.alarm.util.getFileName
+import com.oldogz.core.admob.LocalAdMobManager
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmFilterChip
@@ -97,6 +99,9 @@ internal fun AlarmEditScreen(
     val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30)
     val periodOfDayState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
+    val adManager = LocalAdMobManager.current
+    val activity = LocalActivity.current
+
     LaunchedEffect(Unit) {
         alarmEditViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
@@ -106,7 +111,11 @@ internal fun AlarmEditScreen(
     LaunchedEffect(Unit) {
         alarmEditViewModel.event.collect { event ->
             when (event) {
-                is AlarmEditUiEvent.AlarmEditComplete -> popBackStack()
+                is AlarmEditUiEvent.AlarmEditComplete -> {
+                    popBackStack()
+                    activity?.let { adManager.showInterstitialAlarmAd(it) }
+                }
+
                 is AlarmEditUiEvent.AlarmLoad -> {
                     coroutineScope.launch {
                         hourState.scrollToItem(event.hour - 1)
