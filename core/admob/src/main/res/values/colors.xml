@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="core_admob_primary">#1AC97A</color>
+    <color name="core_admob_yellow">#FFD430</color>
+    <color name="core_admob_text">#000000</color>
+</resources>

@@ -1,5 +1,6 @@
 package com.oldogz.applinkalarm.feature.alarm.home
 
+import SmallNativeAd
 import android.Manifest
 import android.app.Activity
 import android.content.res.Configuration
@@ -17,8 +18,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlarmOff
@@ -26,6 +29,8 @@ import androidx.compose.material.icons.filled.AlarmOn
 import androidx.compose.material.icons.filled.AppBlocking
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -60,6 +65,7 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmDialog
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
+import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
@@ -193,6 +199,21 @@ private fun AlarmHomeContent(
                     )
                 }
             }
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(Paddings.small),
+                shape = RoundedCornerShape(12.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 2.dp
+                )
+            ) {
+                SmallNativeAd(
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
             AnimatedVisibility(
                 visible = homeUiState.isSelectMode && homeUiState.alarms.any { it.selected },
                 enter = slideInVertically { fullHeight -> fullHeight },

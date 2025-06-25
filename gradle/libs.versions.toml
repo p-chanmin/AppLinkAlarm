@@ -9,10 +9,15 @@ androidxAppCompat = "1.7.0"
 androidxLifecycle = "2.9.0"
 androidxActivity = "1.10.1"
 
+constraintlayout = "2.2.1"
+appcompat = "1.7.1"
+
 ## Compose
 androidxComposeBom = "2025.05.01"
 androidxComposeNavigation = "2.9.0"
 androidxComposeMaterial3 = "1.3.2"
+androidxUiViewbinding = "1.8.3"
+
 material = "1.12.0"
 
 ## DataStore
@@ -82,6 +87,7 @@ androidx-compose-ui-tooling-preview = { group = "androidx.compose.ui", name = "u
 androidx-compose-ui-testManifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-compose-navigation = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidxComposeNavigation" }
 androidx-compose-navigation-test = { group = "androidx.navigation", name = "navigation-testing", version.ref = "androidxComposeNavigation" }
+androidx-ui-viewbinding = { group = "androidx.compose.ui", name = "ui-viewbinding", version.ref = "androidxUiViewbinding" }
 compose-compiler-gradle-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
@@ -114,6 +120,9 @@ play-app-update-ktx = { group = "com.google.android.play", name = "app-update-kt
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
+
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 # Test
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
