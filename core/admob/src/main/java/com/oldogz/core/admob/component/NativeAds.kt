@@ -44,7 +44,6 @@ fun SmallNativeAd(
             isDisposed = true
             nativeAd?.destroy()
             nativeAd = null
-            println("Native ad was destroyed.")
         }
     }
 
@@ -115,22 +114,18 @@ fun loadNativeAd(context: Context, onAdLoaded: (NativeAd) -> Unit) {
             .withAdListener(object : AdListener() {
                 override fun onAdFailedToLoad(error: LoadAdError) {
                     super.onAdFailedToLoad(error)
-                    println("Native ad failed to load: ${error.message}")
                 }
 
                 override fun onAdLoaded() {
                     super.onAdLoaded()
-                    println("Native ad was loaded.")
                 }
 
                 override fun onAdImpression() {
                     super.onAdImpression()
-                    println("Native ad recorded an impression.")
                 }
 
                 override fun onAdClicked() {
                     super.onAdClicked()
-                    println("Native ad was clicked.")
                 }
             }).withNativeAdOptions(
                 NativeAdOptions.Builder().setAdChoicesPlacement(
