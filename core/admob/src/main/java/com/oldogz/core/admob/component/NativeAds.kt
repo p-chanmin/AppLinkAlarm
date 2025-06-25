@@ -1,4 +1,5 @@
 import android.content.Context
+import android.view.View
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -64,7 +65,6 @@ private fun NativeAds(
     ) {
         val adView = root.also { view ->
             view.headlineView = this.adHeadline
-            view.imageView = this.adAppIcon
             view.callToActionView = this.adCallToAction
             view.starRatingView = this.adStars
             view.iconView = this.adAppIcon
@@ -75,20 +75,35 @@ private fun NativeAds(
 
         nativeAd.icon?.let {
             this.adAppIcon.setImageDrawable(it.drawable)
+        } ?: run {
+            adAppIcon.visibility = View.INVISIBLE
         }
+
         nativeAd.headline?.let {
             this.adHeadline.text = it
             this.adHeadline.setTextColor(textColor)
+        } ?: run {
+            adHeadline.visibility = View.INVISIBLE
         }
+
         nativeAd.callToAction?.let {
             this.adCallToAction.text = it
+        } ?: run {
+            adCallToAction.visibility = View.INVISIBLE
         }
+
         nativeAd.starRating?.let {
             this.adStars.rating = it.toFloat()
+        } ?: run {
+            adStars.visibility = View.INVISIBLE
         }
+
         nativeAd.mediaContent?.let {
             this.adMedia.mediaContent = it
+        } ?: run {
+            adMedia.visibility = View.INVISIBLE
         }
+
         adView.setNativeAd(nativeAd)
     }
 }
