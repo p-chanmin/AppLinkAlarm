@@ -200,18 +200,20 @@ private fun AlarmHomeContent(
                 }
             }
 
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(Paddings.small),
-                shape = RoundedCornerShape(12.dp),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = 2.dp
-                )
-            ) {
-                SmallNativeAd(
-                    modifier = Modifier.fillMaxWidth()
-                )
+            if (!homeUiState.isSelectMode) {
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(Paddings.small),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 2.dp
+                    )
+                ) {
+                    SmallNativeAd(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
 
             AnimatedVisibility(
