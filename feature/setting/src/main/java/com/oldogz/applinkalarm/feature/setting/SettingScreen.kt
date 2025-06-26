@@ -1,6 +1,7 @@
 package com.oldogz.applinkalarm.feature.setting
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.res.Configuration
@@ -346,6 +347,9 @@ private fun SubscriptionSetting() {
 
 @Composable
 private fun SupportSetting() {
+
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
@@ -367,8 +371,9 @@ private fun SupportSetting() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }
-                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+                .clickable { openPlayStore(context) }
+                .padding(start = Paddings.xlarge)
+                .padding(vertical = Paddings.small),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -381,14 +386,15 @@ private fun SupportSetting() {
             AppLinkAlarmIconButton(
                 imageVector = Icons.Filled.ChevronRight,
                 contentDescription = stringResource(R.string.feature_setting_text_review),
-                onClick = { }
+                onClick = { openPlayStore(context) }
             )
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }
-                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+                .clickable { openPrivacyPolicy(context) }
+                .padding(start = Paddings.xlarge)
+                .padding(vertical = Paddings.small),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -401,14 +407,15 @@ private fun SupportSetting() {
             AppLinkAlarmIconButton(
                 imageVector = Icons.Filled.ChevronRight,
                 contentDescription = stringResource(R.string.feature_setting_text_privacy_policy),
-                onClick = { }
+                onClick = { openPrivacyPolicy(context) }
             )
         }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { }
-                .padding(horizontal = Paddings.xlarge, vertical = Paddings.small),
+                .padding(start = Paddings.xlarge)
+                .padding(vertical = Paddings.small),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
@@ -425,6 +432,24 @@ private fun SupportSetting() {
             )
         }
     }
+}
+
+private fun openPrivacyPolicy(context: Context) {
+    context.startActivity(
+        Intent(
+            Intent.ACTION_VIEW,
+            "https://sites.google.com/view/applinkalarmprivacypolicy".toUri()
+        )
+    )
+}
+
+private fun openPlayStore(context: Context) {
+    context.startActivity(
+        Intent(
+            Intent.ACTION_VIEW,
+            "https://play.google.com/store/apps/details?id=com.oldogz.applinkalarm".toUri()
+        )
+    )
 }
 
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
