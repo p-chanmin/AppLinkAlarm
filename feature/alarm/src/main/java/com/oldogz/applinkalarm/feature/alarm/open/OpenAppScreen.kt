@@ -1,17 +1,23 @@
 package com.oldogz.applinkalarm.feature.alarm.open
 
+import SmallNativeAd
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
@@ -29,6 +36,7 @@ import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
+import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.PeriodOfDay
 
@@ -89,11 +97,12 @@ private fun OpenAppContent(
                 actions = {}
             )
 
-            Box(
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .weight(1f),
-                contentAlignment = Alignment.Center
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 OpenAppInfo(
                     alarmName = openAppUiState.alarmName,
@@ -121,6 +130,21 @@ private fun OpenAppContent(
                         popBackStack()
                     }
                 )
+
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = Paddings.large)
+                        .padding(Paddings.small),
+                    shape = RoundedCornerShape(12.dp),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 2.dp
+                    )
+                ) {
+                    SmallNativeAd(
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             }
         }
     }
