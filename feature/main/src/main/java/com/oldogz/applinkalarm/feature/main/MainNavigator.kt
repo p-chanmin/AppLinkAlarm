@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToAlarmEdit
 import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToHome
 import com.oldogz.applinkalarm.feature.alarm.navigation.navigationToOpen
+import com.oldogz.applinkalarm.feature.setting.navigation.navigationToOpenSource
 import com.oldogz.applinkalarm.feature.setting.navigation.navigationToSetting
 import com.oldogz.core.navigation.Route
 
@@ -25,6 +26,10 @@ internal class MainNavigator(
 
     fun navigateToSetting() {
         navController.navigationToSetting()
+    }
+
+    fun navigateToOpenSource() {
+        navController.navigationToOpenSource()
     }
 
     fun navigateToOpenApp(id: Int) {
