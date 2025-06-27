@@ -1,4 +1,4 @@
-package com.oldogz.applinkalarm.feature.setting
+package com.oldogz.applinkalarm.feature.setting.home
 
 import android.Manifest
 import android.content.Context
@@ -47,6 +47,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.oldogz.applinkalarm.feature.setting.R
 import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
@@ -59,6 +60,7 @@ import kotlinx.coroutines.launch
 internal fun SettingScreen(
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    navigateToOpenSource: () -> Unit,
     popBackStack: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
 ) {
@@ -75,6 +77,7 @@ internal fun SettingScreen(
         settingUiState = settingUiState,
         paddingValues = paddingValues,
         popBackStack = popBackStack,
+        navigateToOpenSource = navigateToOpenSource,
         updatePermission = settingViewModel::updatePermission,
     )
 }
@@ -83,6 +86,7 @@ internal fun SettingScreen(
 private fun SettingContent(
     settingUiState: SettingUiState,
     paddingValues: PaddingValues,
+    navigateToOpenSource: () -> Unit,
     popBackStack: () -> Unit,
     updatePermission: (Boolean) -> Unit,
 ) {
@@ -123,7 +127,9 @@ private fun SettingContent(
                     updatePermission = updatePermission
                 )
                 SubscriptionSetting()
-                SupportSetting()
+                SupportSetting(
+                    navigateToOpenSource = navigateToOpenSource,
+                )
             }
         }
     }
@@ -346,7 +352,9 @@ private fun SubscriptionSetting() {
 }
 
 @Composable
-private fun SupportSetting() {
+private fun SupportSetting(
+    navigateToOpenSource: () -> Unit,
+) {
 
     val context = LocalContext.current
 
@@ -413,7 +421,7 @@ private fun SupportSetting() {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { }
+                .clickable { navigateToOpenSource() }
                 .padding(start = Paddings.xlarge)
                 .padding(vertical = Paddings.small),
             verticalAlignment = Alignment.CenterVertically,
@@ -428,7 +436,7 @@ private fun SupportSetting() {
             AppLinkAlarmIconButton(
                 imageVector = Icons.Filled.ChevronRight,
                 contentDescription = stringResource(R.string.feature_setting_text_open_source_license),
-                onClick = { }
+                onClick = navigateToOpenSource
             )
         }
     }
@@ -463,6 +471,7 @@ private fun SettingContentPreview() {
                 exactAlarmPermission = false,
             ),
             paddingValues = PaddingValues(),
+            navigateToOpenSource = {},
             popBackStack = {},
             updatePermission = {}
         )
