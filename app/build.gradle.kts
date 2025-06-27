@@ -4,6 +4,7 @@ plugins {
     id("oldogz.android.application")
     alias(libs.plugins.google.services)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.aboutLibraries)
 }
 
 android {

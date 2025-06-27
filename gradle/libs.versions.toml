@@ -54,6 +54,9 @@ googlePlayAppUpdate = "2.1.0"
 firebase-bom = "33.14.0"
 firebase-crashlytics = "3.0.3"
 
+## AboutLibraries
+aboutLibraries = "12.2.3"
+
 ## Test
 junit4 = "4.13.2"
 junitVintageEngine = "5.10.2"
@@ -124,6 +127,9 @@ firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
+aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
+aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
+
 # Test
 junit4 = { group = "junit", name = "junit", version.ref = "junit4" }
 junit-vintage-engine = { group = "org.junit.vintage", name = "junit-vintage-engine", version.ref = "junitVintageEngine" }
@@ -150,3 +156,4 @@ hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 android-test = { id = "com.android.test", version.ref = "androidGradlePlugin" }
+aboutLibraries = { id = "com.mikepenz.aboutlibraries.plugin", version.ref = "aboutLibraries" }
