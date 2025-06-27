@@ -8,4 +8,6 @@ android {
 
 dependencies {
     implementation(project(":core:alarm"))
+    implementation(libs.aboutlibraries.core)
+    implementation(libs.aboutlibraries.compose.m3)
 }

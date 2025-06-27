@@ -22,4 +22,7 @@ sealed interface Route {
 
     @Serializable
     data class OpenApp(val id: Int) : Route
+
+    @Serializable
+    data object OpenSource : Route
 }

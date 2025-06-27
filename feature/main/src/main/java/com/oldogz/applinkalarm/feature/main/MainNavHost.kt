@@ -31,6 +31,7 @@ internal fun MainNavHost(
         settingNavGraph(
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToOpenSource = navigator::navigateToOpenSource,
             popBackStack = navigator::popBackStackIfNotStartDestination,
         )
     }

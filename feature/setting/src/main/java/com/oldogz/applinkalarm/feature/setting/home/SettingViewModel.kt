@@ -1,4 +1,4 @@
-package com.oldogz.applinkalarm.feature.setting
+package com.oldogz.applinkalarm.feature.setting.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
