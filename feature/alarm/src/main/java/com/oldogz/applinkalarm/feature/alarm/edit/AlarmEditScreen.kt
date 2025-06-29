@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.firebase.analytics.logEvent
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
@@ -80,6 +81,7 @@ import com.oldogz.core.designsystem.theme.BitterSweet
 import com.oldogz.core.designsystem.theme.NeonBlue
 import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.firebase.LocalFirebaseManager
+import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
@@ -186,6 +188,7 @@ private fun AlarmEditContent(
     val coroutineScope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     val focusManager = LocalFocusManager.current
+    val firebaseManager = LocalFirebaseManager.current
 
     Box(
         modifier = Modifier
@@ -276,7 +279,16 @@ private fun AlarmEditContent(
                         alarmEditUiState.dayOfWeek.isNotEmpty() &&
                         alarmEditUiState.alarmName.isNotEmpty() &&
                         alarmEditUiState.message.isNotEmpty()),
-                onClick = saveAlarm
+                onClick = {
+                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_SAVE) {
+                        param(FA.Param.Key.HOUR, alarmEditUiState.hour.toString())
+                        param(FA.Param.Key.MINUTE, alarmEditUiState.minute.toString())
+                        param(FA.Param.Key.PERIOD_OF_DAY, alarmEditUiState.periodOfDay.name)
+                        param(FA.Param.Key.DAY_OF_WEEK, alarmEditUiState.dayOfWeek.toString())
+                        param(FA.Param.Key.ALARM_MODE, alarmEditUiState.alarmMode.name)
+                    }
+                    saveAlarm()
+                }
             )
         }
     }
