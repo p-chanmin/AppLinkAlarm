@@ -9,15 +9,9 @@ class FakeFirebaseManager : FirebaseManager {
     override val firebaseCrashlytics: FirebaseCrashlytics
         get() = TODO("Not yet implemented")
 
-    override fun reportNonFatalError(error: Throwable) {
-        TODO("Not yet implemented")
-    }
+    override fun reportNonFatalError(error: Throwable) {}
 
-    override fun logCrashlyticsMessage(message: String) {
-        TODO("Not yet implemented")
-    }
+    override fun logCrashlyticsMessage(message: String) {}
 
-    override fun screenLogEvent(screenName: String, orientation: Int) {
-        TODO("Not yet implemented")
-    }
+    override fun screenLogEvent(screenName: String, orientation: Int) {}
 }
