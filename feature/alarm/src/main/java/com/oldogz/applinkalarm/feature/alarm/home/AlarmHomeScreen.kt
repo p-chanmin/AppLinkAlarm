@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -66,6 +67,7 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
@@ -83,8 +85,11 @@ internal fun AlarmHomeScreen(
     val context = LocalContext.current
     val homeUiState by alarmHomeViewModel.homeUiState.collectAsStateWithLifecycle()
     val service by alarmHomeViewModel.service.collectAsStateWithLifecycle()
+    val firebaseManager = LocalFirebaseManager.current
+    val configuration = LocalConfiguration.current
 
     LaunchedEffect(Unit) {
+        firebaseManager.screenLogEvent("AlarmHomeScreen", configuration.orientation)
         alarmHomeViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
         }

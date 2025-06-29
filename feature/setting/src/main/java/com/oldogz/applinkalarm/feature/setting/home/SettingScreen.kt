@@ -37,6 +37,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,6 +55,7 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
 import kotlinx.coroutines.launch
 
 @Composable
@@ -64,10 +66,13 @@ internal fun SettingScreen(
     popBackStack: () -> Unit,
     settingViewModel: SettingViewModel = hiltViewModel(),
 ) {
+    val firebaseManager = LocalFirebaseManager.current
+    val configuration = LocalConfiguration.current
 
     val settingUiState by settingViewModel.settingUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        firebaseManager.screenLogEvent("SettingScreen", configuration.orientation)
         settingViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
         }

@@ -49,6 +49,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
@@ -78,6 +79,7 @@ import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.BitterSweet
 import com.oldogz.core.designsystem.theme.NeonBlue
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
@@ -99,10 +101,14 @@ internal fun AlarmEditScreen(
     val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30)
     val periodOfDayState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
 
+    val firebaseManager = LocalFirebaseManager.current
+    val configuration = LocalConfiguration.current
+
     val adManager = LocalAdMobManager.current
     val activity = LocalActivity.current
 
     LaunchedEffect(Unit) {
+        firebaseManager.screenLogEvent("AlarmEditScreen", configuration.orientation)
         alarmEditViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
         }

@@ -8,6 +8,8 @@ import androidx.compose.runtime.CompositionLocalProvider
 import com.oldogz.core.admob.AdMobManager
 import com.oldogz.core.admob.LocalAdMobManager
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
+import com.oldogz.core.firebase.FirebaseManager
+import com.oldogz.core.firebase.LocalFirebaseManager
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -16,6 +18,9 @@ class MainActivity : ComponentActivity() {
 
     @Inject
     lateinit var adMobManager: AdMobManager
+
+    @Inject
+    lateinit var firebaseManager: FirebaseManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,6 +31,7 @@ class MainActivity : ComponentActivity() {
             AppLinkAlarmTheme {
                 CompositionLocalProvider(
                     LocalAdMobManager provides adMobManager,
+                    LocalFirebaseManager provides firebaseManager
                 ) {
                     MainScreen(
                         navigator = navigator,

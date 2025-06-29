@@ -22,6 +22,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -34,6 +35,7 @@ import com.oldogz.core.alarm.AppLinkAlarmPlayingService
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.coroutines.flow.collectLatest
@@ -46,9 +48,13 @@ fun DismissAlarmScreen(
     dismissAlarm: (String) -> Unit,
     dismissAlarmViewModel: DismissAlarmViewModel = hiltViewModel()
 ) {
+    val firebaseManager = LocalFirebaseManager.current
+    val configuration = LocalConfiguration.current
+
     val openAppUiState by dismissAlarmViewModel.openAppUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
+        firebaseManager.screenLogEvent("DismissAlarmScreen", configuration.orientation)
         dismissAlarmViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
         }
