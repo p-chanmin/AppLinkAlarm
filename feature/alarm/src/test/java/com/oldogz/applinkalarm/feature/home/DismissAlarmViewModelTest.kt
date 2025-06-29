@@ -3,6 +3,8 @@ package com.oldogz.applinkalarm.feature.home
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.open.DismissAlarmViewModel
 import com.oldogz.core.data.AppLinkAlarmRepository
+import com.oldogz.core.firebase.FakeFirebaseManager
+import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
@@ -22,13 +24,14 @@ internal class DismissAlarmViewModelTest {
     var mainCoroutineRule = MainDispatcherRule()
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
+    private val firebaseManager: FirebaseManager = FakeFirebaseManager()
     private lateinit var dismissAlarmViewModel: DismissAlarmViewModel
 
     @Test
     fun `알람 id를 통해 데이터를 확인할 수 있다`() = runTest {
         coEvery { appLinkAlarmRepository.getAlarmById(1) } returns flowOf(alarm)
 
-        dismissAlarmViewModel = DismissAlarmViewModel(appLinkAlarmRepository)
+        dismissAlarmViewModel = DismissAlarmViewModel(appLinkAlarmRepository, firebaseManager)
 
         dismissAlarmViewModel.updateAppLinkAlarm(1)
 

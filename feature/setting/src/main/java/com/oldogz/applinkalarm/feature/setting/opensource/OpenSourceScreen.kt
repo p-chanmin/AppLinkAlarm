@@ -11,8 +11,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mikepenz.aboutlibraries.ui.compose.android.rememberLibraries
@@ -21,12 +23,20 @@ import com.oldogz.applinkalarm.feature.setting.R
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
+import com.oldogz.core.firebase.LocalFirebaseManager
 
 @Composable
 fun OpenSourceScreen(
     paddingValues: PaddingValues,
     popBackStack: () -> Unit,
 ) {
+    val firebaseManager = LocalFirebaseManager.current
+    val configuration = LocalConfiguration.current
+
+    LaunchedEffect(Unit) {
+        firebaseManager.screenLogEvent("OpenSourceScreen", configuration.orientation)
+    }
+
     val libraries by rememberLibraries(R.raw.aboutlibraries)
 
     Column(

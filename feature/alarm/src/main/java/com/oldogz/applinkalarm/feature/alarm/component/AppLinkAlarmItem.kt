@@ -21,11 +21,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.google.firebase.analytics.logEvent
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
 import com.oldogz.core.designsystem.component.AppLinkAlarmSwitch
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
+import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
@@ -42,6 +45,7 @@ internal fun AppLinkAlarmItem(
     selectAlarm: (Boolean, Int) -> Unit,
 ) {
     val context = LocalContext.current
+    val firebaseManager = LocalFirebaseManager.current
 
     Card(
         modifier = modifier
@@ -65,6 +69,9 @@ internal fun AppLinkAlarmItem(
                         }
                     },
                     onLongClick = {
+                        firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_SELECT_MODE) {
+                            param(FA.Param.Key.ACTIVE_STATE, true.toString())
+                        }
                         if (!selectMode) {
                             updateSelectMode(true, appLinkAlarm.id)
                         }
@@ -79,7 +86,13 @@ internal fun AppLinkAlarmItem(
                 Checkbox(
                     modifier = Modifier.padding(end = Paddings.large),
                     checked = selected,
-                    onCheckedChange = { selectAlarm(it, appLinkAlarm.id) },
+                    onCheckedChange = { checked ->
+                        firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_SELECT) {
+                            param(FA.Param.Key.CHECKED_STATE, checked.toString())
+                            param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.ONE)
+                        }
+                        selectAlarm(checked, appLinkAlarm.id)
+                    },
                 )
             }
             Row(
@@ -131,7 +144,13 @@ internal fun AppLinkAlarmItem(
                 AppLinkAlarmSwitch(
                     modifier = Modifier,
                     checked = appLinkAlarm.active,
-                    onCheckedChange = updateAlarmActive
+                    onCheckedChange = { active ->
+                        firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_ACTIVE_STATE_UPDATE) {
+                            param(FA.Param.Key.ACTIVE_STATE, active.toString())
+                            param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.ONE)
+                        }
+                        updateAlarmActive(active)
+                    }
                 )
             }
         }

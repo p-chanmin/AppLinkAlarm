@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
 import com.oldogz.core.data.AppLinkAlarmRepository
+import com.oldogz.core.firebase.FirebaseManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DismissAlarmViewModel @Inject constructor(
-    private val appLinkAlarmRepository: AppLinkAlarmRepository
+    private val appLinkAlarmRepository: AppLinkAlarmRepository,
+    private val firebaseManager: FirebaseManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -47,6 +49,7 @@ class DismissAlarmViewModel @Inject constructor(
                     )
                 }
             } catch (e: Exception) {
+                firebaseManager.reportNonFatalError(e)
                 _errorFlow.emit(e)
             }
         }

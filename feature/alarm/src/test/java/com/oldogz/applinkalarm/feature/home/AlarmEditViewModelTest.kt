@@ -5,6 +5,8 @@ import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.edit.AlarmEditViewModel
 import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
+import com.oldogz.core.firebase.FakeFirebaseManager
+import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
@@ -23,12 +25,18 @@ internal class AlarmEditViewModelTest {
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
     private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
+    private val firebaseManager: FirebaseManager = FakeFirebaseManager()
     private lateinit var alarmEditViewModel: AlarmEditViewModel
 
     @Before
     fun setUp() {
         alarmEditViewModel =
-            AlarmEditViewModel(SavedStateHandle(), appLinkAlarmRepository, appLinkAlarmManager)
+            AlarmEditViewModel(
+                SavedStateHandle(),
+                appLinkAlarmRepository,
+                appLinkAlarmManager,
+                firebaseManager
+            )
     }
 
     @Test

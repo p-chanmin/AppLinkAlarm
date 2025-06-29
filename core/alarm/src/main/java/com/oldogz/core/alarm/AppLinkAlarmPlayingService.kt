@@ -14,7 +14,10 @@ import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.net.toUri
+import com.google.firebase.analytics.logEvent
 import com.oldogz.core.data.AppLinkAlarmRepository
+import com.oldogz.core.firebase.FirebaseManager
+import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AppLinkAlarm
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
@@ -43,6 +46,9 @@ class AppLinkAlarmPlayingService : Service() {
 
     @Inject
     lateinit var appLinkAlarmNotificationManager: AppLinkAlarmNotificationManager
+
+    @Inject
+    lateinit var firebaseManager: FirebaseManager
 
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -100,6 +106,7 @@ class AppLinkAlarmPlayingService : Service() {
             }
 
             INTENT_ACTION_SERVICE_APP_LINK_ALARM_OFF -> {
+                firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_DISMISSED) {}
                 stopSelf()
             }
         }
@@ -164,6 +171,7 @@ class AppLinkAlarmPlayingService : Service() {
     }
 
     private suspend fun notifyMissedAlarm(id: Int) {
+        firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_MISSED) {}
         val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()
         val notification = appLinkAlarmNotificationManager.createMissedAlarmNotification(
             appLinkAlarm,

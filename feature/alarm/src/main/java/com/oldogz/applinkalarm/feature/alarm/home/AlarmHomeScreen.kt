@@ -41,6 +41,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.stringResource
@@ -53,6 +54,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.google.firebase.analytics.logEvent
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.AppLinkAlarmItem
 import com.oldogz.applinkalarm.feature.alarm.edit.ExactAlarmPermissionDialog
@@ -66,6 +68,8 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
+import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
 import com.oldogz.core.model.PeriodOfDay
@@ -83,8 +87,11 @@ internal fun AlarmHomeScreen(
     val context = LocalContext.current
     val homeUiState by alarmHomeViewModel.homeUiState.collectAsStateWithLifecycle()
     val service by alarmHomeViewModel.service.collectAsStateWithLifecycle()
+    val firebaseManager = LocalFirebaseManager.current
+    val configuration = LocalConfiguration.current
 
     LaunchedEffect(Unit) {
+        firebaseManager.screenLogEvent("AlarmHomeScreen", configuration.orientation)
         alarmHomeViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
         }
@@ -314,6 +321,8 @@ private fun AlarmHomeTopAppBar(
     updateSelectMode: (Boolean, Int?) -> Unit,
     selectAllAlarm: (Boolean) -> Unit,
 ) {
+    val firebaseManager = LocalFirebaseManager.current
+
     if (isSelectMode) {
         AppLinkAlarmTopAppBar(
             modifier = Modifier
@@ -340,10 +349,18 @@ private fun AlarmHomeTopAppBar(
                         onClick = {
                             when (checkBoxState) {
                                 ToggleableState.On -> {
+                                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_SELECT) {
+                                        param(FA.Param.Key.CHECKED_STATE, false.toString())
+                                        param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.ALL)
+                                    }
                                     selectAllAlarm(false)
                                 }
 
                                 else -> {
+                                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_SELECT) {
+                                        param(FA.Param.Key.CHECKED_STATE, true.toString())
+                                        param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.ALL)
+                                    }
                                     selectAllAlarm(true)
                                 }
                             }
@@ -358,7 +375,12 @@ private fun AlarmHomeTopAppBar(
             },
             actions = {
                 TextButton(
-                    onClick = { updateSelectMode(false, null) }
+                    onClick = {
+                        firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_SELECT_MODE) {
+                            param(FA.Param.Key.ACTIVE_STATE, false.toString())
+                        }
+                        updateSelectMode(false, null)
+                    }
                 ) {
                     Text(
                         text = stringResource(R.string.feature_alarm_text_select_cancel),
@@ -397,6 +419,8 @@ private fun AlarmSelectController(
     updateSelectedAlarmActive: (Boolean) -> Unit,
     deleteSelectedAlarm: () -> Unit,
 ) {
+    val firebaseManager = LocalFirebaseManager.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -410,7 +434,13 @@ private fun AlarmSelectController(
                 modifier = Modifier,
                 imageVector = Icons.Filled.AlarmOn,
                 contentDescription = stringResource(R.string.feature_alarm_icon_description_selected_alarm_on),
-                onClick = { updateSelectedAlarmActive(true) }
+                onClick = {
+                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_ACTIVE_STATE_UPDATE) {
+                        param(FA.Param.Key.ACTIVE_STATE, true.toString())
+                        param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.SELECTED)
+                    }
+                    updateSelectedAlarmActive(true)
+                }
             )
             Text(
                 modifier = Modifier.offset(y = (-8).dp),
@@ -426,7 +456,13 @@ private fun AlarmSelectController(
                 modifier = Modifier,
                 imageVector = Icons.Filled.AlarmOff,
                 contentDescription = stringResource(R.string.feature_alarm_icon_description_selected_alarm_off),
-                onClick = { updateSelectedAlarmActive(false) }
+                onClick = {
+                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_ACTIVE_STATE_UPDATE) {
+                        param(FA.Param.Key.ACTIVE_STATE, false.toString())
+                        param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.SELECTED)
+                    }
+                    updateSelectedAlarmActive(false)
+                }
             )
             Text(
                 modifier = Modifier.offset(y = (-8).dp),
@@ -442,7 +478,12 @@ private fun AlarmSelectController(
                 modifier = Modifier,
                 imageVector = Icons.Filled.DeleteOutline,
                 contentDescription = stringResource(R.string.feature_alarm_icon_description_selected_alarm_delete),
-                onClick = deleteSelectedAlarm
+                onClick = {
+                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_DELETE) {
+                        param(FA.Param.Key.SELECT_TYPE, FA.Param.Value.SELECTED)
+                    }
+                    deleteSelectedAlarm()
+                }
             )
             Text(
                 modifier = Modifier.offset(y = (-8).dp),

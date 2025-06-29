@@ -13,9 +13,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.google.firebase.analytics.logEvent
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.firebase.LocalFirebaseManager
+import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.PeriodOfDay
 
@@ -30,6 +33,8 @@ internal fun OpenAppInfo(
     linkedAppPackage: String,
     onClick: () -> Unit,
 ) {
+    val firebaseManager = LocalFirebaseManager.current
+
     Column(
         modifier = Modifier.padding(horizontal = Paddings.xlarge),
         verticalArrangement = Arrangement.Center,
@@ -70,7 +75,12 @@ internal fun OpenAppInfo(
                 AlarmMode.STANDARD -> stringResource(R.string.feature_alarm_text_dismiss_and_open_app)
                 AlarmMode.NOTIFICATION_ONLY -> stringResource(R.string.feature_alarm_text_open_app)
             },
-            onClick = onClick
+            onClick = {
+                firebaseManager.firebaseAnalytics.logEvent(FA.Event.LINKED_APP_OPEN) {
+                    param(FA.Param.Key.ALARM_MODE, alarmMode.name)
+                }
+                onClick()
+            }
         )
     }
 }
