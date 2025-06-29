@@ -8,6 +8,7 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.data.AppLinkAlarmRepository
+import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
@@ -30,6 +31,7 @@ class AlarmEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
     private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val firebaseManager: FirebaseManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -76,6 +78,7 @@ class AlarmEditViewModel @Inject constructor(
                         )
                     )
                 } catch (e: Exception) {
+                    firebaseManager.reportNonFatalError(e)
                     _errorFlow.emit(e)
                 }
             }
@@ -219,6 +222,7 @@ class AlarmEditViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                firebaseManager.reportNonFatalError(e)
                 _errorFlow.emit(e)
             }
         }

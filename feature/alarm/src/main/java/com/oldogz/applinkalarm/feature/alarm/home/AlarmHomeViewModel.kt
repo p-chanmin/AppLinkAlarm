@@ -10,6 +10,7 @@ import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.alarm.AppLinkAlarmPlayingService
 import com.oldogz.core.alarm.AppLinkAlarmStateManager
 import com.oldogz.core.data.AppLinkAlarmRepository
+import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AppLinkAlarm
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
@@ -33,6 +34,7 @@ class AlarmHomeViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
     private val appLinkAlarmManager: AppLinkAlarmManager,
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
+    private val firebaseManager: FirebaseManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -57,6 +59,8 @@ class AlarmHomeViewModel @Inject constructor(
                 appLinkAlarmStateManager.bindService()
             }.onEach { service ->
                 _service.value = service
+            }.catch { throwable ->
+                firebaseManager.reportNonFatalError(throwable)
             }.launchIn(viewModelScope)
 
         loadAlarm()
@@ -81,6 +85,7 @@ class AlarmHomeViewModel @Inject constructor(
                     )
                 }
             }.catch {
+                firebaseManager.reportNonFatalError(it)
                 _errorFlow.emit(it)
             }.launchIn(viewModelScope)
     }
@@ -107,6 +112,7 @@ class AlarmHomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                firebaseManager.reportNonFatalError(e)
                 _errorFlow.emit(e)
             }
         }
@@ -140,6 +146,7 @@ class AlarmHomeViewModel @Inject constructor(
                     }
                 }
             } catch (e: Exception) {
+                firebaseManager.reportNonFatalError(e)
                 _errorFlow.emit(e)
             }
         }
@@ -157,6 +164,7 @@ class AlarmHomeViewModel @Inject constructor(
                     }
                 updateSelectMode(false)
             } catch (e: Exception) {
+                firebaseManager.reportNonFatalError(e)
                 _errorFlow.emit(e)
             }
         }
