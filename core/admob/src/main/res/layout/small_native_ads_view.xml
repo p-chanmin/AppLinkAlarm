@@ -30,8 +30,10 @@
             android:background="@color/core_admob_yellow"
             android:text="@string/core_admob_ad"
             android:textColor="@color/core_admob_text"
+            android:textSize="12dp"
             app:layout_constraintStart_toStartOf="@+id/adMedia"
-            app:layout_constraintTop_toTopOf="@id/adMedia" />
+            app:layout_constraintTop_toTopOf="@id/adMedia"
+            tools:ignore="SpUsage" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/actionLayout"
@@ -63,12 +65,13 @@
                 android:ellipsize="end"
                 android:maxLines="3"
                 android:text=""
-                android:textSize="14sp"
+                android:textSize="12dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/adStars"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/adAppIcon"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                tools:ignore="SpUsage" />
 
             <RatingBar
                 android:id="@+id/adStars"
@@ -89,8 +92,9 @@
                 android:backgroundTint="@color/core_admob_primary"
                 android:gravity="center"
                 android:text=""
-                android:textSize="12sp"
-                app:layout_constraintBottom_toBottomOf="parent" />
+                android:textSize="12dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:ignore="SpUsage" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

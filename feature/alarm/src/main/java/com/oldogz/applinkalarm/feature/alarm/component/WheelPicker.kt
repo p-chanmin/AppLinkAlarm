@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
+import kotlin.math.abs
 
 @Composable
 internal fun <T> WheelPicker(
@@ -34,10 +35,23 @@ internal fun <T> WheelPicker(
     selectedItem: (T?) -> Unit,
 ) {
     val flingBehavior = rememberSnapFlingBehavior(lazyListState = state)
-    val firstVisibleItemIndex by remember { derivedStateOf { state.firstVisibleItemIndex } }
+    val centerItemIndex by remember {
+        derivedStateOf {
+            val layoutInfo = state.layoutInfo
+            val viewportHeight = layoutInfo.viewportSize.height
+            val centerY = viewportHeight / 2
 
-    LaunchedEffect(firstVisibleItemIndex) {
-        selectedItem(list.getOrNull(firstVisibleItemIndex))
+            val centerIndex = layoutInfo.visibleItemsInfo.minByOrNull { item ->
+                val itemCenter = item.offset + item.size / 2
+                abs(itemCenter - centerY)
+            }?.index ?: state.firstVisibleItemIndex
+
+            centerIndex - 1
+        }
+    }
+
+    LaunchedEffect(centerItemIndex) {
+        selectedItem(list.getOrNull(centerItemIndex))
     }
 
     LazyColumn(
@@ -58,7 +72,7 @@ internal fun <T> WheelPicker(
             ) {
                 Text(
                     text = item.toString(),
-                    style = if (i == firstVisibleItemIndex) {
+                    style = if (i == centerItemIndex) {
                         MaterialTheme.typography.headlineSmall.copy(
                             fontWeight = FontWeight.Bold,
                             color = MaterialTheme.colorScheme.onBackground

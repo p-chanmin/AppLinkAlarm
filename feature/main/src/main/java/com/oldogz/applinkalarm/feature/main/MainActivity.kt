@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import com.oldogz.core.admob.AdMobManager
 import com.oldogz.core.admob.LocalAdMobManager
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
@@ -31,7 +33,8 @@ class MainActivity : ComponentActivity() {
             AppLinkAlarmTheme {
                 CompositionLocalProvider(
                     LocalAdMobManager provides adMobManager,
-                    LocalFirebaseManager provides firebaseManager
+                    LocalFirebaseManager provides firebaseManager,
+                    LocalDensity provides Density(LocalDensity.current.density, 0.8f),
                 ) {
                     MainScreen(
                         navigator = navigator,
