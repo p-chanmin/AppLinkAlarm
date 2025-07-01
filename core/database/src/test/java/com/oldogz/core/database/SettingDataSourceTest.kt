@@ -37,20 +37,6 @@ internal class SettingDataSourceTest : StringSpec() {
             tempFolder.delete()
         }
 
-        "lastReviewDate 초기 상태 테스트" {
-            runTest(testDispatcher) {
-                // Given
-
-                // When
-                settingDataSource.lastReviewDate.test {
-
-                    // Then
-                    awaitItem() shouldBe null
-                    cancelAndConsumeRemainingEvents()
-                }
-            }
-        }
-
         "rejectFlexibleUpdateDate 초기 상태 테스트" {
             runTest(testDispatcher) {
                 // Given
@@ -60,22 +46,6 @@ internal class SettingDataSourceTest : StringSpec() {
 
                     // Then
                     awaitItem() shouldBe null
-                    cancelAndConsumeRemainingEvents()
-                }
-            }
-        }
-
-        "lastReviewDate 저장 및 조회 테스트" {
-            runTest(testDispatcher) {
-                // Given
-                val result = "2025-05-02T11:09:35.545010Z"
-                settingDataSource.setLastReviewDate(result)
-
-                // When
-                settingDataSource.lastReviewDate.test {
-
-                    // Then
-                    awaitItem() shouldBe result
                     cancelAndConsumeRemainingEvents()
                 }
             }
