@@ -360,7 +360,6 @@ private fun SubscriptionSetting() {
 private fun SupportSetting(
     navigateToOpenSource: () -> Unit,
 ) {
-
     val context = LocalContext.current
 
     Column(
@@ -442,6 +441,27 @@ private fun SupportSetting(
                 imageVector = Icons.Filled.ChevronRight,
                 contentDescription = stringResource(R.string.feature_setting_text_open_source_license),
                 onClick = navigateToOpenSource
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = Paddings.xlarge, vertical = Paddings.xlarge),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val versionName =
+                context.packageManager.getPackageInfo(context.packageName, 0)?.versionName
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_version),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            Text(
+                modifier = Modifier,
+                text = "$versionName",
+                style = MaterialTheme.typography.bodyLarge
             )
         }
     }

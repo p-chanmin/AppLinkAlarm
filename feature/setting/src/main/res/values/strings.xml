@@ -26,4 +26,5 @@
     <string name="feature_setting_text_review">Review</string>
     <string name="feature_setting_text_privacy_policy">Privacy Policy</string>
     <string name="feature_setting_text_open_source_license">Open source licenses</string>
+    <string name="feature_setting_text_version">Version</string>
 </resources>

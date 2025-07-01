@@ -23,6 +23,7 @@ internal fun Project.configureKotestAndroid() {
 internal fun Project.configureJUnit() {
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
+        jvmArgs("--add-opens", "java.base/java.time=ALL-UNNAMED")
     }
 }
 
