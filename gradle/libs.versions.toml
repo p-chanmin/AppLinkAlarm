@@ -8,7 +8,6 @@ androidxCore = "1.16.0"
 androidxAppCompat = "1.7.0"
 androidxLifecycle = "2.9.0"
 androidxActivity = "1.10.1"
-
 constraintlayout = "2.2.1"
 appcompat = "1.7.1"
 
@@ -49,6 +48,7 @@ googlePlayAds = "24.3.0"
 google-services = "4.4.2"
 googlePlayReview = "2.0.2"
 googlePlayAppUpdate = "2.1.0"
+billing = "8.0.0"
 
 ## firebase
 firebase-bom = "33.14.0"
@@ -119,6 +119,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "googlePlayAds" }
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "googlePlayReview" }
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "googlePlayAppUpdate" }
+billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
