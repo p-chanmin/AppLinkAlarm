@@ -39,17 +39,6 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
 
         when (intent.action) {
-            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_TIMEZONE_CHANGED -> {
-                CoroutineScope(Dispatchers.IO).launch {
-                    val appLinkAlarms = appLinkAlarmRepository.alarms.first()
-                    appLinkAlarms.forEach { appLinkAlarm ->
-                        if (appLinkAlarmManager.checkScheduleExactAlarms()) {
-                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
-                        }
-                    }
-                }
-            }
-
             INTENT_ACTION_APP_LINK_ALARM -> {
                 appLinkAlarmNotificationManager.registerNotificationChannels()
                 val id = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)

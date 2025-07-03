@@ -17,6 +17,9 @@
 
         <receiver
             android:name=".AppLinkAlarmReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".AppLinkAlarmRegisterReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
