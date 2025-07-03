@@ -39,6 +39,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", project(":core:navigation"))
                 add("implementation", project(":core:admob"))
                 add("implementation", project(":core:firebase"))
+                add("implementation", project(":core:billing"))
 
                 add("testImplementation", project(":core:testing"))
             }
