@@ -15,6 +15,8 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.net.toUri
 import com.google.firebase.analytics.logEvent
+import com.oldogz.core.billing.BuildConfig
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.firebase.model.FA
@@ -50,9 +52,10 @@ class AppLinkAlarmPlayingService : Service() {
     @Inject
     lateinit var firebaseManager: FirebaseManager
 
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    @Inject
+    lateinit var subscriptionManager: SubscriptionManager
 
-    private val includeAds = true // 광고
+    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
     private lateinit var audioManager: AudioManager
     private lateinit var vibrator: Vibrator
@@ -74,6 +77,7 @@ class AppLinkAlarmPlayingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        subscriptionManager.initialize()
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         mediaVolumeBeforeAlarm = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
@@ -91,15 +95,17 @@ class AppLinkAlarmPlayingService : Service() {
             INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON -> {
                 val alarmId = intent.getIntExtra(INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID, -1)
                 if (alarmId != -1) {
-                    serviceScope.launch {
-                        mutex.withLock {
-                            mediaPlayer?.let {
-                                mediaPlayer?.stop()
-                                mediaPlayer?.release()
-                                mediaPlayer = null
+                    subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
+                        serviceScope.launch {
+                            mutex.withLock {
+                                mediaPlayer?.let {
+                                    mediaPlayer?.stop()
+                                    mediaPlayer?.release()
+                                    mediaPlayer = null
+                                }
+                                vibrator.cancel()
+                                playAppLinkAlarm(alarmId, !hasPremium)
                             }
-                            vibrator.cancel()
-                            playAppLinkAlarm(alarmId)
                         }
                     }
                 }
@@ -114,7 +120,7 @@ class AppLinkAlarmPlayingService : Service() {
         return START_NOT_STICKY
     }
 
-    private suspend fun playAppLinkAlarm(alarmId: Int) {
+    private suspend fun playAppLinkAlarm(alarmId: Int, includeAds: Boolean) {
         appLinkAlarmNotificationManager.registerNotificationChannels()
 
         val appLinkAlarm = appLinkAlarmRepository.getAlarmById(alarmId).first()
@@ -125,7 +131,7 @@ class AppLinkAlarmPlayingService : Service() {
         )
 
         _currentAppLinkAlarmId.value?.let { id ->
-            notifyMissedAlarm(id)
+            notifyMissedAlarm(id, includeAds)
         }
 
         _currentAppLinkAlarmId.value = alarmId
@@ -170,7 +176,7 @@ class AppLinkAlarmPlayingService : Service() {
         }
     }
 
-    private suspend fun notifyMissedAlarm(id: Int) {
+    private suspend fun notifyMissedAlarm(id: Int, includeAds: Boolean) {
         firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_MISSED) {}
         val appLinkAlarm = appLinkAlarmRepository.getAlarmById(id).first()
         val notification = appLinkAlarmNotificationManager.createMissedAlarmNotification(
@@ -196,6 +202,7 @@ class AppLinkAlarmPlayingService : Service() {
 
         vibrator.cancel()
         audioManager.abandonAudioFocusRequest(focusRequest)
+        subscriptionManager.endConnection()
         stopForeground(STOP_FOREGROUND_REMOVE)
         serviceScope.cancel()
     }

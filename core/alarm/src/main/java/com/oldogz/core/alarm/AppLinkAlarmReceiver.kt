@@ -8,6 +8,8 @@ import com.oldogz.core.alarm.AppLinkAlarmManager.Companion.INTENT_ACTION_APP_LIN
 import com.oldogz.core.alarm.AppLinkAlarmManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_ID
 import com.oldogz.core.alarm.AppLinkAlarmPlayingService.Companion.INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON
 import com.oldogz.core.alarm.AppLinkAlarmPlayingService.Companion.INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID
+import com.oldogz.core.billing.BuildConfig
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.firebase.model.FA
@@ -34,10 +36,10 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
     @Inject
     lateinit var firebaseManager: FirebaseManager
 
-    private val includeAds = true // 광고
+    @Inject
+    lateinit var subscriptionManager: SubscriptionManager
 
     override fun onReceive(context: Context, intent: Intent) {
-
         when (intent.action) {
             INTENT_ACTION_APP_LINK_ALARM -> {
                 appLinkAlarmNotificationManager.registerNotificationChannels()
@@ -53,14 +55,17 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                         }
                         when (appLinkAlarm.alarmMode) {
                             AlarmMode.NOTIFICATION_ONLY -> {
-
-                                appLinkAlarmNotificationManager.notify(
-                                    appLinkAlarm.id,
-                                    appLinkAlarmNotificationManager.createNotification(
-                                        appLinkAlarm,
-                                        includeAds
+                                subscriptionManager.initialize()
+                                subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
+                                    appLinkAlarmNotificationManager.notify(
+                                        appLinkAlarm.id,
+                                        appLinkAlarmNotificationManager.createNotification(
+                                            appLinkAlarm,
+                                            !hasPremium
+                                        )
                                     )
-                                )
+                                    subscriptionManager.endConnection()
+                                }
                             }
 
                             AlarmMode.STANDARD -> {
