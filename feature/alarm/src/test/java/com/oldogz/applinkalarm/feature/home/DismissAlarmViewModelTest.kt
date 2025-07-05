@@ -2,6 +2,8 @@ package com.oldogz.applinkalarm.feature.home
 
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.open.DismissAlarmViewModel
+import com.oldogz.core.billing.FakeSubscriptionManager
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FakeFirebaseManager
 import com.oldogz.core.firebase.FirebaseManager
@@ -25,13 +27,18 @@ internal class DismissAlarmViewModelTest {
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
     private val firebaseManager: FirebaseManager = FakeFirebaseManager()
+    private val subscriptionManager: SubscriptionManager = FakeSubscriptionManager()
     private lateinit var dismissAlarmViewModel: DismissAlarmViewModel
 
     @Test
     fun `알람 id를 통해 데이터를 확인할 수 있다`() = runTest {
         coEvery { appLinkAlarmRepository.getAlarmById(1) } returns flowOf(alarm)
 
-        dismissAlarmViewModel = DismissAlarmViewModel(appLinkAlarmRepository, firebaseManager)
+        dismissAlarmViewModel = DismissAlarmViewModel(
+            appLinkAlarmRepository,
+            firebaseManager,
+            subscriptionManager
+        )
 
         dismissAlarmViewModel.updateAppLinkAlarm(1)
 

@@ -4,6 +4,8 @@ import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.edit.AlarmEditViewModel
 import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.billing.FakeSubscriptionManager
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FakeFirebaseManager
 import com.oldogz.core.firebase.FirebaseManager
@@ -26,6 +28,7 @@ internal class AlarmEditViewModelTest {
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
     private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
     private val firebaseManager: FirebaseManager = FakeFirebaseManager()
+    private val subscriptionManager: SubscriptionManager = FakeSubscriptionManager()
     private lateinit var alarmEditViewModel: AlarmEditViewModel
 
     @Before
@@ -35,7 +38,8 @@ internal class AlarmEditViewModelTest {
                 SavedStateHandle(),
                 appLinkAlarmRepository,
                 appLinkAlarmManager,
-                firebaseManager
+                firebaseManager,
+                subscriptionManager
             )
     }
 

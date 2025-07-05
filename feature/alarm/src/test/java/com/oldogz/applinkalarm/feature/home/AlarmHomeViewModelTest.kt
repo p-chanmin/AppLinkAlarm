@@ -7,6 +7,8 @@ import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.alarm.AppLinkAlarmStateManager
+import com.oldogz.core.billing.FakeSubscriptionManager
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FakeFirebaseManager
 import com.oldogz.core.firebase.FirebaseManager
@@ -34,6 +36,7 @@ internal class AlarmHomeViewModelTest {
     private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager = mockk(relaxed = true)
     private val firebaseManager: FirebaseManager = FakeFirebaseManager()
+    private val subscriptionManager: SubscriptionManager = FakeSubscriptionManager()
     private lateinit var alarmHomeViewModel: AlarmHomeViewModel
 
     @Test
@@ -47,7 +50,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -88,7 +92,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         alarmHomeViewModel.homeUiState.test {
@@ -123,7 +128,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -158,7 +164,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -192,7 +199,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -235,7 +243,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // Given
@@ -293,7 +302,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // Given
@@ -339,7 +349,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         alarmHomeViewModel.homeUiState.test {
@@ -371,7 +382,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -398,7 +410,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         alarmHomeViewModel.event.test {
