@@ -52,6 +52,7 @@ fun DismissAlarmScreen(
     val configuration = LocalConfiguration.current
 
     val openAppUiState by dismissAlarmViewModel.openAppUiState.collectAsStateWithLifecycle()
+    val hasPremium by dismissAlarmViewModel.hasPremium.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         firebaseManager.screenLogEvent("DismissAlarmScreen", configuration.orientation)
@@ -70,6 +71,7 @@ fun DismissAlarmScreen(
 
     DismissAlarmContent(
         openAppUiState = openAppUiState,
+        hasPremium = hasPremium,
         onShowErrorSnackBar = onShowErrorSnackBar,
         dismissAlarm = dismissAlarm
     )
@@ -78,6 +80,7 @@ fun DismissAlarmScreen(
 @Composable
 private fun DismissAlarmContent(
     openAppUiState: OpenAppUiState,
+    hasPremium: Boolean?,
     dismissAlarm: (String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
@@ -121,19 +124,21 @@ private fun DismissAlarmContent(
                     onClick = { dismissAlarm(openAppUiState.linkedAppPackage) },
                 )
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = Paddings.large)
-                        .padding(Paddings.small),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 2.dp
-                    )
-                ) {
-                    SmallNativeAd(
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                if (hasPremium == false) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Paddings.large)
+                            .padding(Paddings.small),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 2.dp
+                        )
+                    ) {
+                        SmallNativeAd(
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
@@ -154,6 +159,7 @@ private fun DismissAlarmContentPreview() {
                 periodOfDay = PeriodOfDay.AM,
                 linkedAppPackage = "com.example.app"
             ),
+            hasPremium = false,
             onShowErrorSnackBar = {},
             dismissAlarm = {}
         )

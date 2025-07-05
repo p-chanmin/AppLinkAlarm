@@ -3,6 +3,7 @@ package com.oldogz.applinkalarm.feature.alarm.open
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,10 +21,13 @@ import javax.inject.Inject
 class DismissAlarmViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
     private val firebaseManager: FirebaseManager,
+    private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
+
+    val hasPremium = subscriptionManager.subscriptionState
 
     private val _openAppUiState = MutableStateFlow(OpenAppUiState())
     val openAppUiState = _openAppUiState.stateIn(

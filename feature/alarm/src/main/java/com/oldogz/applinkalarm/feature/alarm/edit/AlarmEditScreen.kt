@@ -98,6 +98,7 @@ internal fun AlarmEditScreen(
     alarmEditViewModel: AlarmEditViewModel = hiltViewModel()
 ) {
     val alarmEditUiState by alarmEditViewModel.alarmEditUiState.collectAsStateWithLifecycle()
+    val hasPremium by alarmEditViewModel.hasPremium.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
     val hourState = rememberLazyListState(initialFirstVisibleItemIndex = 5)
     val minuteState = rememberLazyListState(initialFirstVisibleItemIndex = 30)
@@ -121,7 +122,11 @@ internal fun AlarmEditScreen(
             when (event) {
                 is AlarmEditUiEvent.AlarmEditComplete -> {
                     popBackStack()
-                    activity?.let { adManager.showInterstitialAlarmAd(it) }
+                    activity?.let {
+                        if (hasPremium == false) {
+                            adManager.showInterstitialAlarmAd(it)
+                        }
+                    }
                 }
 
                 is AlarmEditUiEvent.AlarmLoad -> {

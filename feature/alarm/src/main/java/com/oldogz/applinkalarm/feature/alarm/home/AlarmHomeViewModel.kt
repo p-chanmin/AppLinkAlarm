@@ -9,6 +9,7 @@ import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.alarm.AppLinkAlarmPlayingService
 import com.oldogz.core.alarm.AppLinkAlarmStateManager
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AppLinkAlarm
@@ -35,6 +36,7 @@ class AlarmHomeViewModel @Inject constructor(
     private val appLinkAlarmManager: AppLinkAlarmManager,
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
     private val firebaseManager: FirebaseManager,
+    private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -42,6 +44,8 @@ class AlarmHomeViewModel @Inject constructor(
 
     private val _service = MutableStateFlow<AppLinkAlarmPlayingService?>(null)
     val service get() = _service.asStateFlow()
+
+    val hasPremium = subscriptionManager.subscriptionState
 
     private val _homeUiState = MutableStateFlow(AlarmHomeUiState())
     val homeUiState = _homeUiState.stateIn(

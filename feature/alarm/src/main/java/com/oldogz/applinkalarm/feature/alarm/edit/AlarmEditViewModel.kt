@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
@@ -32,6 +33,7 @@ class AlarmEditViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
     private val appLinkAlarmManager: AppLinkAlarmManager,
     private val firebaseManager: FirebaseManager,
+    private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -39,6 +41,8 @@ class AlarmEditViewModel @Inject constructor(
 
     private val _event = MutableSharedFlow<AlarmEditUiEvent>()
     val event get() = _event.asSharedFlow()
+
+    val hasPremium = subscriptionManager.subscriptionState
 
     private val _alarmEditUiState = MutableStateFlow(AlarmEditUiState())
     val alarmEditUiState = _alarmEditUiState.stateIn(

@@ -53,6 +53,7 @@ internal fun OpenAppScreen(
     val configuration = LocalConfiguration.current
 
     val openAppUiState by openAppViewModel.openAppUiState.collectAsStateWithLifecycle()
+    val hasPremium by openAppViewModel.hasPremium.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         firebaseManager.screenLogEvent("OpenAppScreen", configuration.orientation)
@@ -63,6 +64,7 @@ internal fun OpenAppScreen(
 
     OpenAppContent(
         openAppUiState = openAppUiState,
+        hasPremium = hasPremium,
         onShowErrorSnackBar = onShowErrorSnackBar,
         popBackStack = popBackStack,
     )
@@ -71,6 +73,7 @@ internal fun OpenAppScreen(
 @Composable
 private fun OpenAppContent(
     openAppUiState: OpenAppUiState,
+    hasPremium: Boolean?,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     popBackStack: () -> Unit,
 ) {
@@ -137,19 +140,21 @@ private fun OpenAppContent(
                     }
                 )
 
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = Paddings.large)
-                        .padding(Paddings.small),
-                    shape = RoundedCornerShape(12.dp),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = 2.dp
-                    )
-                ) {
-                    SmallNativeAd(
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                if (hasPremium == false) {
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = Paddings.large)
+                            .padding(Paddings.small),
+                        shape = RoundedCornerShape(12.dp),
+                        elevation = CardDefaults.cardElevation(
+                            defaultElevation = 2.dp
+                        )
+                    ) {
+                        SmallNativeAd(
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 }
             }
         }
@@ -171,6 +176,7 @@ private fun OpenAppContentPreview() {
                 periodOfDay = PeriodOfDay.AM,
                 linkedAppPackage = "com.example.app"
             ),
+            hasPremium = false,
             popBackStack = {},
             onShowErrorSnackBar = {}
         )

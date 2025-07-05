@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.navigation.Route
@@ -25,10 +26,13 @@ class OpenAppViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
     private val firebaseManager: FirebaseManager,
+    private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
+
+    val hasPremium = subscriptionManager.subscriptionState
 
     private val _openAppUiState = MutableStateFlow(OpenAppUiState())
     val openAppUiState = _openAppUiState.stateIn(
