@@ -1,6 +1,7 @@
 package com.oldogz.applinkalarm.feature.setting.home
 
 import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -50,6 +51,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.setting.R
 import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
+import com.oldogz.core.billing.BuildConfig
+import com.oldogz.core.billing.LocalSubscriptionManager
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
@@ -84,6 +87,7 @@ internal fun SettingScreen(
         popBackStack = popBackStack,
         navigateToOpenSource = navigateToOpenSource,
         updatePermission = settingViewModel::updatePermission,
+        onShowErrorSnackBar = onShowErrorSnackBar,
     )
 }
 
@@ -94,6 +98,7 @@ private fun SettingContent(
     navigateToOpenSource: () -> Unit,
     popBackStack: () -> Unit,
     updatePermission: (Boolean) -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val scrollState = rememberScrollState()
 
@@ -131,7 +136,9 @@ private fun SettingContent(
                     exactAlarmPermission = settingUiState.exactAlarmPermission,
                     updatePermission = updatePermission
                 )
-                SubscriptionSetting()
+                SubscriptionSetting(
+                    onShowErrorSnackBar = onShowErrorSnackBar,
+                )
                 SupportSetting(
                     navigateToOpenSource = navigateToOpenSource,
                 )
@@ -258,9 +265,24 @@ private fun PermissionSetting(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SubscriptionSetting() {
+private fun SubscriptionSetting(
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+) {
     val coroutineScope = rememberCoroutineScope()
     val tooltipState = rememberTooltipState()
+
+    val context = LocalContext.current
+    val activity = context as? Activity
+    val subscriptionManager = LocalSubscriptionManager.current
+
+    val products = subscriptionManager.availableProducts.collectAsStateWithLifecycle().value
+    val subscriptionState =
+        subscriptionManager.subscriptionState.collectAsStateWithLifecycle().value
+
+    LaunchedEffect(Unit) {
+        subscriptionManager.queryAvailableProducts(listOf(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID))
+        subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) {}
+    }
 
     Column(
         modifier = Modifier.fillMaxWidth()
@@ -329,30 +351,78 @@ private fun SubscriptionSetting() {
 
             Text(
                 modifier = Modifier,
-                text = stringResource(R.string.feature_setting_text_not_subscribed),
+                text = subscriptionState?.let {
+                    if (it) {
+                        stringResource(R.string.feature_setting_text_subscribed)
+                    } else {
+                        stringResource(R.string.feature_setting_text_not_subscribed)
+                    }
+                } ?: "",
                 style = MaterialTheme.typography.bodyLarge
             )
         }
 
-        AppLinkAlarmButton(
-            modifier = Modifier
-                .padding(horizontal = Paddings.xlarge)
-                .padding(top = Paddings.medium),
-            enabled = true,
-            content = stringResource(R.string.feature_setting_text_purchase_premium),
-            onClick = {}
-        )
+        val product = products.find { it.productId == BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID }
+        val offer =
+            product?.subscriptionOfferDetails?.find { it.offerId == BuildConfig.PREMIUM_MONTHLY_TRIAL_7D_OFFER_ID }
+                ?: product?.subscriptionOfferDetails?.firstOrNull()
 
-        AppLinkAlarmButton(
-            modifier = Modifier
-                .padding(horizontal = Paddings.xlarge)
-                .padding(bottom = Paddings.medium),
-            enabled = true,
-            containerColor = MaterialTheme.colorScheme.secondary,
-            contentColor = MaterialTheme.colorScheme.onBackground,
-            content = stringResource(R.string.feature_setting_text_restore_purchases),
-            onClick = {}
-        )
+        subscriptionState?.let { state ->
+            if (!state && product != null && offer != null) {
+                AppLinkAlarmButton(
+                    modifier = Modifier
+                        .padding(horizontal = Paddings.xlarge)
+                        .padding(top = Paddings.medium),
+                    enabled = true,
+                    content = if (offer.pricingPhases.size > 1) {
+                        val priceText = offer.pricingPhases.last().formattedPrice
+                        stringResource(R.string.feature_setting_text_7_day_free_trial, priceText)
+                    } else {
+                        val priceText = offer.pricingPhases.last().formattedPrice
+                        stringResource(R.string.feature_setting_text_join_premium, priceText)
+                    },
+                    onClick = {
+                        activity?.let { activity ->
+                            subscriptionManager.launchPurchaseFlow(
+                                activity,
+                                product.productDetails,
+                                offer.offerIdToken
+                            )
+                        }
+                    }
+                )
+            }
+
+            AppLinkAlarmButton(
+                modifier = Modifier
+                    .padding(horizontal = Paddings.xlarge)
+                    .padding(bottom = Paddings.medium),
+                enabled = true,
+                containerColor = MaterialTheme.colorScheme.secondary,
+                contentColor = MaterialTheme.colorScheme.onBackground,
+                content = if (state) {
+                    stringResource(R.string.feature_setting_text_google_play_subscriptions_center)
+                } else {
+                    stringResource(R.string.feature_setting_text_restore_purchases)
+                },
+                onClick = {
+                    if (state) {
+                        context.startActivity(
+                            Intent(
+                                Intent.ACTION_VIEW,
+                                "https://play.google.com/store/account/subscriptions".toUri()
+                            )
+                        )
+                    } else {
+                        subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
+                            if (!hasPremium) {
+                                onShowErrorSnackBar(Throwable(context.getString(R.string.feature_setting_text_no_premium_subscription)))
+                            }
+                        }
+                    }
+                }
+            )
+        }
     }
 }
 
@@ -446,6 +516,27 @@ private fun SupportSetting(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .clickable { openContactUs(context) }
+                .padding(start = Paddings.xlarge)
+                .padding(vertical = Paddings.small),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.feature_setting_text_contact_us),
+                style = MaterialTheme.typography.bodyLarge
+            )
+
+            AppLinkAlarmIconButton(
+                imageVector = Icons.Filled.ChevronRight,
+                contentDescription = stringResource(R.string.feature_setting_text_contact_us),
+                onClick = { openContactUs(context) }
+            )
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = Paddings.xlarge, vertical = Paddings.xlarge),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -485,6 +576,17 @@ private fun openPlayStore(context: Context) {
     )
 }
 
+private fun openContactUs(context: Context) {
+    val intent = Intent(Intent.ACTION_SENDTO).apply {
+        data = "mailto:".toUri()
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("oldogz7358@gmail.com"))
+        putExtra(Intent.EXTRA_SUBJECT, "[AppLink Alarm]: Support Request")
+    }
+    if (intent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(intent)
+    }
+}
+
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
@@ -498,7 +600,8 @@ private fun SettingContentPreview() {
             paddingValues = PaddingValues(),
             navigateToOpenSource = {},
             popBackStack = {},
-            updatePermission = {}
+            updatePermission = {},
+            onShowErrorSnackBar = {}
         )
     }
 }
