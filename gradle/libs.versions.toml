@@ -119,7 +119,7 @@ room-compiler = { group = "androidx.room", name = "room-compiler", version.ref =
 play-services-ads = { group = "com.google.android.gms", name = "play-services-ads", version.ref = "googlePlayAds" }
 play-review-ktx = { group = "com.google.android.play", name = "review-ktx", version.ref = "googlePlayReview" }
 play-app-update-ktx = { group = "com.google.android.play", name = "app-update-ktx", version.ref = "googlePlayAppUpdate" }
-billing = { module = "com.android.billingclient:billing", version.ref = "billing" }
+billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", version.ref = "billing" }
 
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
