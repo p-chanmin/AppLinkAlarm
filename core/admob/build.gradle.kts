@@ -39,5 +39,5 @@ dependencies {
     api(libs.play.services.ads)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.ui.viewbinding)
-    implementation(libs.appcompat)
+    implementation(libs.androidx.appcompat)
 }

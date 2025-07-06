@@ -44,15 +44,15 @@ kotlinxImmutable = "0.3.7"
 coroutine = "1.9.0-RC"
 
 ## Google services
-googlePlayAds = "24.3.0"
-google-services = "4.4.2"
+googlePlayAds = "24.4.0"
+google-services = "4.4.3"
 googlePlayReview = "2.0.2"
 googlePlayAppUpdate = "2.1.0"
 billing = "8.0.0"
 
 ## firebase
-firebase-bom = "33.14.0"
-firebase-crashlytics = "3.0.3"
+firebase-bom = "33.16.0"
+firebase-crashlytics = "3.0.4"
 
 ## AboutLibraries
 aboutLibraries = "12.2.3"
@@ -79,6 +79,7 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-lifecycle-runtimeCompose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidxLifecycle" }
 androidx-lifecycle-viewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidxLifecycle" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidxComposeBom" }
 androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidxComposeMaterial3" }
@@ -124,9 +125,6 @@ billing-ktx = { group = "com.android.billingclient", name = "billing-ktx", versi
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics-ktx = { module = "com.google.firebase:firebase-analytics-ktx" }
 firebase-crashlytics-ktx = { module = "com.google.firebase:firebase-crashlytics-ktx" }
-
-androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 
 aboutlibraries-core = { module = "com.mikepenz:aboutlibraries-core", version.ref = "aboutLibraries" }
 aboutlibraries-compose-m3 = { module = "com.mikepenz:aboutlibraries-compose-m3", version.ref = "aboutLibraries" }
