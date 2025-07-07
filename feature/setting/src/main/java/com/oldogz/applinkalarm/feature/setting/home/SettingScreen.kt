@@ -275,9 +275,8 @@ private fun SubscriptionSetting(
     val activity = context as? Activity
     val subscriptionManager = LocalSubscriptionManager.current
 
-    val products = subscriptionManager.availableProducts.collectAsStateWithLifecycle().value
-    val subscriptionState =
-        subscriptionManager.subscriptionState.collectAsStateWithLifecycle().value
+    val products by subscriptionManager.availableProducts.collectAsStateWithLifecycle()
+    val subscriptionState by subscriptionManager.subscriptionState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         subscriptionManager.queryAvailableProducts(listOf(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID))
