@@ -136,7 +136,6 @@ class SubscriptionManagerImpl @Inject constructor(
                         productDetails = productDetails,
                     )
                 }
-                println("products : $products")
                 _availableProducts.update { products }
             } else {
                 _availableProducts.update { emptyList() }
@@ -170,7 +169,6 @@ class SubscriptionManagerImpl @Inject constructor(
             .build()
 
         billingClient.queryPurchasesAsync(params) { billingResult, purchases ->
-            println("purchases : $purchases")
             if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
                 val activePurchase = purchases.firstOrNull {
                     it.isAcknowledged && it.purchaseState == Purchase.PurchaseState.PURCHASED

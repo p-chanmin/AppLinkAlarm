@@ -77,7 +77,6 @@ internal class AlarmHomeViewModelTest {
 
         // Given
         val alarms = MutableStateFlow(listOf(alarm1))
-        println(alarms.value)
 
         coEvery { appLinkAlarmRepository.alarms } returns alarms
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = true)) } answers {
@@ -99,7 +98,6 @@ internal class AlarmHomeViewModelTest {
         alarmHomeViewModel.homeUiState.test {
 
             var uiState = awaitItem()
-            println(uiState)
             assertEquals(true, uiState.alarms.first().appLinkAlarm.active)
 
             // When
@@ -366,7 +364,6 @@ internal class AlarmHomeViewModelTest {
 
             // Then
             uiState = awaitItem()
-            println(uiState)
             assertEquals(PermissionState.DENIED, uiState.notificationPermissionState)
             assertEquals(true, uiState.visibleNotificationPermissionDialog)
         }
