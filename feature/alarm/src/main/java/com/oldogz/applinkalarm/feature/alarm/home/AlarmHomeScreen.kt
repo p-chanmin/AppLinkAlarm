@@ -87,6 +87,7 @@ internal fun AlarmHomeScreen(
     val context = LocalContext.current
     val homeUiState by alarmHomeViewModel.homeUiState.collectAsStateWithLifecycle()
     val service by alarmHomeViewModel.service.collectAsStateWithLifecycle()
+    val hasPremium by alarmHomeViewModel.hasPremium.collectAsStateWithLifecycle()
     val firebaseManager = LocalFirebaseManager.current
     val configuration = LocalConfiguration.current
 
@@ -123,6 +124,7 @@ internal fun AlarmHomeScreen(
     if (service == null) {
         AlarmHomeContent(
             homeUiState = homeUiState,
+            hasPremium = hasPremium,
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
             navigateToAlarmEdit = navigateToAlarmEdit,
@@ -149,6 +151,7 @@ internal fun AlarmHomeScreen(
 @Composable
 private fun AlarmHomeContent(
     homeUiState: AlarmHomeUiState,
+    hasPremium: Boolean?,
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     navigateToAlarmEdit: (Int?) -> Unit,
@@ -207,7 +210,7 @@ private fun AlarmHomeContent(
                 }
             }
 
-            if (!homeUiState.isSelectMode) {
+            if (!homeUiState.isSelectMode && hasPremium == false) {
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -501,7 +504,7 @@ private fun HomeContentPreview() {
     AppLinkAlarmTheme {
         AlarmHomeContent(
             homeUiState = AlarmHomeUiState(
-                isSelectMode = true,
+                isSelectMode = false,
                 visibleNotificationPermissionDialog = false,
                 alarms = persistentListOf(
                     AppLinkAlarmUiState(
@@ -546,6 +549,7 @@ private fun HomeContentPreview() {
                     ),
                 )
             ),
+            hasPremium = false,
             paddingValues = PaddingValues(),
             onShowErrorSnackBar = {},
             navigateToAlarmEdit = {},

@@ -14,17 +14,21 @@
 
     <string name="feature_setting_text_subscription">Subscription</string>
     <string name="feature_setting_text_premium_subscription">Premium Subscription</string>
-    <string name="feature_setting_text_premium_subscription_tool_tip">The Premium Subscription offers an ad-free experience and allows you to instantly launch a specific app when your alarm rings.</string>
-
-    <string name="feature_setting_text_not_subscribed">Not Subscribed</string>
-    <string name="feature_setting_text_subscribed">Subscribed</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">The Premium Subscription offers an ad-free experience and lets you instantly launch a specific app when your alarm is in notification-only mode.</string>
 
     <string name="feature_setting_text_purchase_premium">Purchase Premium</string>
     <string name="feature_setting_text_restore_purchases">Restore Purchases</string>
+    <string name="feature_setting_text_not_subscribed">Not Subscribed</string>
+    <string name="feature_setting_text_subscribed">Subscribed</string>
+    <string name="feature_setting_text_7_day_free_trial">7-day free trial, then %1$s/month</string>
+    <string name="feature_setting_text_join_premium">Join Premium for %1$s/month</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Google Play subscriptions center</string>
+    <string name="feature_setting_text_no_premium_subscription">No premium subscription</string>
 
     <string name="feature_setting_text_support">Support</string>
     <string name="feature_setting_text_review">Review</string>
     <string name="feature_setting_text_privacy_policy">Privacy Policy</string>
     <string name="feature_setting_text_open_source_license">Open source licenses</string>
+    <string name="feature_setting_text_contact_us">Contact Us</string>
     <string name="feature_setting_text_version">Version</string>
 </resources>

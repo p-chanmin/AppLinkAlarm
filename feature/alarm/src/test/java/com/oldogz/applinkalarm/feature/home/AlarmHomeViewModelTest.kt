@@ -7,6 +7,8 @@ import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.alarm.AppLinkAlarmManager
 import com.oldogz.core.alarm.AppLinkAlarmStateManager
+import com.oldogz.core.billing.FakeSubscriptionManager
+import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FakeFirebaseManager
 import com.oldogz.core.firebase.FirebaseManager
@@ -34,6 +36,7 @@ internal class AlarmHomeViewModelTest {
     private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager = mockk(relaxed = true)
     private val firebaseManager: FirebaseManager = FakeFirebaseManager()
+    private val subscriptionManager: SubscriptionManager = FakeSubscriptionManager()
     private lateinit var alarmHomeViewModel: AlarmHomeViewModel
 
     @Test
@@ -47,7 +50,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -73,7 +77,6 @@ internal class AlarmHomeViewModelTest {
 
         // Given
         val alarms = MutableStateFlow(listOf(alarm1))
-        println(alarms.value)
 
         coEvery { appLinkAlarmRepository.alarms } returns alarms
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = true)) } answers {
@@ -88,13 +91,13 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         alarmHomeViewModel.homeUiState.test {
 
             var uiState = awaitItem()
-            println(uiState)
             assertEquals(true, uiState.alarms.first().appLinkAlarm.active)
 
             // When
@@ -123,7 +126,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -158,7 +162,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -192,7 +197,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -235,7 +241,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // Given
@@ -293,7 +300,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // Given
@@ -339,7 +347,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         alarmHomeViewModel.homeUiState.test {
@@ -355,7 +364,6 @@ internal class AlarmHomeViewModelTest {
 
             // Then
             uiState = awaitItem()
-            println(uiState)
             assertEquals(PermissionState.DENIED, uiState.notificationPermissionState)
             assertEquals(true, uiState.visibleNotificationPermissionDialog)
         }
@@ -371,7 +379,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         // When
@@ -398,7 +407,8 @@ internal class AlarmHomeViewModelTest {
             appLinkAlarmRepository,
             appLinkAlarmManager,
             appLinkAlarmStateManager,
-            firebaseManager
+            firebaseManager,
+            subscriptionManager
         )
 
         alarmHomeViewModel.event.test {
