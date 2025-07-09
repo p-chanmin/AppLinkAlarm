@@ -1,0 +1,33 @@
+<resources>
+    <string name="feature_setting_top_app_bar_title">Pengaturan</string>
+
+    <string name="feature_setting_icon_description_close">Tutup</string>
+    <string name="feature_setting_icon_description_subscription_info">Info langganan premium</string>
+
+    <string name="feature_setting_text_permission">Izin</string>
+    <string name="feature_setting_text_notification_status">Status Notifikasi</string>
+    <string name="feature_setting_text_alarms_reminders_status">Status Alarm &amp; Pengingat</string>
+
+    <string name="feature_setting_text_granted">Diizinkan</string>
+    <string name="feature_setting_text_denied">Diblokir</string>
+
+    <string name="feature_setting_text_subscription">Langganan</string>
+    <string name="feature_setting_text_premium_subscription">Langganan Premium</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">Langganan Premium menawarkan pengalaman tanpa iklan dan memungkinkan Anda langsung membuka aplikasi tertentu saat alarm Anda dalam mode hanya notifikasi.</string>
+
+    <string name="feature_setting_text_purchase_premium">Beli Premium</string>
+    <string name="feature_setting_text_restore_purchases">Pulihkan Pembelian</string>
+    <string name="feature_setting_text_not_subscribed">Belum Berlangganan</string>
+    <string name="feature_setting_text_subscribed">Sudah Berlangganan</string>
+    <string name="feature_setting_text_7_day_free_trial">Uji coba gratis 7 hari, lalu %1$s/bulan</string>
+    <string name="feature_setting_text_join_premium">Gabung Premium seharga %1$s/bulan</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Pusat langganan Google Play</string>
+    <string name="feature_setting_text_no_premium_subscription">Tidak ada langganan premium</string>
+
+    <string name="feature_setting_text_support">Dukungan</string>
+    <string name="feature_setting_text_review">Ulasan</string>
+    <string name="feature_setting_text_privacy_policy">Kebijakan Privasi</string>
+    <string name="feature_setting_text_open_source_license">Lisensi open source</string>
+    <string name="feature_setting_text_contact_us">Hubungi Kami</string>
+    <string name="feature_setting_text_version">Versi</string>
+</resources>

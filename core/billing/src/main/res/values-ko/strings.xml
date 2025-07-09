@@ -1,0 +1,4 @@
+<resources>
+    <string name="core_billing_text_payment_canceled">결제가 취소되었습니다</string>
+    <string name="core_billing_text_payment_error">결제 중 오류가 발생했습니다(%1$d)</string>
+</resources>

@@ -1,0 +1,33 @@
+<resources>
+    <string name="feature_setting_top_app_bar_title">設定</string>
+
+    <string name="feature_setting_icon_description_close">閉じる</string>
+    <string name="feature_setting_icon_description_subscription_info">プレミアムサブスクリプション情報</string>
+
+    <string name="feature_setting_text_permission">権限</string>
+    <string name="feature_setting_text_notification_status">通知の状態</string>
+    <string name="feature_setting_text_alarms_reminders_status">アラームとリマインダーの状態</string>
+
+    <string name="feature_setting_text_granted">許可</string>
+    <string name="feature_setting_text_denied">ブロック</string>
+
+    <string name="feature_setting_text_subscription">サブスクリプション</string>
+    <string name="feature_setting_text_premium_subscription">プレミアムサブスクリプション</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">プレミアムサブスクリプションでは広告が表示されず、アラームが通知のみモードのときに特定のアプリをすぐに起動できます。</string>
+
+    <string name="feature_setting_text_purchase_premium">プレミアムを購入</string>
+    <string name="feature_setting_text_restore_purchases">購入を復元</string>
+    <string name="feature_setting_text_not_subscribed">未登録</string>
+    <string name="feature_setting_text_subscribed">登録済み</string>
+    <string name="feature_setting_text_7_day_free_trial">7日間無料トライアル、その後 %1$s/月</string>
+    <string name="feature_setting_text_join_premium">%1$s/月でプレミアムに参加</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Google Play サブスクリプションセンター</string>
+    <string name="feature_setting_text_no_premium_subscription">プレミアムサブスクリプションなし</string>
+
+    <string name="feature_setting_text_support">サポート</string>
+    <string name="feature_setting_text_review">レビュー</string>
+    <string name="feature_setting_text_privacy_policy">プライバシーポリシー</string>
+    <string name="feature_setting_text_open_source_license">オープンソースライセンス</string>
+    <string name="feature_setting_text_contact_us">お問い合わせ</string>
+    <string name="feature_setting_text_version">バージョン</string>
+</resources>

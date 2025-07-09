@@ -1,0 +1,76 @@
+<resources>
+    <string name="feature_alarm_top_app_bar_title_default">Alarm AppLink</string>
+    <string name="feature_alarm_top_app_bar_title_select_default">Pilih Alarm</string>
+    <string name="feature_alarm_top_app_bar_title_select_alarm">%1$s dipilih</string>
+    <string name="feature_alarm_top_app_bar_new_alarm">Alarm Baru</string>
+    <string name="feature_alarm_top_app_bar_edit_alarm">Edit Alarm</string>
+    <string name="feature_alarm_top_app_bar_select_app">Pilih Aplikasi</string>
+    <string name="feature_alarm_top_app_bar_dismiss_alarm">Matikan Alarm</string>
+
+    <string name="feature_alarm_icon_description_settings">Pengaturan</string>
+    <string name="feature_alarm_icon_description_add_alarm">Tambah Alarm</string>
+    <string name="feature_alarm_icon_description_selected_alarm_on">alarm terpilih Aktif</string>
+    <string name="feature_alarm_icon_description_selected_alarm_off">alarm terpilih Nonaktif</string>
+    <string name="feature_alarm_icon_description_selected_alarm_delete">hapus alarm terpilih</string>
+    <string name="feature_alarm_icon_description_close">Tutup</string>
+    <string name="feature_alarm_icon_description_app_icon">ikon %1$s</string>
+    <string name="feature_alarm_icon_description_alarm_mode_info">Info Mode Alarm</string>
+
+    <string name="feature_alarm_text_select_all">Semua</string>
+    <string name="feature_alarm_text_select_cancel">Batal</string>
+    <string name="feature_alarm_text_on">Aktif</string>
+    <string name="feature_alarm_text_off">Nonaktif</string>
+    <string name="feature_alarm_text_selected_alarm_delete">Hapus</string>
+    <string name="feature_alarm_text_alarm_save">Simpan</string>
+
+    <string name="feature_alarm_text_standard">Standar</string>
+    <string name="feature_alarm_text_notification_only">Hanya Notifikasi</string>
+    <string name="feature_alarm_text_every_day">Setiap Hari</string>
+
+    <string name="feature_alarm_text_sunday">Min</string>
+    <string name="feature_alarm_text_monday">Sen</string>
+    <string name="feature_alarm_text_tuesday">Sel</string>
+    <string name="feature_alarm_text_wednesday">Rab</string>
+    <string name="feature_alarm_text_thursday">Kam</string>
+    <string name="feature_alarm_text_friday">Jum</string>
+    <string name="feature_alarm_text_saturday">Sab</string>
+
+    <string name="feature_alarm_text_sunday_simple">M</string>
+    <string name="feature_alarm_text_monday_simple">S</string>
+    <string name="feature_alarm_text_tuesday_simple">S</string>
+    <string name="feature_alarm_text_wednesday_simple">R</string>
+    <string name="feature_alarm_text_thursday_simple">K</string>
+    <string name="feature_alarm_text_friday_simple">J</string>
+    <string name="feature_alarm_text_saturday_simple">S</string>
+
+    <string name="feature_alarm_text_linked_app">Aplikasi Tertaut</string>
+    <string name="feature_alarm_text_not_found">Tidak Ditemukan</string>
+    <string name="feature_alarm_text_choose_app">Pilih Aplikasi</string>
+    <string name="feature_alarm_text_time">Waktu</string>
+    <string name="feature_alarm_text_am">AM</string>
+    <string name="feature_alarm_text_pm">PM</string>
+    <string name="feature_alarm_text_repeat_days">Hari Pengulangan</string>
+    <string name="feature_alarm_text_alarm_info">Info Alarm</string>
+    <string name="feature_alarm_text_alarm_name">Nama Alarm</string>
+    <string name="feature_alarm_text_message">Pesan</string>
+    <string name="feature_alarm_text_alarm_mode">Mode Alarm</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">Hanya Notifikasi: Pada waktu yang ditentukan, Anda akan menerima notifikasi di ponsel Anda. Mengetuk notifikasi akan membuka aplikasi tertentu.\n\nStandar: Pada waktu yang ditentukan, alarm akan berbunyi. Anda dapat membuka aplikasi tertentu saat mematikan alarm.</string>
+    <string name="feature_alarm_text_mode">Mode</string>
+    <string name="feature_alarm_text_alarm_sound">Suara Alarm</string>
+    <string name="feature_alarm_text_volume">Volume: %1$s</string>
+    <string name="feature_alarm_text_vibrate">Getar</string>
+    <string name="feature_alarm_text_search">Cari</string>
+    <string name="feature_alarm_text_default_sound">Suara Default</string>
+
+    <string name="feature_alarm_text_permission_denied">Izin Ditolak</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">Izin notifikasi diperlukan agar alarm berfungsi dengan baik. Tanpa izin ini, Anda mungkin melewatkan pemberitahuan penting. Silakan izinkan notifikasi.</string>
+    <string name="feature_alarm_text_exact_alarm_permission_denied_content">Aplikasi ini memerlukan izin Alarm &amp; Pengingat agar dapat berfungsi dengan benar. Apakah Anda ingin mengizinkannya?</string>
+    <string name="feature_alarm_text_permission_allow">Izinkan</string>
+    <string name="feature_alarm_text_permission_do_not_allow">Jangan Izinkan</string>
+
+    <string name="feature_alarm_error_text_app_not_found">Aplikasi tidak ditemukan: %1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">Izin notifikasi telah ditolak.\nUntuk mengaktifkan notifikasi, buka Pengaturan</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">Matikan dan Buka Aplikasi</string>
+    <string name="feature_alarm_text_open_app">Buka Aplikasi</string>
+</resources>

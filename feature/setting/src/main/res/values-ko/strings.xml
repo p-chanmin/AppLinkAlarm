@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_setting_top_app_bar_title">설정</string>
+
+    <string name="feature_setting_icon_description_close">닫기</string>
+    <string name="feature_setting_icon_description_subscription_info">프리미엄 구독 정보</string>
+
+    <string name="feature_setting_text_permission">권한</string>
+    <string name="feature_setting_text_notification_status">알림 권한 상태</string>
+    <string name="feature_setting_text_alarms_reminders_status">알람 및 리마인더 권한 상태</string>
+
+    <string name="feature_setting_text_granted">허용됨</string>
+    <string name="feature_setting_text_denied">차단됨</string>
+
+    <string name="feature_setting_text_subscription">구독</string>
+    <string name="feature_setting_text_premium_subscription">프리미엄 구독</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">프리미엄 구독은 앱 내에서 광고를 제거합니다. 알람이 알림만 모드일 때 연결 앱을 즉시 실행할 수 있습니다.</string>
+
+    <string name="feature_setting_text_purchase_premium">프리미엄 구매</string>
+    <string name="feature_setting_text_restore_purchases">구매 복원</string>
+    <string name="feature_setting_text_not_subscribed">구독 없음</string>
+    <string name="feature_setting_text_subscribed">구독 중</string>
+    <string name="feature_setting_text_7_day_free_trial">7일 무료 이용 이후 %1$s/월</string>
+    <string name="feature_setting_text_join_premium">프리미엄 구독 %1$s/월</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Google Play 결제 센터</string>
+    <string name="feature_setting_text_no_premium_subscription">프리미엄 구독 상태가 없습니다</string>
+
+    <string name="feature_setting_text_support">지원</string>
+    <string name="feature_setting_text_review">리뷰</string>
+    <string name="feature_setting_text_privacy_policy">개인정보 처리방침</string>
+    <string name="feature_setting_text_open_source_license">오픈소스 라이선스</string>
+    <string name="feature_setting_text_contact_us">문의하기</string>
+    <string name="feature_setting_text_version">Version</string>
+</resources>
