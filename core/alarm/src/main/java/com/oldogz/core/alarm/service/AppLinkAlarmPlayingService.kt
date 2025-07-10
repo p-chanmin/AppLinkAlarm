@@ -1,4 +1,4 @@
-package com.oldogz.core.alarm
+package com.oldogz.core.alarm.service
 
 import android.app.Service
 import android.content.Context
@@ -15,6 +15,9 @@ import android.os.Vibrator
 import android.os.VibratorManager
 import androidx.core.net.toUri
 import com.google.firebase.analytics.logEvent
+import com.oldogz.core.alarm.R
+import com.oldogz.core.alarm.manager.AppLinkAlarmNotificationManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.BuildConfig
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
@@ -26,8 +29,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -50,6 +51,9 @@ class AppLinkAlarmPlayingService : Service() {
     lateinit var appLinkAlarmNotificationManager: AppLinkAlarmNotificationManager
 
     @Inject
+    lateinit var appLinkAlarmStateManager: AppLinkAlarmStateManager
+
+    @Inject
     lateinit var firebaseManager: FirebaseManager
 
     @Inject
@@ -61,9 +65,6 @@ class AppLinkAlarmPlayingService : Service() {
     private lateinit var vibrator: Vibrator
 
     private val mutex = Mutex()
-
-    private val _currentAppLinkAlarmId: MutableStateFlow<Int?> = MutableStateFlow(null)
-    val currentAppLinkAlarmId = _currentAppLinkAlarmId.asStateFlow()
 
     private var mediaPlayer: MediaPlayer? = null
     private var mediaVolumeBeforeAlarm: Int = 0
@@ -130,11 +131,11 @@ class AppLinkAlarmPlayingService : Service() {
             appLinkAlarmNotificationManager.createNotification(appLinkAlarm, includeAds)
         )
 
-        _currentAppLinkAlarmId.value?.let { id ->
+        appLinkAlarmStateManager.currentAppLinkAlarmId.value?.let { id ->
             notifyMissedAlarm(id, includeAds)
         }
 
-        _currentAppLinkAlarmId.value = alarmId
+        appLinkAlarmStateManager.updateCurrentAppLinkAlarmId(alarmId)
 
         initMediaPlayer(appLinkAlarm)
 
@@ -203,6 +204,7 @@ class AppLinkAlarmPlayingService : Service() {
         vibrator.cancel()
         audioManager.abandonAudioFocusRequest(focusRequest)
         subscriptionManager.endConnection()
+        appLinkAlarmStateManager.updateCurrentAppLinkAlarmId(null)
         stopForeground(STOP_FOREGROUND_REMOVE)
         serviceScope.cancel()
     }

@@ -1,4 +1,4 @@
-package com.oldogz.core.alarm
+package com.oldogz.core.alarm.manager
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -12,6 +12,8 @@ import android.graphics.Canvas
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
+import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
+import com.oldogz.core.alarm.R
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.navigation.getDeepLinkOf
