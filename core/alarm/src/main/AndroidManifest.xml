@@ -11,15 +11,12 @@
 
     <application>
         <service
-            android:name=".AppLinkAlarmPlayingService"
+            android:name=".service.AppLinkAlarmPlayingService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
-            android:name=".AppLinkAlarmReceiver"
-            android:exported="false" />
-        <receiver
-            android:name=".AppLinkAlarmRegisterReceiver"
+            android:name=".receiver.AppLinkAlarmReceiver"
             android:exported="false">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
