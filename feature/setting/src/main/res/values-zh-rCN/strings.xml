@@ -1,0 +1,33 @@
+<resources>
+    <string name="feature_setting_top_app_bar_title">设置</string>
+
+    <string name="feature_setting_icon_description_close">关闭</string>
+    <string name="feature_setting_icon_description_subscription_info">高级订阅信息</string>
+
+    <string name="feature_setting_text_permission">权限</string>
+    <string name="feature_setting_text_notification_status">通知状态</string>
+    <string name="feature_setting_text_alarms_reminders_status">闹钟和提醒状态</string>
+
+    <string name="feature_setting_text_granted">已允许</string>
+    <string name="feature_setting_text_denied">已阻止</string>
+
+    <string name="feature_setting_text_subscription">订阅</string>
+    <string name="feature_setting_text_premium_subscription">高级订阅</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">高级订阅可带来无广告体验，并允许你在闹钟为仅通知模式时立即启动指定应用。</string>
+
+    <string name="feature_setting_text_purchase_premium">购买高级版</string>
+    <string name="feature_setting_text_restore_purchases">恢复购买</string>
+    <string name="feature_setting_text_not_subscribed">未订阅</string>
+    <string name="feature_setting_text_subscribed">已订阅</string>
+    <string name="feature_setting_text_7_day_free_trial">7天免费试用，之后为 %1$s/月</string>
+    <string name="feature_setting_text_join_premium">以 %1$s/月加入高级版</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Google Play 订阅中心</string>
+    <string name="feature_setting_text_no_premium_subscription">无高级订阅</string>
+
+    <string name="feature_setting_text_support">支持</string>
+    <string name="feature_setting_text_review">评价</string>
+    <string name="feature_setting_text_privacy_policy">隐私政策</string>
+    <string name="feature_setting_text_open_source_license">开源许可证</string>
+    <string name="feature_setting_text_contact_us">联系我们</string>
+    <string name="feature_setting_text_version">版本</string>
+</resources>

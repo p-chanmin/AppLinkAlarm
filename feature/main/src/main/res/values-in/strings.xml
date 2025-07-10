@@ -1,0 +1,5 @@
+<resources>
+    <string name="feature_main_error_message_unknown">Terjadi kesalahan yang tidak diketahui.</string>
+    <string name="feature_main_text_install">Instal</string>
+    <string name="feature_main_text_update_download_complete">Unduhan pembaruan selesai</string>
+</resources>

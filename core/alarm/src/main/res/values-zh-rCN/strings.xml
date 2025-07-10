@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">应用链接闹钟通知渠道</string>
+    <string name="core_alarm_notification_channel_description">用于应用链接闹钟的通知渠道</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">点击以关闭闹钟\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">错过的闹钟：%1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">未找到关联的应用：%1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">由于找不到关联的应用，此闹钟将被禁用。</string>
+</resources>

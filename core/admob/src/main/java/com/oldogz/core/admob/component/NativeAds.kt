@@ -75,7 +75,7 @@ private fun NativeAds(
         nativeAd.icon?.let {
             this.adAppIcon.setImageDrawable(it.drawable)
         } ?: run {
-            adAppIcon.visibility = View.INVISIBLE
+            adAppIcon.visibility = View.GONE
         }
 
         nativeAd.headline?.let {
@@ -88,13 +88,13 @@ private fun NativeAds(
         nativeAd.callToAction?.let {
             this.adCallToAction.text = it
         } ?: run {
-            adCallToAction.visibility = View.INVISIBLE
+            adCallToAction.visibility = View.GONE
         }
 
         nativeAd.starRating?.let {
             this.adStars.rating = it.toFloat()
         } ?: run {
-            adStars.visibility = View.INVISIBLE
+            adStars.visibility = View.GONE
         }
 
         nativeAd.mediaContent?.let {

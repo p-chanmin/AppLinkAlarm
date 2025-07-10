@@ -1,0 +1,4 @@
+<resources>
+    <string name="core_billing_text_payment_canceled">Paiement annulé</string>
+    <string name="core_billing_text_payment_error">Une erreur est survenue lors du paiement (%1$d)</string>
+</resources>

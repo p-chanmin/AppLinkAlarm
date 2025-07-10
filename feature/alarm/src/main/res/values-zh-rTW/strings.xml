@@ -1,0 +1,76 @@
+<resources>
+    <string name="feature_alarm_top_app_bar_title_default">應用連結鬧鐘</string>
+    <string name="feature_alarm_top_app_bar_title_select_default">選擇鬧鐘</string>
+    <string name="feature_alarm_top_app_bar_title_select_alarm">已選擇 %1$s 個</string>
+    <string name="feature_alarm_top_app_bar_new_alarm">新增鬧鐘</string>
+    <string name="feature_alarm_top_app_bar_edit_alarm">編輯鬧鐘</string>
+    <string name="feature_alarm_top_app_bar_select_app">選擇應用程式</string>
+    <string name="feature_alarm_top_app_bar_dismiss_alarm">關閉鬧鐘</string>
+
+    <string name="feature_alarm_icon_description_settings">設定</string>
+    <string name="feature_alarm_icon_description_add_alarm">新增鬧鐘</string>
+    <string name="feature_alarm_icon_description_selected_alarm_on">已選鬧鐘開啟</string>
+    <string name="feature_alarm_icon_description_selected_alarm_off">已選鬧鐘關閉</string>
+    <string name="feature_alarm_icon_description_selected_alarm_delete">刪除已選鬧鐘</string>
+    <string name="feature_alarm_icon_description_close">關閉</string>
+    <string name="feature_alarm_icon_description_app_icon">%1$s 圖示</string>
+    <string name="feature_alarm_icon_description_alarm_mode_info">鬧鐘模式資訊</string>
+
+    <string name="feature_alarm_text_select_all">全部</string>
+    <string name="feature_alarm_text_select_cancel">取消</string>
+    <string name="feature_alarm_text_on">開啟</string>
+    <string name="feature_alarm_text_off">關閉</string>
+    <string name="feature_alarm_text_selected_alarm_delete">刪除</string>
+    <string name="feature_alarm_text_alarm_save">儲存</string>
+
+    <string name="feature_alarm_text_standard">標準</string>
+    <string name="feature_alarm_text_notification_only">僅通知</string>
+    <string name="feature_alarm_text_every_day">每天</string>
+
+    <string name="feature_alarm_text_sunday">週日</string>
+    <string name="feature_alarm_text_monday">週一</string>
+    <string name="feature_alarm_text_tuesday">週二</string>
+    <string name="feature_alarm_text_wednesday">週三</string>
+    <string name="feature_alarm_text_thursday">週四</string>
+    <string name="feature_alarm_text_friday">週五</string>
+    <string name="feature_alarm_text_saturday">週六</string>
+
+    <string name="feature_alarm_text_sunday_simple">日</string>
+    <string name="feature_alarm_text_monday_simple">一</string>
+    <string name="feature_alarm_text_tuesday_simple">二</string>
+    <string name="feature_alarm_text_wednesday_simple">三</string>
+    <string name="feature_alarm_text_thursday_simple">四</string>
+    <string name="feature_alarm_text_friday_simple">五</string>
+    <string name="feature_alarm_text_saturday_simple">六</string>
+
+    <string name="feature_alarm_text_linked_app">已連結應用程式</string>
+    <string name="feature_alarm_text_not_found">找不到</string>
+    <string name="feature_alarm_text_choose_app">選擇應用程式</string>
+    <string name="feature_alarm_text_time">時間</string>
+    <string name="feature_alarm_text_am">上午</string>
+    <string name="feature_alarm_text_pm">下午</string>
+    <string name="feature_alarm_text_repeat_days">重複天數</string>
+    <string name="feature_alarm_text_alarm_info">鬧鐘資訊</string>
+    <string name="feature_alarm_text_alarm_name">鬧鐘名稱</string>
+    <string name="feature_alarm_text_message">訊息</string>
+    <string name="feature_alarm_text_alarm_mode">鬧鐘模式</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">僅通知：在設定時間，您會收到通知。點擊通知會開啟指定應用程式。\n\n標準：在設定時間，鬧鐘會響鈴。關閉鬧鐘時可開啟指定應用程式。</string>
+    <string name="feature_alarm_text_mode">模式</string>
+    <string name="feature_alarm_text_alarm_sound">鬧鐘鈴聲</string>
+    <string name="feature_alarm_text_volume">音量：%1$s</string>
+    <string name="feature_alarm_text_vibrate">震動</string>
+    <string name="feature_alarm_text_search">搜尋</string>
+    <string name="feature_alarm_text_default_sound">預設鈴聲</string>
+
+    <string name="feature_alarm_text_permission_denied">權限已拒絕</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">鬧鐘需要通知權限才能正常運作。否則您可能會錯過重要提醒。請允許通知。</string>
+    <string name="feature_alarm_text_exact_alarm_permission_denied_content">此應用程式需要「鬧鐘與提醒」權限才能正常運作。是否允許？</string>
+    <string name="feature_alarm_text_permission_allow">允許</string>
+    <string name="feature_alarm_text_permission_do_not_allow">不允許</string>
+
+    <string name="feature_alarm_error_text_app_not_found">找不到應用程式：%1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">通知權限已被拒絕。\n如需啟用通知，請前往設定</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">關閉並開啟應用程式</string>
+    <string name="feature_alarm_text_open_app">開啟應用程式</string>
+</resources>

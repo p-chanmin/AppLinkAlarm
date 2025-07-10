@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">Canal de notificaciones de Alarma de Enlace de App</string>
+    <string name="core_alarm_notification_channel_description">Canal de notificaciones para Alarma de Enlace de App</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">Haz clic para descartar la alarma\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">Alarma perdida: %1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">No se encontraron aplicaciones enlazadas: %1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">Esta alarma se desactivará porque no se puede encontrar la aplicación enlazada.</string>
+</resources>

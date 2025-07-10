@@ -1,0 +1,5 @@
+<resources>
+    <string name="feature_main_error_message_unknown">不明なエラーが発生しました。</string>
+    <string name="feature_main_text_install">インストール</string>
+    <string name="feature_main_text_update_download_complete">アップデートのダウンロードが完了しました</string>
+</resources>

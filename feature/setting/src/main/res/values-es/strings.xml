@@ -1,0 +1,33 @@
+<resources>
+    <string name="feature_setting_top_app_bar_title">Configuración</string>
+
+    <string name="feature_setting_icon_description_close">Cerrar</string>
+    <string name="feature_setting_icon_description_subscription_info">Información de suscripción premium</string>
+
+    <string name="feature_setting_text_permission">Permiso</string>
+    <string name="feature_setting_text_notification_status">Estado de notificaciones</string>
+    <string name="feature_setting_text_alarms_reminders_status">Estado de alarmas y recordatorios</string>
+
+    <string name="feature_setting_text_granted">Permitido</string>
+    <string name="feature_setting_text_denied">Bloqueado</string>
+
+    <string name="feature_setting_text_subscription">Suscripción</string>
+    <string name="feature_setting_text_premium_subscription">Suscripción premium</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">La suscripción premium ofrece una experiencia sin anuncios y te permite abrir una app específica al instante cuando tu alarma está en modo solo notificación.</string>
+
+    <string name="feature_setting_text_purchase_premium">Comprar premium</string>
+    <string name="feature_setting_text_restore_purchases">Restaurar compras</string>
+    <string name="feature_setting_text_not_subscribed">Sin suscripción</string>
+    <string name="feature_setting_text_subscribed">Suscrito</string>
+    <string name="feature_setting_text_7_day_free_trial">Prueba gratuita de 7 días, luego %1$s/mes</string>
+    <string name="feature_setting_text_join_premium">Únete a Premium por %1$s/mes</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Centro de suscripciones de Google Play</string>
+    <string name="feature_setting_text_no_premium_subscription">Sin suscripción premium</string>
+
+    <string name="feature_setting_text_support">Soporte</string>
+    <string name="feature_setting_text_review">Reseña</string>
+    <string name="feature_setting_text_privacy_policy">Política de privacidad</string>
+    <string name="feature_setting_text_open_source_license">Licencias de código abierto</string>
+    <string name="feature_setting_text_contact_us">Contáctanos</string>
+    <string name="feature_setting_text_version">Versión</string>
+</resources>

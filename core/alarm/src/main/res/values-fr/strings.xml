@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">Canal de notification d’Alarme de Lien d’App</string>
+    <string name="core_alarm_notification_channel_description">Canal de notification pour Alarme de Lien d’App</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">Cliquez pour désactiver l’alarme\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">Alarme manquée : %1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">Aucune application liée trouvée : %1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">Cette alarme sera désactivée car l’application liée est introuvable.</string>
+</resources>

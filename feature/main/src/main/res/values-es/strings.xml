@@ -1,0 +1,5 @@
+<resources>
+    <string name="feature_main_error_message_unknown">Ha ocurrido un error desconocido.</string>
+    <string name="feature_main_text_install">Instalar</string>
+    <string name="feature_main_text_update_download_complete">Descarga de actualización completada</string>
+</resources>

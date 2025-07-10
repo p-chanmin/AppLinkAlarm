@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">應用連結鬧鐘通知頻道</string>
+    <string name="core_alarm_notification_channel_description">應用連結鬧鐘的通知頻道</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">點擊以關閉鬧鐘\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">錯過的鬧鐘：%1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">找不到已連結的應用程式：%1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">由於找不到已連結的應用程式，此鬧鐘將會被停用。</string>
+</resources>

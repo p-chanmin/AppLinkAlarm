@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="feature_alarm_top_app_bar_title_default">앱 연결 알람</string>
+    <string name="feature_alarm_top_app_bar_title_select_default">알람 선택</string>
+    <string name="feature_alarm_top_app_bar_title_select_alarm">%1$s개 선택됨</string>
+    <string name="feature_alarm_top_app_bar_new_alarm">새로운 알람</string>
+    <string name="feature_alarm_top_app_bar_edit_alarm">알람 편집</string>
+    <string name="feature_alarm_top_app_bar_select_app">앱 선택</string>
+    <string name="feature_alarm_top_app_bar_dismiss_alarm">알람 해제</string>
+
+    <string name="feature_alarm_icon_description_settings">설정</string>
+    <string name="feature_alarm_icon_description_add_alarm">알람 추가</string>
+    <string name="feature_alarm_icon_description_selected_alarm_on">선택된 알람 켜기</string>
+    <string name="feature_alarm_icon_description_selected_alarm_off">선택된 알람 끄기</string>
+    <string name="feature_alarm_icon_description_selected_alarm_delete">선택된 알람 삭제</string>
+    <string name="feature_alarm_icon_description_close">닫기</string>
+    <string name="feature_alarm_icon_description_app_icon">%1$s 아이콘</string>
+    <string name="feature_alarm_icon_description_alarm_mode_info">알람 모드 정보</string>
+
+    <string name="feature_alarm_text_select_all">전체</string>
+    <string name="feature_alarm_text_select_cancel">취소</string>
+    <string name="feature_alarm_text_on">켜기</string>
+    <string name="feature_alarm_text_off">끄기</string>
+    <string name="feature_alarm_text_selected_alarm_delete">삭제</string>
+    <string name="feature_alarm_text_alarm_save">저장</string>
+
+    <string name="feature_alarm_text_standard">기본 알람</string>
+    <string name="feature_alarm_text_notification_only">알림만</string>
+    <string name="feature_alarm_text_every_day">매일</string>
+
+    <string name="feature_alarm_text_sunday">일</string>
+    <string name="feature_alarm_text_monday">월</string>
+    <string name="feature_alarm_text_tuesday">화</string>
+    <string name="feature_alarm_text_wednesday">수</string>
+    <string name="feature_alarm_text_thursday">목</string>
+    <string name="feature_alarm_text_friday">금</string>
+    <string name="feature_alarm_text_saturday">토</string>
+
+    <string name="feature_alarm_text_sunday_simple">일</string>
+    <string name="feature_alarm_text_monday_simple">월</string>
+    <string name="feature_alarm_text_tuesday_simple">화</string>
+    <string name="feature_alarm_text_wednesday_simple">수</string>
+    <string name="feature_alarm_text_thursday_simple">목</string>
+    <string name="feature_alarm_text_friday_simple">금</string>
+    <string name="feature_alarm_text_saturday_simple">토</string>
+
+    <string name="feature_alarm_text_linked_app">연결된 앱</string>
+    <string name="feature_alarm_text_not_found">찾을 수 없음</string>
+    <string name="feature_alarm_text_choose_app">앱 선택</string>
+    <string name="feature_alarm_text_time">시간</string>
+    <string name="feature_alarm_text_am">오전</string>
+    <string name="feature_alarm_text_pm">오후</string>
+    <string name="feature_alarm_text_repeat_days">반복</string>
+    <string name="feature_alarm_text_alarm_info">알람 정보</string>
+    <string name="feature_alarm_text_alarm_name">알람 제목</string>
+    <string name="feature_alarm_text_message">내용</string>
+    <string name="feature_alarm_text_alarm_mode">알람 모드</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">알림만: 설정된 시간에 알림만 받게 됩니다. 알림을 누르면 언제든지 연결된 앱을 열 수 있습니다.\n\n기본 알람: 설정된 시간에 벨소리와 함께 울립니다. 알람을 해제할 때 연결된 앱을 열 수 있습니다.</string>
+    <string name="feature_alarm_text_mode">모드</string>
+    <string name="feature_alarm_text_alarm_sound">알람 소리</string>
+    <string name="feature_alarm_text_volume">볼륨 : %1$s</string>
+    <string name="feature_alarm_text_vibrate">진동</string>
+    <string name="feature_alarm_text_search">검색</string>
+    <string name="feature_alarm_text_default_sound">기본음</string>
+
+    <string name="feature_alarm_text_permission_denied">권한 거부됨</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">알람이 제대로 작동하려면 알림 권한이 필요합니다. 알림 권한이 없으면 중요한 알림을 놓칠 수 있습니다. 알림을 허용해 주세요.</string>
+    <string name="feature_alarm_text_exact_alarm_permission_denied_content">알람이 제대로 작동하려면 알람 및 리마인더 권한이 필요합니다. 허용 하시겠습니까?</string>
+    <string name="feature_alarm_text_permission_allow">허용</string>
+    <string name="feature_alarm_text_permission_do_not_allow">거부</string>
+
+    <string name="feature_alarm_error_text_app_not_found">연결된 앱을 찾을 수 없음: %1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">알림 권한이 거부되었습니다.\n권한을 활성화 하려면 설정으로 이동하세요.</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">알람 해제 및 앱 실행</string>
+    <string name="feature_alarm_text_open_app">앱 실행</string>
+</resources>

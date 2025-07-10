@@ -1,0 +1,76 @@
+<resources>
+    <string name="feature_alarm_top_app_bar_title_default">Alarmes de Lien d’App</string>
+    <string name="feature_alarm_top_app_bar_title_select_default">Sélectionner des alarmes</string>
+    <string name="feature_alarm_top_app_bar_title_select_alarm">%1$s sélectionné(s)</string>
+    <string name="feature_alarm_top_app_bar_new_alarm">Nouvelle alarme</string>
+    <string name="feature_alarm_top_app_bar_edit_alarm">Modifier l’alarme</string>
+    <string name="feature_alarm_top_app_bar_select_app">Sélectionner une app</string>
+    <string name="feature_alarm_top_app_bar_dismiss_alarm">Désactiver l’alarme</string>
+
+    <string name="feature_alarm_icon_description_settings">Paramètres</string>
+    <string name="feature_alarm_icon_description_add_alarm">Ajouter une alarme</string>
+    <string name="feature_alarm_icon_description_selected_alarm_on">alarme sélectionnée activée</string>
+    <string name="feature_alarm_icon_description_selected_alarm_off">alarme sélectionnée désactivée</string>
+    <string name="feature_alarm_icon_description_selected_alarm_delete">supprimer l’alarme sélectionnée</string>
+    <string name="feature_alarm_icon_description_close">Fermer</string>
+    <string name="feature_alarm_icon_description_app_icon">icône %1$s</string>
+    <string name="feature_alarm_icon_description_alarm_mode_info">Info mode alarme</string>
+
+    <string name="feature_alarm_text_select_all">Tout</string>
+    <string name="feature_alarm_text_select_cancel">Annuler</string>
+    <string name="feature_alarm_text_on">Activé</string>
+    <string name="feature_alarm_text_off">Désactivé</string>
+    <string name="feature_alarm_text_selected_alarm_delete">Supprimer</string>
+    <string name="feature_alarm_text_alarm_save">Enregistrer</string>
+
+    <string name="feature_alarm_text_standard">Standard</string>
+    <string name="feature_alarm_text_notification_only">Notification seulement</string>
+    <string name="feature_alarm_text_every_day">Tous les jours</string>
+
+    <string name="feature_alarm_text_sunday">Dim</string>
+    <string name="feature_alarm_text_monday">Lun</string>
+    <string name="feature_alarm_text_tuesday">Mar</string>
+    <string name="feature_alarm_text_wednesday">Mer</string>
+    <string name="feature_alarm_text_thursday">Jeu</string>
+    <string name="feature_alarm_text_friday">Ven</string>
+    <string name="feature_alarm_text_saturday">Sam</string>
+
+    <string name="feature_alarm_text_sunday_simple">D</string>
+    <string name="feature_alarm_text_monday_simple">L</string>
+    <string name="feature_alarm_text_tuesday_simple">M</string>
+    <string name="feature_alarm_text_wednesday_simple">M</string>
+    <string name="feature_alarm_text_thursday_simple">J</string>
+    <string name="feature_alarm_text_friday_simple">V</string>
+    <string name="feature_alarm_text_saturday_simple">S</string>
+
+    <string name="feature_alarm_text_linked_app">App liée</string>
+    <string name="feature_alarm_text_not_found">Non trouvé</string>
+    <string name="feature_alarm_text_choose_app">Choisir une app</string>
+    <string name="feature_alarm_text_time">Heure</string>
+    <string name="feature_alarm_text_am">AM</string>
+    <string name="feature_alarm_text_pm">PM</string>
+    <string name="feature_alarm_text_repeat_days">Jours de répétition</string>
+    <string name="feature_alarm_text_alarm_info">Infos de l’alarme</string>
+    <string name="feature_alarm_text_alarm_name">Nom de l’alarme</string>
+    <string name="feature_alarm_text_message">Message</string>
+    <string name="feature_alarm_text_alarm_mode">Mode d’alarme</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">Notification seulement : À l’heure définie, vous recevrez une notification sur votre téléphone. En appuyant sur la notification, une application spécifique s’ouvrira.\n\nStandard : À l’heure définie, une alarme sonnera. Vous pouvez ouvrir une application spécifique lors de la désactivation de l’alarme.</string>
+    <string name="feature_alarm_text_mode">Mode</string>
+    <string name="feature_alarm_text_alarm_sound">Sonnerie de l’alarme</string>
+    <string name="feature_alarm_text_volume">Volume : %1$s</string>
+    <string name="feature_alarm_text_vibrate">Vibrer</string>
+    <string name="feature_alarm_text_search">Rechercher</string>
+    <string name="feature_alarm_text_default_sound">Son par défaut</string>
+
+    <string name="feature_alarm_text_permission_denied">Autorisation refusée</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">L’autorisation de notification est requise pour que les alarmes fonctionnent correctement. Sans elle, vous pourriez manquer des alertes importantes. Veuillez autoriser les notifications.</string>
+    <string name="feature_alarm_text_exact_alarm_permission_denied_content">Cette application nécessite l’autorisation Alarmes &amp; Rappels pour fonctionner correctement. Voulez-vous l’autoriser ?</string>
+    <string name="feature_alarm_text_permission_allow">Autoriser</string>
+    <string name="feature_alarm_text_permission_do_not_allow">Ne pas autoriser</string>
+
+    <string name="feature_alarm_error_text_app_not_found">App non trouvée : %1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">L’autorisation de notification a été refusée.\nPour activer les notifications, allez dans Paramètres</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">Désactiver et ouvrir l’app</string>
+    <string name="feature_alarm_text_open_app">Ouvrir l’app</string>
+</resources>

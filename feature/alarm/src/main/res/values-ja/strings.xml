@@ -1,0 +1,76 @@
+<resources>
+    <string name="feature_alarm_top_app_bar_title_default">アプリリンクアラーム</string>
+    <string name="feature_alarm_top_app_bar_title_select_default">アラームを選択</string>
+    <string name="feature_alarm_top_app_bar_title_select_alarm">%1$s 件選択済み</string>
+    <string name="feature_alarm_top_app_bar_new_alarm">新しいアラーム</string>
+    <string name="feature_alarm_top_app_bar_edit_alarm">アラームを編集</string>
+    <string name="feature_alarm_top_app_bar_select_app">アプリを選択</string>
+    <string name="feature_alarm_top_app_bar_dismiss_alarm">アラームを解除</string>
+
+    <string name="feature_alarm_icon_description_settings">設定</string>
+    <string name="feature_alarm_icon_description_add_alarm">アラームを追加</string>
+    <string name="feature_alarm_icon_description_selected_alarm_on">選択中のアラームオン</string>
+    <string name="feature_alarm_icon_description_selected_alarm_off">選択中のアラームオフ</string>
+    <string name="feature_alarm_icon_description_selected_alarm_delete">選択中のアラームを削除</string>
+    <string name="feature_alarm_icon_description_close">閉じる</string>
+    <string name="feature_alarm_icon_description_app_icon">%1$s アイコン</string>
+    <string name="feature_alarm_icon_description_alarm_mode_info">アラームモード情報</string>
+
+    <string name="feature_alarm_text_select_all">すべて</string>
+    <string name="feature_alarm_text_select_cancel">キャンセル</string>
+    <string name="feature_alarm_text_on">オン</string>
+    <string name="feature_alarm_text_off">オフ</string>
+    <string name="feature_alarm_text_selected_alarm_delete">削除</string>
+    <string name="feature_alarm_text_alarm_save">保存</string>
+
+    <string name="feature_alarm_text_standard">標準</string>
+    <string name="feature_alarm_text_notification_only">通知のみ</string>
+    <string name="feature_alarm_text_every_day">毎日</string>
+
+    <string name="feature_alarm_text_sunday">日</string>
+    <string name="feature_alarm_text_monday">月</string>
+    <string name="feature_alarm_text_tuesday">火</string>
+    <string name="feature_alarm_text_wednesday">水</string>
+    <string name="feature_alarm_text_thursday">木</string>
+    <string name="feature_alarm_text_friday">金</string>
+    <string name="feature_alarm_text_saturday">土</string>
+
+    <string name="feature_alarm_text_sunday_simple">日</string>
+    <string name="feature_alarm_text_monday_simple">月</string>
+    <string name="feature_alarm_text_tuesday_simple">火</string>
+    <string name="feature_alarm_text_wednesday_simple">水</string>
+    <string name="feature_alarm_text_thursday_simple">木</string>
+    <string name="feature_alarm_text_friday_simple">金</string>
+    <string name="feature_alarm_text_saturday_simple">土</string>
+
+    <string name="feature_alarm_text_linked_app">連携アプリ</string>
+    <string name="feature_alarm_text_not_found">見つかりません</string>
+    <string name="feature_alarm_text_choose_app">アプリを選択</string>
+    <string name="feature_alarm_text_time">時間</string>
+    <string name="feature_alarm_text_am">午前</string>
+    <string name="feature_alarm_text_pm">午後</string>
+    <string name="feature_alarm_text_repeat_days">繰り返し日</string>
+    <string name="feature_alarm_text_alarm_info">アラーム情報</string>
+    <string name="feature_alarm_text_alarm_name">アラーム名</string>
+    <string name="feature_alarm_text_message">メッセージ</string>
+    <string name="feature_alarm_text_alarm_mode">アラームモード</string>
+    <string name="feature_alarm_text_alarm_mode_tool_tip">通知のみ：設定した時刻に通知が届きます。通知をタップすると特定のアプリが開きます。\n\n標準：設定した時刻にアラーム音が鳴ります。アラームを解除する際に特定のアプリを開くことができます。</string>
+    <string name="feature_alarm_text_mode">モード</string>
+    <string name="feature_alarm_text_alarm_sound">アラーム音</string>
+    <string name="feature_alarm_text_volume">音量：%1$s</string>
+    <string name="feature_alarm_text_vibrate">バイブレーション</string>
+    <string name="feature_alarm_text_search">検索</string>
+    <string name="feature_alarm_text_default_sound">デフォルト音</string>
+
+    <string name="feature_alarm_text_permission_denied">権限が拒否されました</string>
+    <string name="feature_alarm_text_notification_permission_denied_content">アラームを正常に動作させるには通知の許可が必要です。許可しない場合、重要な通知を見逃すことがあります。通知を許可してください。</string>
+    <string name="feature_alarm_text_exact_alarm_permission_denied_content">このアプリは「アラームとリマインダー」の権限が必要です。許可しますか？</string>
+    <string name="feature_alarm_text_permission_allow">許可する</string>
+    <string name="feature_alarm_text_permission_do_not_allow">許可しない</string>
+
+    <string name="feature_alarm_error_text_app_not_found">アプリが見つかりません：%1$s</string>
+    <string name="feature_alarm_error_text_notification_permission_denied">通知の許可が拒否されました。\n通知を有効にするには、設定に移動してください</string>
+
+    <string name="feature_alarm_text_dismiss_and_open_app">解除してアプリを開く</string>
+    <string name="feature_alarm_text_open_app">アプリを開く</string>
+</resources>

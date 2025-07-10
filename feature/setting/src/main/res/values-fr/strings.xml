@@ -1,0 +1,33 @@
+<resources>
+    <string name="feature_setting_top_app_bar_title">Paramètres</string>
+
+    <string name="feature_setting_icon_description_close">Fermer</string>
+    <string name="feature_setting_icon_description_subscription_info">Infos sur l’abonnement Premium</string>
+
+    <string name="feature_setting_text_permission">Autorisation</string>
+    <string name="feature_setting_text_notification_status">Statut des notifications</string>
+    <string name="feature_setting_text_alarms_reminders_status">Statut des alarmes et rappels</string>
+
+    <string name="feature_setting_text_granted">Autorisé</string>
+    <string name="feature_setting_text_denied">Bloqué</string>
+
+    <string name="feature_setting_text_subscription">Abonnement</string>
+    <string name="feature_setting_text_premium_subscription">Abonnement Premium</string>
+    <string name="feature_setting_text_premium_subscription_tool_tip">L’abonnement Premium offre une expérience sans publicité et vous permet de lancer instantanément une application spécifique lorsque votre alarme est en mode notification seulement.</string>
+
+    <string name="feature_setting_text_purchase_premium">Acheter Premium</string>
+    <string name="feature_setting_text_restore_purchases">Restaurer les achats</string>
+    <string name="feature_setting_text_not_subscribed">Non abonné</string>
+    <string name="feature_setting_text_subscribed">Abonné</string>
+    <string name="feature_setting_text_7_day_free_trial">Essai gratuit de 7 jours, puis %1$s/mois</string>
+    <string name="feature_setting_text_join_premium">Rejoindre Premium pour %1$s/mois</string>
+    <string name="feature_setting_text_google_play_subscriptions_center">Centre d’abonnements Google Play</string>
+    <string name="feature_setting_text_no_premium_subscription">Aucun abonnement Premium</string>
+
+    <string name="feature_setting_text_support">Assistance</string>
+    <string name="feature_setting_text_review">Avis</string>
+    <string name="feature_setting_text_privacy_policy">Politique de confidentialité</string>
+    <string name="feature_setting_text_open_source_license">Licences open source</string>
+    <string name="feature_setting_text_contact_us">Nous contacter</string>
+    <string name="feature_setting_text_version">Version</string>
+</resources>

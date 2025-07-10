@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">앱 연결 알람 알림 채널</string>
+    <string name="core_alarm_notification_channel_description">앱 연결 알람을 위한 알림 채널</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">알람을 해제하려면 클릭하세요\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">놓친 알람: %1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">연결된 앱을 찾을 수 없음: %1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">연결된 앱을 찾을 수 없어 알람이 비활성화됩니다.</string>
+</resources>

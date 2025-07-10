@@ -1,0 +1,10 @@
+<resources>
+    <string name="core_alarm_notification_channel_name">アプリリンクアラーム通知チャンネル</string>
+    <string name="core_alarm_notification_channel_description">アプリリンクアラーム用の通知チャンネル</string>
+
+    <string name="core_alarm_text_click_to_dismiss_alarm">アラームを解除するにはクリックしてください\n%1$s</string>
+    <string name="core_alarm_text_missed_alarm">未確認のアラーム: %1$s</string>
+
+    <string name="core_alarm_text_no_linked_apps_found">リンクされたアプリが見つかりません: %1$s</string>
+    <string name="core_alarm_text_no_linked_apps_content_text">リンクされたアプリが見つからないため、このアラームは無効になります。</string>
+</resources>

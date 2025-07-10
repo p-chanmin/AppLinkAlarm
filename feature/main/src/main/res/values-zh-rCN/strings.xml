@@ -1,0 +1,5 @@
+<resources>
+    <string name="feature_main_error_message_unknown">发生未知错误。</string>
+    <string name="feature_main_text_install">安装</string>
+    <string name="feature_main_text_update_download_complete">更新下载完成</string>
+</resources>
