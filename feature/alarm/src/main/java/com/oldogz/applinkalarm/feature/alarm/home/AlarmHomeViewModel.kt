@@ -6,9 +6,9 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
-import com.oldogz.core.alarm.AppLinkAlarmManager
-import com.oldogz.core.alarm.AppLinkAlarmPlayingService
-import com.oldogz.core.alarm.AppLinkAlarmStateManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
+import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
+import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
@@ -42,10 +42,9 @@ class AlarmHomeViewModel @Inject constructor(
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
 
-    private val _service = MutableStateFlow<AppLinkAlarmPlayingService?>(null)
-    val service get() = _service.asStateFlow()
-
     val hasPremium = subscriptionManager.subscriptionState
+
+    val currentAppLinkAlarmId = appLinkAlarmStateManager.currentAppLinkAlarmId
 
     private val _homeUiState = MutableStateFlow(AlarmHomeUiState())
     val homeUiState = _homeUiState.stateIn(
@@ -58,15 +57,6 @@ class AlarmHomeViewModel @Inject constructor(
     val event get() = _event.asSharedFlow()
 
     init {
-        appLinkAlarmStateManager.appLinkAlarmPlayingService
-            .onStart {
-                appLinkAlarmStateManager.bindService()
-            }.onEach { service ->
-                _service.value = service
-            }.catch { throwable ->
-                firebaseManager.reportNonFatalError(throwable)
-            }.launchIn(viewModelScope)
-
         loadAlarm()
     }
 
@@ -101,7 +91,7 @@ class AlarmHomeViewModel @Inject constructor(
                     if (active) {
                         appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                     } else {
-                        appLinkAlarmManager.cancelAlarm(appLinkAlarm.id)
+                        appLinkAlarmManager.cancelAlarm(appLinkAlarm.id, appLinkAlarm.alarmMode.name)
                     }
                     appLinkAlarmRepository.updateAlarm(
                         appLinkAlarm.copy(
@@ -133,7 +123,7 @@ class AlarmHomeViewModel @Inject constructor(
                             if (active) {
                                 appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                             } else {
-                                appLinkAlarmManager.cancelAlarm(appLinkAlarm.id)
+                                appLinkAlarmManager.cancelAlarm(appLinkAlarm.id, appLinkAlarm.alarmMode.name)
                             }
                             appLinkAlarmRepository.updateAlarm(
                                 appLinkAlarm.copy(
@@ -161,10 +151,10 @@ class AlarmHomeViewModel @Inject constructor(
             try {
                 _homeUiState.value.alarms
                     .filter { it.selected }
-                    .map { it.appLinkAlarm.id }
-                    .forEach { id ->
-                        appLinkAlarmManager.cancelAlarm(id)
-                        appLinkAlarmRepository.deleteAlarmById(id)
+                    .map { it.appLinkAlarm }
+                    .forEach { appLinkAlarm ->
+                        appLinkAlarmManager.cancelAlarm(appLinkAlarm.id, appLinkAlarm.alarmMode.name)
+                        appLinkAlarmRepository.deleteAlarmById(appLinkAlarm.id)
                     }
                 updateSelectMode(false)
             } catch (e: Exception) {
@@ -229,13 +219,8 @@ class AlarmHomeViewModel @Inject constructor(
 
     fun dismissAlarm(linkedAppPackage: String) {
         viewModelScope.launch {
-            _service.value?.stopSelf()
+            appLinkAlarmStateManager.stopService()
             _event.emit(AlarmHomeUiEvent.LinkedAppOpen(linkedAppPackage))
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        appLinkAlarmStateManager.unbindService()
     }
 }

@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
-import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager

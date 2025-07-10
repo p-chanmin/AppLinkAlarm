@@ -3,7 +3,7 @@ package com.oldogz.applinkalarm.feature.setting.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
-import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

@@ -3,7 +3,7 @@ package com.oldogz.applinkalarm.feature.setting
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.setting.home.SettingViewModel
 import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
-import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
 import com.oldogz.core.testing.rule.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.mockk

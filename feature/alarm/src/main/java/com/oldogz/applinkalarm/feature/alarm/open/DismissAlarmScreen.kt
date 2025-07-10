@@ -31,7 +31,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.OpenAppInfo
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
-import com.oldogz.core.alarm.AppLinkAlarmPlayingService
+import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
@@ -42,7 +42,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DismissAlarmScreen(
-    service: AppLinkAlarmPlayingService?,
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     dismissAlarm: (String) -> Unit,
@@ -58,14 +57,6 @@ fun DismissAlarmScreen(
         firebaseManager.screenLogEvent("DismissAlarmScreen", configuration.orientation)
         dismissAlarmViewModel.errorFlow.collect { throwable ->
             onShowErrorSnackBar(throwable)
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        service?.currentAppLinkAlarmId?.collectLatest { id ->
-            id?.let {
-                dismissAlarmViewModel.updateAppLinkAlarm(it)
-            }
         }
     }
 

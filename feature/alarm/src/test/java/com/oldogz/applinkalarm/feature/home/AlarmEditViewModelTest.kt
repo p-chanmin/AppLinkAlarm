@@ -3,7 +3,7 @@ package com.oldogz.applinkalarm.feature.home
 import androidx.lifecycle.SavedStateHandle
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.edit.AlarmEditViewModel
-import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
 import com.oldogz.core.billing.FakeSubscriptionManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository

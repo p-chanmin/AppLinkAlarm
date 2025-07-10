@@ -5,8 +5,8 @@ import com.oldogz.applinkalarm.feature.alarm.home.AlarmHomeViewModel
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
-import com.oldogz.core.alarm.AppLinkAlarmManager
-import com.oldogz.core.alarm.AppLinkAlarmStateManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.FakeSubscriptionManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository

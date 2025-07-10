@@ -86,7 +86,7 @@ internal fun AlarmHomeScreen(
 ) {
     val context = LocalContext.current
     val homeUiState by alarmHomeViewModel.homeUiState.collectAsStateWithLifecycle()
-    val service by alarmHomeViewModel.service.collectAsStateWithLifecycle()
+    val currentAppLinkAlarmId by alarmHomeViewModel.currentAppLinkAlarmId.collectAsStateWithLifecycle()
     val hasPremium by alarmHomeViewModel.hasPremium.collectAsStateWithLifecycle()
     val firebaseManager = LocalFirebaseManager.current
     val configuration = LocalConfiguration.current
@@ -121,7 +121,7 @@ internal fun AlarmHomeScreen(
         }
     }
 
-    if (service == null) {
+    if (currentAppLinkAlarmId == null) {
         AlarmHomeContent(
             homeUiState = homeUiState,
             hasPremium = hasPremium,
@@ -140,7 +140,6 @@ internal fun AlarmHomeScreen(
         )
     } else {
         DismissAlarmScreen(
-            service = service,
             paddingValues = paddingValues,
             onShowErrorSnackBar = onShowErrorSnackBar,
             dismissAlarm = alarmHomeViewModel::dismissAlarm,
