@@ -3,7 +3,7 @@ package com.oldogz.applinkalarm.feature.setting.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.setting.model.SettingUiState
-import com.oldogz.core.alarm.manager.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +15,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingViewModel @Inject constructor(
-    private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val appLinkAlarmScheduleManager: AppLinkAlarmScheduleManager,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -32,7 +32,7 @@ class SettingViewModel @Inject constructor(
         _settingUiState.update {
             it.copy(
                 notificationPermission = notificationPermission,
-                exactAlarmPermission = appLinkAlarmManager.checkScheduleExactAlarms()
+                exactAlarmPermission = appLinkAlarmScheduleManager.checkScheduleExactAlarms()
             )
         }
     }

@@ -5,11 +5,11 @@ enum class AlarmMode {
     STANDARD;
 
     companion object {
-        fun fromString(value: String?): AlarmMode {
+        fun fromString(value: String?): AlarmMode? {
             return when (value) {
                 NOTIFICATION_ONLY.name -> NOTIFICATION_ONLY
                 STANDARD.name -> STANDARD
-                else -> NOTIFICATION_ONLY
+                else -> null
             }
         }
     }

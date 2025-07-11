@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
-import com.oldogz.core.alarm.manager.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
@@ -31,7 +31,7 @@ import javax.inject.Inject
 class AlarmEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
-    private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val appLinkAlarmScheduleManager: AppLinkAlarmScheduleManager,
     private val firebaseManager: FirebaseManager,
     private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
@@ -210,13 +210,13 @@ class AlarmEditViewModel @Inject constructor(
                         alarmVolume = alarmVolume,
                         active = active
                     )
-                    if (appLinkAlarmManager.checkScheduleExactAlarms()) {
+                    if (appLinkAlarmScheduleManager.checkScheduleExactAlarms()) {
                         if (id != null) {
                             appLinkAlarmRepository.updateAlarm(appLinkAlarm)
-                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                            appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm)
                         } else {
                             val alarmId = appLinkAlarmRepository.addAlarm(appLinkAlarm)
-                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
+                            appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
                         }
                         _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                     } else {

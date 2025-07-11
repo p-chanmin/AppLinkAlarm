@@ -12,8 +12,9 @@ class AppLinkAlarmApp() : Application(), Configuration.Provider {
     @Inject
     lateinit var workerFactory: WrapperWorkerFactory
 
-    override val workManagerConfiguration: Configuration get() = Configuration.Builder()
-        .setMinimumLoggingLevel(android.util.Log.DEBUG)
-        .setWorkerFactory(workerFactory)
-        .build()
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder()
+            .setMinimumLoggingLevel(android.util.Log.DEBUG)
+            .setWorkerFactory(workerFactory)
+            .build()
 }

@@ -6,7 +6,7 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
-import com.oldogz.core.alarm.manager.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
@@ -31,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AlarmHomeViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
-    private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val appLinkAlarmScheduleManager: AppLinkAlarmScheduleManager,
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
     private val firebaseManager: FirebaseManager,
     private val subscriptionManager: SubscriptionManager,
@@ -61,7 +61,7 @@ class AlarmHomeViewModel @Inject constructor(
     private fun loadAlarm() {
         appLinkAlarmRepository.alarms
             .onStart {
-                if (!appLinkAlarmManager.checkScheduleExactAlarms()) {
+                if (!appLinkAlarmScheduleManager.checkScheduleExactAlarms()) {
                     val alarms = appLinkAlarmRepository.alarms.first()
                     alarms.forEach { alarm ->
                         appLinkAlarmRepository.updateAlarm(
@@ -85,11 +85,11 @@ class AlarmHomeViewModel @Inject constructor(
     fun updateAlarmActive(appLinkAlarm: AppLinkAlarm, active: Boolean) {
         viewModelScope.launch {
             try {
-                if (appLinkAlarmManager.checkScheduleExactAlarms() || !active) {
+                if (appLinkAlarmScheduleManager.checkScheduleExactAlarms() || !active) {
                     if (active) {
-                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
+                        appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                     } else {
-                        appLinkAlarmManager.cancelAlarm(
+                        appLinkAlarmScheduleManager.cancelAlarm(
                             appLinkAlarm.id,
                             appLinkAlarm.alarmMode.name,
                             appLinkAlarm.linkedAppPackage
@@ -117,15 +117,15 @@ class AlarmHomeViewModel @Inject constructor(
     fun updateSelectedAlarmActive(active: Boolean) {
         viewModelScope.launch {
             try {
-                if (appLinkAlarmManager.checkScheduleExactAlarms() || !active) {
+                if (appLinkAlarmScheduleManager.checkScheduleExactAlarms() || !active) {
                     _homeUiState.value.alarms
                         .filter { it.selected }
                         .map { it.appLinkAlarm }
                         .forEach { appLinkAlarm ->
                             if (active) {
-                                appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
+                                appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                             } else {
-                                appLinkAlarmManager.cancelAlarm(
+                                appLinkAlarmScheduleManager.cancelAlarm(
                                     appLinkAlarm.id,
                                     appLinkAlarm.alarmMode.name,
                                     appLinkAlarm.linkedAppPackage
@@ -159,7 +159,7 @@ class AlarmHomeViewModel @Inject constructor(
                     .filter { it.selected }
                     .map { it.appLinkAlarm }
                     .forEach { appLinkAlarm ->
-                        appLinkAlarmManager.cancelAlarm(
+                        appLinkAlarmScheduleManager.cancelAlarm(
                             appLinkAlarm.id,
                             appLinkAlarm.alarmMode.name,
                             appLinkAlarm.linkedAppPackage

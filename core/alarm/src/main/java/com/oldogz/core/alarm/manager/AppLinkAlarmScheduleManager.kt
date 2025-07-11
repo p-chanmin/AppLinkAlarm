@@ -16,7 +16,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppLinkAlarmManager @Inject constructor(
+class AppLinkAlarmScheduleManager @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
 

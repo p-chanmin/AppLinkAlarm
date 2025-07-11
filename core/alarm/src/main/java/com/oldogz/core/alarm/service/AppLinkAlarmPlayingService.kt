@@ -15,7 +15,6 @@ import android.os.VibratorManager
 import androidx.core.net.toUri
 import com.google.firebase.analytics.logEvent
 import com.oldogz.core.alarm.R
-import com.oldogz.core.alarm.manager.AppLinkAlarmManager
 import com.oldogz.core.alarm.manager.AppLinkAlarmNotificationManager
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.BuildConfig
@@ -48,9 +47,6 @@ class AppLinkAlarmPlayingService : Service() {
 
     @Inject
     lateinit var appLinkAlarmStateManager: AppLinkAlarmStateManager
-
-    @Inject
-    lateinit var appLinkAlarmManager: AppLinkAlarmManager
 
     @Inject
     lateinit var firebaseManager: FirebaseManager

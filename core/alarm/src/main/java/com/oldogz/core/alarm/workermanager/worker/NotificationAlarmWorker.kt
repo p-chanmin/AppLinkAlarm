@@ -23,13 +23,11 @@ class NotificationAlarmWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
-            println("doWork NotificationAlarmWorker")
             val alarmId = inputData.getInt(RESCHEDULE_ALARM_DATA_ID, -1)
             val appLinkAlarm = appLinkAlarmRepository.getAlarmById(alarmId).first()
 
             when {
                 tags.contains(NOTIFICATION_ALARM_TAG) -> {
-                    println("tags contains NOTIFICATION_ALARM_TAG")
                     subscriptionManager.initialize()
                     subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
                         appLinkAlarmNotificationManager.notify(
@@ -44,7 +42,6 @@ class NotificationAlarmWorker @AssistedInject constructor(
                 }
 
                 tags.contains(NOTIFICATION_NOT_FOUND_TAG) -> {
-                    println("tags contains NOTIFICATION_NOT_FOUND_TAG")
                     appLinkAlarmRepository.updateAlarm(appLinkAlarm.copy(active = false))
                     appLinkAlarmNotificationManager.notify(
                         appLinkAlarm.id,
@@ -54,11 +51,8 @@ class NotificationAlarmWorker @AssistedInject constructor(
                     )
                 }
             }
-
-            println("NotificationAlarmWorker success")
             Result.success()
         } catch (throwable: Throwable) {
-            println("NotificationAlarmWorker failure")
             Result.failure()
         }
     }

@@ -5,7 +5,7 @@ import com.oldogz.applinkalarm.feature.alarm.home.AlarmHomeViewModel
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
-import com.oldogz.core.alarm.manager.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.FakeSubscriptionManager
 import com.oldogz.core.billing.SubscriptionManager
@@ -33,7 +33,7 @@ internal class AlarmHomeViewModelTest {
     var mainCoroutineRule = MainDispatcherRule()
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
-    private val appLinkAlarmManager: AppLinkAlarmManager = mockk(relaxed = true)
+    private val appLinkAlarmScheduleManager: AppLinkAlarmScheduleManager = mockk(relaxed = true)
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager = mockk(relaxed = true)
     private val firebaseManager: FirebaseManager = FakeFirebaseManager()
     private val subscriptionManager: SubscriptionManager = FakeSubscriptionManager()
@@ -48,7 +48,7 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -85,11 +85,11 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = false)) } answers {
             alarms.value = listOf(alarm1.copy(active = false))
         }
-        coEvery { appLinkAlarmManager.checkScheduleExactAlarms() } returns true
+        coEvery { appLinkAlarmScheduleManager.checkScheduleExactAlarms() } returns true
 
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -124,7 +124,7 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -160,7 +160,7 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -195,7 +195,7 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.alarms } returns flowOf(alarms)
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -235,11 +235,11 @@ internal class AlarmHomeViewModelTest {
         coEvery { appLinkAlarmRepository.updateAlarm(alarm1.copy(active = false)) } answers {
             alarms.value = listOf(alarm1.copy(active = false), alarm2)
         }
-        coEvery { appLinkAlarmManager.checkScheduleExactAlarms() } returns true
+        coEvery { appLinkAlarmScheduleManager.checkScheduleExactAlarms() } returns true
 
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -298,7 +298,7 @@ internal class AlarmHomeViewModelTest {
 
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -345,7 +345,7 @@ internal class AlarmHomeViewModelTest {
         // Given
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -373,11 +373,11 @@ internal class AlarmHomeViewModelTest {
     fun `알람 및 리마인더 권한 다이얼로그 상태를 변경할 수 있다`() = runTest {
         // Given
 
-        coEvery { appLinkAlarmManager.checkScheduleExactAlarms() } returns false
+        coEvery { appLinkAlarmScheduleManager.checkScheduleExactAlarms() } returns false
 
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
@@ -405,7 +405,7 @@ internal class AlarmHomeViewModelTest {
         // Given
         alarmHomeViewModel = AlarmHomeViewModel(
             appLinkAlarmRepository,
-            appLinkAlarmManager,
+            appLinkAlarmScheduleManager,
             appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager

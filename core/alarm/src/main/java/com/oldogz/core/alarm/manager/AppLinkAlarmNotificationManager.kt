@@ -12,8 +12,8 @@ import android.graphics.Canvas
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
-import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.alarm.R
+import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.navigation.getDeepLinkOf
@@ -77,11 +77,10 @@ class AppLinkAlarmNotificationManager @Inject constructor(
         appLinkAlarm: AppLinkAlarm,
     ): Notification {
 
-        val alarmStopIntent =
-            Intent(context, AppLinkAlarmPlayingService::class.java).apply {
-                action =
-                    AppLinkAlarmPlayingService.INTENT_ACTION_SERVICE_APP_LINK_ALARM_OFF
-            }
+        val alarmStopIntent = Intent(context, AppLinkAlarmPlayingService::class.java).apply {
+            action =
+                AppLinkAlarmPlayingService.INTENT_ACTION_SERVICE_APP_LINK_ALARM_OFF
+        }
 
         val deletePendingIntent = PendingIntent.getService(
             context,

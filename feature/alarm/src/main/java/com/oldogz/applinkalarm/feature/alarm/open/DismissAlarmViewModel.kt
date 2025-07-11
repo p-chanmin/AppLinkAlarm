@@ -22,8 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class DismissAlarmViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
-    private val firebaseManager: FirebaseManager,
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
+    private val firebaseManager: FirebaseManager,
     private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
 
