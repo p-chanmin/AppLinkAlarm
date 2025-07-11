@@ -28,16 +28,16 @@ class NotificationAlarmWorker @AssistedInject constructor(
 
             when {
                 tags.contains(NOTIFICATION_ALARM_TAG) -> {
-                    subscriptionManager.initialize()
-                    subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
-                        appLinkAlarmNotificationManager.notify(
-                            appLinkAlarm.id,
-                            appLinkAlarmNotificationManager.createNotification(
-                                appLinkAlarm,
-                                !hasPremium
+                    subscriptionManager.initialize {
+                        subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
+                            appLinkAlarmNotificationManager.notify(
+                                appLinkAlarm.id,
+                                appLinkAlarmNotificationManager.createNotification(
+                                    appLinkAlarm,
+                                    !hasPremium
+                                )
                             )
-                        )
-                        subscriptionManager.endConnection()
+                        }
                     }
                 }
 

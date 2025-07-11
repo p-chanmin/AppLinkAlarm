@@ -74,7 +74,6 @@ class AppLinkAlarmPlayingService : Service() {
     override fun onCreate() {
         super.onCreate()
         appLinkAlarmNotificationManager.registerNotificationChannels()
-        subscriptionManager.initialize()
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         mediaVolumeBeforeAlarm = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
 
@@ -92,17 +91,20 @@ class AppLinkAlarmPlayingService : Service() {
             INTENT_ACTION_SERVICE_APP_LINK_ALARM_ON -> {
                 val alarmId = intent.getIntExtra(INTENT_EXTRA_SERVICE_APP_LINK_ALARM_ID, -1)
                 if (alarmId != -1) {
-                    subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
-                        serviceScope.launch {
-                            val appLinkAlarm = appLinkAlarmRepository.getAlarmById(alarmId).first()
-                            mutex.withLock {
-                                mediaPlayer?.let {
-                                    mediaPlayer?.stop()
-                                    mediaPlayer?.release()
-                                    mediaPlayer = null
+                    subscriptionManager.initialize {
+                        subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
+                            serviceScope.launch {
+                                val appLinkAlarm =
+                                    appLinkAlarmRepository.getAlarmById(alarmId).first()
+                                mutex.withLock {
+                                    mediaPlayer?.let {
+                                        mediaPlayer?.stop()
+                                        mediaPlayer?.release()
+                                        mediaPlayer = null
+                                    }
+                                    vibrator.cancel()
+                                    playAppLinkAlarm(appLinkAlarm, !hasPremium)
                                 }
-                                vibrator.cancel()
-                                playAppLinkAlarm(appLinkAlarm, !hasPremium)
                             }
                         }
                     }
@@ -197,7 +199,6 @@ class AppLinkAlarmPlayingService : Service() {
 
         vibrator.cancel()
         audioManager.abandonAudioFocusRequest(focusRequest)
-        subscriptionManager.endConnection()
         appLinkAlarmStateManager.updateCurrentAppLinkAlarmId(null)
         stopForeground(STOP_FOREGROUND_REMOVE)
         serviceScope.cancel()

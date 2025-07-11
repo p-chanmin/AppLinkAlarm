@@ -9,6 +9,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
 import com.oldogz.core.admob.AdMobManager
 import com.oldogz.core.admob.LocalAdMobManager
+import com.oldogz.core.billing.BuildConfig
 import com.oldogz.core.billing.LocalSubscriptionManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
@@ -33,7 +34,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        subscriptionManager.initialize()
+        subscriptionManager.initialize {
+            subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) {}
+        }
 
         setContent {
             val navigator: MainNavigator = rememberMainNavigator()
@@ -50,10 +53,5 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        subscriptionManager.endConnection()
     }
 }
