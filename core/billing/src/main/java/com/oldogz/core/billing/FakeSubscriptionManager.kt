@@ -10,7 +10,7 @@ class FakeSubscriptionManager : SubscriptionManager {
     override val availableProducts: StateFlow<List<Product>> = MutableStateFlow(emptyList())
     override val subscriptionState: StateFlow<Boolean?> = MutableStateFlow(false)
 
-    override fun initialize() {}
+    override fun initialize(onSetupFinished: () -> Unit) {}
 
     override fun queryAvailableProducts(productIds: List<String>) {}
 
@@ -22,6 +22,4 @@ class FakeSubscriptionManager : SubscriptionManager {
     }
 
     override fun queryPurchases(productId: String, onPurchaseResult: (Boolean) -> Unit) {}
-
-    override fun endConnection() {}
 }

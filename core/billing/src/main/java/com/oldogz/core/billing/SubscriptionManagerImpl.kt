@@ -2,6 +2,7 @@ package com.oldogz.core.billing
 
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import com.android.billingclient.api.AcknowledgePurchaseParams
 import com.android.billingclient.api.BillingClient
@@ -26,8 +27,6 @@ import javax.inject.Inject
 class SubscriptionManagerImpl @Inject constructor(
     @ApplicationContext context: Context
 ) : SubscriptionManager {
-
-    private var initCount = 0
 
     private val _availableProducts = MutableStateFlow<List<Product>>(emptyList())
     override val availableProducts = _availableProducts.asStateFlow()
@@ -73,21 +72,23 @@ class SubscriptionManagerImpl @Inject constructor(
     private var billingClient: BillingClient = BillingClient.newBuilder(context)
         .setListener(purchasesUpdatedListener)
         .enablePendingPurchases(pendingPurchasesParams)
-        .enableAutoServiceReconnection()
         .build()
 
-    override fun initialize() {
-        if (initCount++ == 0) {
-            billingClient.startConnection(object : BillingClientStateListener {
-                override fun onBillingSetupFinished(billingResult: BillingResult) {
-                    if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
-                        queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) {}
-                    }
+    override fun initialize(onSetupFinished: () -> Unit) {
+        billingClient.startConnection(object : BillingClientStateListener {
+            override fun onBillingSetupFinished(billingResult: BillingResult) {
+                if (billingResult.responseCode == BillingClient.BillingResponseCode.OK) {
+                    Log.d(TAG, "Billing client setup finished successfully")
+                } else {
+                    Log.e(TAG, "Billing client setup failed : ${billingResult.responseCode}")
                 }
+                onSetupFinished()
+            }
 
-                override fun onBillingServiceDisconnected() {}
-            })
-        }
+            override fun onBillingServiceDisconnected() {
+                Log.d(TAG, "Billing client disconnected")
+            }
+        })
     }
 
     override fun queryAvailableProducts(
@@ -206,9 +207,7 @@ class SubscriptionManagerImpl @Inject constructor(
         }
     }
 
-    override fun endConnection() {
-        if (billingClient.isReady && initCount-- == 1) {
-            billingClient.endConnection()
-        }
+    companion object {
+        const val TAG = "SubscriptionManager"
     }
 }
