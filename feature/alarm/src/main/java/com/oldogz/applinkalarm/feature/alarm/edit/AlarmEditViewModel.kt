@@ -192,7 +192,6 @@ class AlarmEditViewModel @Inject constructor(
                 val vibrate = _alarmEditUiState.value.vibrate
                 val alarmSound = _alarmEditUiState.value.alarmSound
                 val alarmVolume = _alarmEditUiState.value.alarmVolume
-                val active = _alarmEditUiState.value.active
 
                 if (linkedAppPackage != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
                     val appLinkAlarm = AppLinkAlarm(
@@ -208,7 +207,7 @@ class AlarmEditViewModel @Inject constructor(
                         vibrate = vibrate,
                         alarmSound = alarmSound,
                         alarmVolume = alarmVolume,
-                        active = active
+                        active = true
                     )
                     if (appLinkAlarmScheduleManager.checkScheduleExactAlarms()) {
                         if (id != null) {
