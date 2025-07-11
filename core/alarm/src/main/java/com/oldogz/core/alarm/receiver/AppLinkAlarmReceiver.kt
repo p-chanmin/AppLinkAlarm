@@ -50,7 +50,7 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_TIMEZONE_CHANGED -> {
+            Intent.ACTION_BOOT_COMPLETED, Intent.ACTION_TIMEZONE_CHANGED, Intent.ACTION_MY_PACKAGE_REPLACED -> {
                 workRequestManager.enqueueWorker<RescheduleAlarmWorker>(RESCHEDULE_ALARM_TAG)
             }
 
