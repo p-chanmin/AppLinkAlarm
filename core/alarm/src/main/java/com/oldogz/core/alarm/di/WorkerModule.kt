@@ -2,7 +2,9 @@ package com.oldogz.core.alarm.di
 
 import androidx.work.ListenableWorker
 import com.oldogz.core.alarm.workermanager.factory.ChildWorkerFactory
+import com.oldogz.core.alarm.workermanager.factory.NotificationAlarmWorkerFactory
 import com.oldogz.core.alarm.workermanager.factory.RescheduleAlarmWorkerFactory
+import com.oldogz.core.alarm.workermanager.worker.NotificationAlarmWorker
 import com.oldogz.core.alarm.workermanager.worker.RescheduleAlarmWorker
 import dagger.Binds
 import dagger.MapKey
@@ -25,4 +27,9 @@ abstract class WorkerModule {
     @IntoMap
     @WorkerKey(RescheduleAlarmWorker::class)
     abstract fun bindRescheduleAlarmWorker(rescheduleAlarmWorkerFactory: RescheduleAlarmWorkerFactory): ChildWorkerFactory
+
+    @Binds
+    @IntoMap
+    @WorkerKey(NotificationAlarmWorker::class)
+    abstract fun bindNotificationAlarmWorker(rescheduleAlarmWorkerFactory: NotificationAlarmWorkerFactory): ChildWorkerFactory
 }

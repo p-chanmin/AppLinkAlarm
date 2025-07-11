@@ -35,7 +35,8 @@ class AppLinkAlarmManager @Inject constructor(
 
         val nextAlarmTime = calculateNextAlarmTime(alarm)
 
-        val pendingIntent = createPendingIntent(alarm.id, alarm.alarmMode.name)
+        val pendingIntent =
+            createPendingIntent(alarm.id, alarm.alarmMode.name, alarm.linkedAppPackage)
 
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             nextAlarmTime,
@@ -44,8 +45,8 @@ class AppLinkAlarmManager @Inject constructor(
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
     }
 
-    fun cancelAlarm(alarmId: Int, alarmMode: String) {
-        alarmManager.cancel(createPendingIntent(alarmId, alarmMode))
+    fun cancelAlarm(alarmId: Int, alarmMode: String, linkedAppPackage: String) {
+        alarmManager.cancel(createPendingIntent(alarmId, alarmMode, linkedAppPackage))
     }
 
     private fun calculateNextAlarmTime(alarm: AppLinkAlarm): Long {
@@ -85,11 +86,16 @@ class AppLinkAlarmManager @Inject constructor(
         return dayOfWeek ?: sortedDayOfWeek.first()
     }
 
-    private fun createPendingIntent(alarmId: Int, alarmMode: String): PendingIntent {
+    private fun createPendingIntent(
+        alarmId: Int,
+        alarmMode: String,
+        linkedAppPackage: String
+    ): PendingIntent {
         val intent = Intent(context, AppLinkAlarmReceiver::class.java).apply {
             action = INTENT_ACTION_APP_LINK_ALARM
             putExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, alarmId)
             putExtra(INTENT_EXTRA_APP_LINK_ALARM_MODE, alarmMode)
+            putExtra(INTENT_EXTRA_APP_LINK_ALARM_PACKAGE, linkedAppPackage)
         }
 
         return PendingIntent.getBroadcast(
@@ -104,5 +110,6 @@ class AppLinkAlarmManager @Inject constructor(
         const val INTENT_ACTION_APP_LINK_ALARM = "intentActionAppLinkAlarm"
         const val INTENT_EXTRA_APP_LINK_ALARM_ID = "intentExtraAppLinkAlarmId"
         const val INTENT_EXTRA_APP_LINK_ALARM_MODE = "intentExtraAppLinkAlarmMode"
+        const val INTENT_EXTRA_APP_LINK_ALARM_PACKAGE = "intentExtraAppLinkAlarmPackage"
     }
 }

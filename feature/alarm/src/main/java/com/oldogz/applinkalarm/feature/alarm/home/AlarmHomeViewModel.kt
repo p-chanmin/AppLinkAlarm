@@ -7,7 +7,6 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.core.alarm.manager.AppLinkAlarmManager
-import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -91,7 +89,11 @@ class AlarmHomeViewModel @Inject constructor(
                     if (active) {
                         appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                     } else {
-                        appLinkAlarmManager.cancelAlarm(appLinkAlarm.id, appLinkAlarm.alarmMode.name)
+                        appLinkAlarmManager.cancelAlarm(
+                            appLinkAlarm.id,
+                            appLinkAlarm.alarmMode.name,
+                            appLinkAlarm.linkedAppPackage
+                        )
                     }
                     appLinkAlarmRepository.updateAlarm(
                         appLinkAlarm.copy(
@@ -123,7 +125,11 @@ class AlarmHomeViewModel @Inject constructor(
                             if (active) {
                                 appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                             } else {
-                                appLinkAlarmManager.cancelAlarm(appLinkAlarm.id, appLinkAlarm.alarmMode.name)
+                                appLinkAlarmManager.cancelAlarm(
+                                    appLinkAlarm.id,
+                                    appLinkAlarm.alarmMode.name,
+                                    appLinkAlarm.linkedAppPackage
+                                )
                             }
                             appLinkAlarmRepository.updateAlarm(
                                 appLinkAlarm.copy(
@@ -153,7 +159,11 @@ class AlarmHomeViewModel @Inject constructor(
                     .filter { it.selected }
                     .map { it.appLinkAlarm }
                     .forEach { appLinkAlarm ->
-                        appLinkAlarmManager.cancelAlarm(appLinkAlarm.id, appLinkAlarm.alarmMode.name)
+                        appLinkAlarmManager.cancelAlarm(
+                            appLinkAlarm.id,
+                            appLinkAlarm.alarmMode.name,
+                            appLinkAlarm.linkedAppPackage
+                        )
                         appLinkAlarmRepository.deleteAlarmById(appLinkAlarm.id)
                     }
                 updateSelectMode(false)

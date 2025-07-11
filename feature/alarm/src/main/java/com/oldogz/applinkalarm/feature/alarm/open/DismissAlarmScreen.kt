@@ -31,14 +31,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.OpenAppInfo
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
-import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.PeriodOfDay
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun DismissAlarmScreen(
