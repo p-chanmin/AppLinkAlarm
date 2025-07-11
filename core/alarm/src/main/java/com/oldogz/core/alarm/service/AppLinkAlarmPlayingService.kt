@@ -7,7 +7,6 @@ import android.media.AudioAttributes
 import android.media.AudioFocusRequest
 import android.media.AudioManager
 import android.media.MediaPlayer
-import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.VibrationEffect
@@ -16,6 +15,7 @@ import android.os.VibratorManager
 import androidx.core.net.toUri
 import com.google.firebase.analytics.logEvent
 import com.oldogz.core.alarm.R
+import com.oldogz.core.alarm.manager.AppLinkAlarmManager
 import com.oldogz.core.alarm.manager.AppLinkAlarmNotificationManager
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.BuildConfig
@@ -38,11 +38,7 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class AppLinkAlarmPlayingService : Service() {
 
-    private val binder: IBinder = LocalBinder()
-    override fun onBind(intent: Intent): IBinder = binder
-    inner class LocalBinder : Binder() {
-        fun getService(): AppLinkAlarmPlayingService = this@AppLinkAlarmPlayingService
-    }
+    override fun onBind(intent: Intent): IBinder? = null
 
     @Inject
     lateinit var appLinkAlarmRepository: AppLinkAlarmRepository
@@ -52,6 +48,9 @@ class AppLinkAlarmPlayingService : Service() {
 
     @Inject
     lateinit var appLinkAlarmStateManager: AppLinkAlarmStateManager
+
+    @Inject
+    lateinit var appLinkAlarmManager: AppLinkAlarmManager
 
     @Inject
     lateinit var firebaseManager: FirebaseManager
@@ -78,6 +77,7 @@ class AppLinkAlarmPlayingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        appLinkAlarmNotificationManager.registerNotificationChannels()
         subscriptionManager.initialize()
         audioManager = getSystemService(AUDIO_SERVICE) as AudioManager
         mediaVolumeBeforeAlarm = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC)
@@ -98,6 +98,7 @@ class AppLinkAlarmPlayingService : Service() {
                 if (alarmId != -1) {
                     subscriptionManager.queryPurchases(BuildConfig.PREMIUM_MEMBERSHIP_PRODUCT_ID) { hasPremium ->
                         serviceScope.launch {
+                            val appLinkAlarm = appLinkAlarmRepository.getAlarmById(alarmId).first()
                             mutex.withLock {
                                 mediaPlayer?.let {
                                     mediaPlayer?.stop()
@@ -105,7 +106,7 @@ class AppLinkAlarmPlayingService : Service() {
                                     mediaPlayer = null
                                 }
                                 vibrator.cancel()
-                                playAppLinkAlarm(alarmId, !hasPremium)
+                                playAppLinkAlarm(appLinkAlarm, !hasPremium)
                             }
                         }
                     }
@@ -121,11 +122,8 @@ class AppLinkAlarmPlayingService : Service() {
         return START_NOT_STICKY
     }
 
-    private suspend fun playAppLinkAlarm(alarmId: Int, includeAds: Boolean) {
-        appLinkAlarmNotificationManager.registerNotificationChannels()
 
-        val appLinkAlarm = appLinkAlarmRepository.getAlarmById(alarmId).first()
-
+    private suspend fun playAppLinkAlarm(appLinkAlarm: AppLinkAlarm, includeAds: Boolean) {
         startForeground(
             appLinkAlarm.id,
             appLinkAlarmNotificationManager.createNotification(appLinkAlarm, includeAds)
@@ -135,7 +133,7 @@ class AppLinkAlarmPlayingService : Service() {
             notifyMissedAlarm(id, includeAds)
         }
 
-        appLinkAlarmStateManager.updateCurrentAppLinkAlarmId(alarmId)
+        appLinkAlarmStateManager.updateCurrentAppLinkAlarmId(appLinkAlarm.id)
 
         initMediaPlayer(appLinkAlarm)
 
