@@ -3,6 +3,7 @@ package com.oldogz.applinkalarm.feature.alarm.open
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
+import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
@@ -12,14 +13,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class DismissAlarmViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
+    private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
     private val firebaseManager: FirebaseManager,
     private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
@@ -36,26 +39,30 @@ class DismissAlarmViewModel @Inject constructor(
         _openAppUiState.value
     )
 
-    fun updateAppLinkAlarm(id: Int) {
-        viewModelScope.launch {
-            try {
-                val linkedAlarm = appLinkAlarmRepository.getAlarmById(id).first()
-                _openAppUiState.update {
-                    it.copy(
-                        id = linkedAlarm.id,
-                        alarmName = linkedAlarm.alarmName,
-                        alarmMessage = linkedAlarm.alarmMessage,
-                        hour = linkedAlarm.hour,
-                        minute = linkedAlarm.minute,
-                        alarmMode = linkedAlarm.alarmMode,
-                        periodOfDay = linkedAlarm.periodOfDay,
-                        linkedAppPackage = linkedAlarm.linkedAppPackage
-                    )
-                }
-            } catch (e: Exception) {
-                firebaseManager.reportNonFatalError(e)
-                _errorFlow.emit(e)
+    init {
+        appLinkAlarmStateManager.currentAppLinkAlarmId.onEach { id ->
+            id?.let { updateAppLinkAlarm(it) }
+        }.launchIn(viewModelScope)
+    }
+
+    suspend fun updateAppLinkAlarm(id: Int) {
+        try {
+            val linkedAlarm = appLinkAlarmRepository.getAlarmById(id).first()
+            _openAppUiState.update {
+                it.copy(
+                    id = linkedAlarm.id,
+                    alarmName = linkedAlarm.alarmName,
+                    alarmMessage = linkedAlarm.alarmMessage,
+                    hour = linkedAlarm.hour,
+                    minute = linkedAlarm.minute,
+                    alarmMode = linkedAlarm.alarmMode,
+                    periodOfDay = linkedAlarm.periodOfDay,
+                    linkedAppPackage = linkedAlarm.linkedAppPackage
+                )
             }
+        } catch (e: Exception) {
+            firebaseManager.reportNonFatalError(e)
+            _errorFlow.emit(e)
         }
     }
 }

@@ -2,6 +2,7 @@ package com.oldogz.applinkalarm.feature.home
 
 import app.cash.turbine.test
 import com.oldogz.applinkalarm.feature.alarm.open.DismissAlarmViewModel
+import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.FakeSubscriptionManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
@@ -26,6 +27,7 @@ internal class DismissAlarmViewModelTest {
     var mainCoroutineRule = MainDispatcherRule()
 
     private val appLinkAlarmRepository: AppLinkAlarmRepository = mockk(relaxed = true)
+    private val appLinkAlarmStateManager: AppLinkAlarmStateManager = mockk(relaxed = true)
     private val firebaseManager: FirebaseManager = FakeFirebaseManager()
     private val subscriptionManager: SubscriptionManager = FakeSubscriptionManager()
     private lateinit var dismissAlarmViewModel: DismissAlarmViewModel
@@ -36,6 +38,7 @@ internal class DismissAlarmViewModelTest {
 
         dismissAlarmViewModel = DismissAlarmViewModel(
             appLinkAlarmRepository,
+            appLinkAlarmStateManager,
             firebaseManager,
             subscriptionManager
         )

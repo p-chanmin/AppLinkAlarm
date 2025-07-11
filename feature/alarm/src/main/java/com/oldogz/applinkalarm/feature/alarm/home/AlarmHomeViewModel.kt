@@ -6,9 +6,8 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
-import com.oldogz.core.alarm.AppLinkAlarmManager
-import com.oldogz.core.alarm.AppLinkAlarmPlayingService
-import com.oldogz.core.alarm.AppLinkAlarmStateManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
@@ -19,7 +18,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
@@ -33,7 +31,7 @@ import javax.inject.Inject
 @HiltViewModel
 class AlarmHomeViewModel @Inject constructor(
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
-    private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val appLinkAlarmScheduleManager: AppLinkAlarmScheduleManager,
     private val appLinkAlarmStateManager: AppLinkAlarmStateManager,
     private val firebaseManager: FirebaseManager,
     private val subscriptionManager: SubscriptionManager,
@@ -42,10 +40,9 @@ class AlarmHomeViewModel @Inject constructor(
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
 
-    private val _service = MutableStateFlow<AppLinkAlarmPlayingService?>(null)
-    val service get() = _service.asStateFlow()
-
     val hasPremium = subscriptionManager.subscriptionState
+
+    val currentAppLinkAlarmId = appLinkAlarmStateManager.currentAppLinkAlarmId
 
     private val _homeUiState = MutableStateFlow(AlarmHomeUiState())
     val homeUiState = _homeUiState.stateIn(
@@ -58,22 +55,13 @@ class AlarmHomeViewModel @Inject constructor(
     val event get() = _event.asSharedFlow()
 
     init {
-        appLinkAlarmStateManager.appLinkAlarmPlayingService
-            .onStart {
-                appLinkAlarmStateManager.bindService()
-            }.onEach { service ->
-                _service.value = service
-            }.catch { throwable ->
-                firebaseManager.reportNonFatalError(throwable)
-            }.launchIn(viewModelScope)
-
         loadAlarm()
     }
 
     private fun loadAlarm() {
         appLinkAlarmRepository.alarms
             .onStart {
-                if (!appLinkAlarmManager.checkScheduleExactAlarms()) {
+                if (!appLinkAlarmScheduleManager.checkScheduleExactAlarms()) {
                     val alarms = appLinkAlarmRepository.alarms.first()
                     alarms.forEach { alarm ->
                         appLinkAlarmRepository.updateAlarm(
@@ -97,11 +85,15 @@ class AlarmHomeViewModel @Inject constructor(
     fun updateAlarmActive(appLinkAlarm: AppLinkAlarm, active: Boolean) {
         viewModelScope.launch {
             try {
-                if (appLinkAlarmManager.checkScheduleExactAlarms() || !active) {
+                if (appLinkAlarmScheduleManager.checkScheduleExactAlarms() || !active) {
                     if (active) {
-                        appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
+                        appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                     } else {
-                        appLinkAlarmManager.cancelAlarm(appLinkAlarm.id)
+                        appLinkAlarmScheduleManager.cancelAlarm(
+                            appLinkAlarm.id,
+                            appLinkAlarm.alarmMode.name,
+                            appLinkAlarm.linkedAppPackage
+                        )
                     }
                     appLinkAlarmRepository.updateAlarm(
                         appLinkAlarm.copy(
@@ -125,15 +117,19 @@ class AlarmHomeViewModel @Inject constructor(
     fun updateSelectedAlarmActive(active: Boolean) {
         viewModelScope.launch {
             try {
-                if (appLinkAlarmManager.checkScheduleExactAlarms() || !active) {
+                if (appLinkAlarmScheduleManager.checkScheduleExactAlarms() || !active) {
                     _homeUiState.value.alarms
                         .filter { it.selected }
                         .map { it.appLinkAlarm }
                         .forEach { appLinkAlarm ->
                             if (active) {
-                                appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(active = true))
+                                appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm.copy(active = true))
                             } else {
-                                appLinkAlarmManager.cancelAlarm(appLinkAlarm.id)
+                                appLinkAlarmScheduleManager.cancelAlarm(
+                                    appLinkAlarm.id,
+                                    appLinkAlarm.alarmMode.name,
+                                    appLinkAlarm.linkedAppPackage
+                                )
                             }
                             appLinkAlarmRepository.updateAlarm(
                                 appLinkAlarm.copy(
@@ -161,10 +157,14 @@ class AlarmHomeViewModel @Inject constructor(
             try {
                 _homeUiState.value.alarms
                     .filter { it.selected }
-                    .map { it.appLinkAlarm.id }
-                    .forEach { id ->
-                        appLinkAlarmManager.cancelAlarm(id)
-                        appLinkAlarmRepository.deleteAlarmById(id)
+                    .map { it.appLinkAlarm }
+                    .forEach { appLinkAlarm ->
+                        appLinkAlarmScheduleManager.cancelAlarm(
+                            appLinkAlarm.id,
+                            appLinkAlarm.alarmMode.name,
+                            appLinkAlarm.linkedAppPackage
+                        )
+                        appLinkAlarmRepository.deleteAlarmById(appLinkAlarm.id)
                     }
                 updateSelectMode(false)
             } catch (e: Exception) {
@@ -229,13 +229,8 @@ class AlarmHomeViewModel @Inject constructor(
 
     fun dismissAlarm(linkedAppPackage: String) {
         viewModelScope.launch {
-            _service.value?.stopSelf()
+            appLinkAlarmStateManager.stopService()
             _event.emit(AlarmHomeUiEvent.LinkedAppOpen(linkedAppPackage))
         }
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        appLinkAlarmStateManager.unbindService()
     }
 }

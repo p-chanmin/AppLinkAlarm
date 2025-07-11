@@ -11,19 +11,17 @@
 
     <application>
         <service
-            android:name=".AppLinkAlarmPlayingService"
+            android:name=".service.AppLinkAlarmPlayingService"
             android:exported="false"
             android:foregroundServiceType="mediaPlayback" />
 
         <receiver
-            android:name=".AppLinkAlarmReceiver"
-            android:exported="false" />
-        <receiver
-            android:name=".AppLinkAlarmRegisterReceiver"
-            android:exported="false">
+            android:name=".receiver.AppLinkAlarmReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
     </application>

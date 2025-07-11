@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
-import com.oldogz.core.alarm.AppLinkAlarmManager
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager
 import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
@@ -31,7 +31,7 @@ import javax.inject.Inject
 class AlarmEditViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val appLinkAlarmRepository: AppLinkAlarmRepository,
-    private val appLinkAlarmManager: AppLinkAlarmManager,
+    private val appLinkAlarmScheduleManager: AppLinkAlarmScheduleManager,
     private val firebaseManager: FirebaseManager,
     private val subscriptionManager: SubscriptionManager,
 ) : ViewModel() {
@@ -192,7 +192,6 @@ class AlarmEditViewModel @Inject constructor(
                 val vibrate = _alarmEditUiState.value.vibrate
                 val alarmSound = _alarmEditUiState.value.alarmSound
                 val alarmVolume = _alarmEditUiState.value.alarmVolume
-                val active = _alarmEditUiState.value.active
 
                 if (linkedAppPackage != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
                     val appLinkAlarm = AppLinkAlarm(
@@ -208,15 +207,15 @@ class AlarmEditViewModel @Inject constructor(
                         vibrate = vibrate,
                         alarmSound = alarmSound,
                         alarmVolume = alarmVolume,
-                        active = active
+                        active = true
                     )
-                    if (appLinkAlarmManager.checkScheduleExactAlarms()) {
+                    if (appLinkAlarmScheduleManager.checkScheduleExactAlarms()) {
                         if (id != null) {
                             appLinkAlarmRepository.updateAlarm(appLinkAlarm)
-                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm)
+                            appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm)
                         } else {
                             val alarmId = appLinkAlarmRepository.addAlarm(appLinkAlarm)
-                            appLinkAlarmManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
+                            appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm.copy(id = alarmId))
                         }
                         _event.emit(AlarmEditUiEvent.AlarmEditComplete)
                     } else {
