@@ -15,7 +15,7 @@ class AppLinkAlarmRepository @Inject constructor(
     val alarms = appLinkAlarmDataSource.alarms.map { entities ->
         entities.map { it.toData() }.sortedWith(
             compareBy<AppLinkAlarm> { it.periodOfDay.ordinal }
-                .thenBy { it.hour }
+                .thenBy { it.hour % 12 }
                 .thenBy { it.minute }
         )
     }
