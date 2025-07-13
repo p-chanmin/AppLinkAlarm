@@ -1,4 +1,4 @@
-package com.oldogz.core.alarm.workermanager.worker
+package com.oldogz.core.alarm.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
