@@ -51,7 +51,5 @@ fun getPropertyKey(propertyKey: String): String {
 }
 
 dependencies {
-    implementation(libs.androidx.work.runtime.ktx)
     implementation(project(":feature:main"))
-    implementation(project(":core:alarm"))
 }
