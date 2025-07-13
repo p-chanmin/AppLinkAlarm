@@ -1,8 +1,8 @@
 package com.oldogz.applinkalarm
 
 import android.app.Application
+import androidx.hilt.work.HiltWorkerFactory
 import androidx.work.Configuration
-import com.oldogz.core.alarm.workermanager.factory.WrapperWorkerFactory
 import dagger.hilt.android.HiltAndroidApp
 import javax.inject.Inject
 
@@ -10,7 +10,7 @@ import javax.inject.Inject
 class AppLinkAlarmApp : Application(), Configuration.Provider {
 
     @Inject
-    lateinit var workerFactory: WrapperWorkerFactory
+    lateinit var workerFactory: HiltWorkerFactory
 
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
