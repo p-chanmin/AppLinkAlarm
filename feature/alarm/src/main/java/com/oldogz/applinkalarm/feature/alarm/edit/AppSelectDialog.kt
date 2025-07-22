@@ -81,7 +81,7 @@ fun AppSelectDialog(
                     packageName = app.packageName,
                     icon = app.loadIcon(packageManager)
                 )
-            }
+            }.distinctBy { it.packageName }
             apps.addAll(appInfoList)
             searchApps(searchKeyWords, apps, filteredApps)
         }
