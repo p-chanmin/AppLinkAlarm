@@ -3,7 +3,7 @@ package com.oldogz.core.alarm.receiver
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.work.Data
+import androidx.work.workDataOf
 import com.google.firebase.analytics.logEvent
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_ID
@@ -11,14 +11,14 @@ import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTEN
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_PACKAGE
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.alarm.manager.WorkRequestManager
-import com.oldogz.core.alarm.workermanager.worker.NOTIFICATION_ALARM_DATA_ID
-import com.oldogz.core.alarm.workermanager.worker.NOTIFICATION_ALARM_TAG
-import com.oldogz.core.alarm.workermanager.worker.NOTIFICATION_NOT_FOUND_TAG
-import com.oldogz.core.alarm.workermanager.worker.NotificationAlarmWorker
-import com.oldogz.core.alarm.workermanager.worker.RESCHEDULE_ALARM_ALL_TAG
-import com.oldogz.core.alarm.workermanager.worker.RESCHEDULE_ALARM_DATA_ID
-import com.oldogz.core.alarm.workermanager.worker.RESCHEDULE_ALARM_TAG
-import com.oldogz.core.alarm.workermanager.worker.RescheduleAlarmWorker
+import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_DATA_ID
+import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_TAG
+import com.oldogz.core.alarm.worker.NOTIFICATION_NOT_FOUND_TAG
+import com.oldogz.core.alarm.worker.NotificationAlarmWorker
+import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_ALL_TAG
+import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_DATA_ID
+import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_TAG
+import com.oldogz.core.alarm.worker.RescheduleAlarmWorker
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
@@ -60,7 +60,7 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                         AlarmMode.NOTIFICATION_ONLY -> {
                             workRequestManager.enqueueWorker<NotificationAlarmWorker>(
                                 NOTIFICATION_ALARM_TAG,
-                                Data.Builder().putInt(NOTIFICATION_ALARM_DATA_ID, alarmId).build()
+                                workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
                             )
                         }
 
@@ -70,13 +70,13 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                     }
                     workRequestManager.enqueueWorker<RescheduleAlarmWorker>(
                         RESCHEDULE_ALARM_TAG,
-                        Data.Builder().putInt(RESCHEDULE_ALARM_DATA_ID, alarmId).build()
+                        workDataOf(RESCHEDULE_ALARM_DATA_ID to alarmId)
                     )
                 } else {
                     firebaseManager.firebaseAnalytics.logEvent(FA.Event.LINKED_APP_NOT_FOUND) {}
                     workRequestManager.enqueueWorker<NotificationAlarmWorker>(
                         NOTIFICATION_NOT_FOUND_TAG,
-                        Data.Builder().putInt(NOTIFICATION_ALARM_DATA_ID, alarmId).build()
+                        workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
                     )
                 }
             }

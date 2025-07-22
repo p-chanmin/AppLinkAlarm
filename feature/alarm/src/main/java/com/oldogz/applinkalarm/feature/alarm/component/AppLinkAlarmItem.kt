@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,6 +33,7 @@ import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.PeriodOfDay
 
 @Composable
 internal fun AppLinkAlarmItem(
@@ -131,9 +133,13 @@ internal fun AppLinkAlarmItem(
                     )
                     val hour = appLinkAlarm.hour.toString().padStart(2, '0')
                     val minute = appLinkAlarm.minute.toString().padStart(2, '0')
+                    val periodOfDay = when (appLinkAlarm.periodOfDay) {
+                        PeriodOfDay.AM -> stringResource(R.string.feature_alarm_text_am)
+                        PeriodOfDay.PM -> stringResource(R.string.feature_alarm_text_pm)
+                    }
                     Text(
                         modifier = Modifier.padding(top = Paddings.small),
-                        text = "$hour:$minute ${appLinkAlarm.periodOfDay}",
+                        text = "$hour:$minute $periodOfDay",
                         style = MaterialTheme.typography.labelLarge.copy(
                             color = MaterialTheme.colorScheme.onSecondary
                         )

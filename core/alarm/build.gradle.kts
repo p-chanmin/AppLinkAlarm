@@ -7,7 +7,7 @@ android {
 }
 
 dependencies {
-    implementation(libs.androidx.work.runtime.ktx)
+    api(libs.androidx.work.runtime.ktx)
     implementation(project(":core:model"))
     implementation(project(":core:data"))
     implementation(project(":core:navigation"))
