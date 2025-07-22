@@ -12,15 +12,18 @@
 
 <br>
 
-<p align="center"><img src="https://github.com/user-attachments/assets/034388d2-953d-4ab6-be8b-4d57b0d86db2" width="800"/>
+<p align="center"><img src="https://github.com/user-attachments/assets/034388d2-953d-4ab6-be8b-4d57b0d86db2" width="600"/>
 </p>
+
 
 <br>
 
 
 ## 📲 알람이 울리면 연결한 앱을 실행하는 스마트 알람
 
-**AppLink Alarm**은 기본 알람 기능에 **‘앱 연결’** 기능을 더해, 알람이 울릴 때 즉시 연결한 앱을 실행할 수 있는 새로운 알람 경험을 제공합니다. **하루를 계획할 때 자주 쓰는 앱**(루틴, 일정 관리, 로그인 이벤트 등)과 알람을 연결해 두면, 바로 필요한 앱으로 이동해 시간을 절약하거나 중요한 일을 리마인드할 수 있습니다.
+**AppLink Alarm**은 기본 알람 기능에 **‘앱 연결’** 기능을 더해, 알람이 울릴 때 즉시 연결한 앱을 실행할 수 있는 새로운 알람 경험을 제공합니다.
+
+**하루를 계획할 때 자주 쓰는 앱**(루틴, 일정 관리, 로그인 이벤트 등)과 알람을 연결해 두면, 바로 필요한 앱으로 이동해 시간을 절약하거나 중요한 일을 리마인드할 수 있습니다.
 
 **알람 설정**
 
@@ -50,9 +53,9 @@
 |                        알람 목록 화면                        |                         연결 앱 선택                         |                          알람 추가                           |
 | :----------------------------------------------------------: | :----------------------------------------------------------: | :----------------------------------------------------------: |
 | <img src="https://github.com/user-attachments/assets/61029670-9229-4a76-aed3-21575bd2d876" width="200"> | <img src="https://github.com/user-attachments/assets/ed447dc5-d344-467e-adea-da0c707aefc3" width="200"> | <img src="https://github.com/user-attachments/assets/a0cb8ac6-70a2-4d49-b533-a339d4e9ab64" width="200"> |
-|                        알람 선택 모드                        |                         알람 ON/OFF                          |                          알람 삭제                           |
+|                      **알람 선택 모드**                      |                       **알람 ON/OFF**                        |                        **알람 삭제**                         |
 | <img src="https://github.com/user-attachments/assets/a09ba5e0-8288-427b-bdce-f7fe310c7744" width="200"> | <img src="https://github.com/user-attachments/assets/19361280-5666-4b8b-b428-d49e69e32845" width="200"> | <img src="https://github.com/user-attachments/assets/5943e9ba-7812-4a4a-9e79-87218f02103e" width="200"> |
-|                         알림만 모드                          |                        기본 알람 모드                        |                             설정                             |
+|                       **알림만 모드**                        |                      **기본 알람 모드**                      |                           **설정**                           |
 | <img src="https://github.com/user-attachments/assets/b75c8418-a157-4ec2-8996-9ccc715ad51f" width="200"> | <img src="https://github.com/user-attachments/assets/de04f346-5ccb-40e2-9260-c20244962e40" width="200"> | <img src="https://github.com/user-attachments/assets/32b89f0c-fbd3-4a57-89b0-3a5f0f5a0272" width="200"> |
 
 <br>
