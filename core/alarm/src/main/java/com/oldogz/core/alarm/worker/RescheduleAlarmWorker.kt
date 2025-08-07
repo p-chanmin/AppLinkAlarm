@@ -33,7 +33,7 @@ class RescheduleAlarmWorker @AssistedInject constructor(
                 tags.contains(RESCHEDULE_ALARM_TAG) -> {
                     val alarmId = inputData.getInt(RESCHEDULE_ALARM_DATA_ID, -1)
                     val appLinkAlarm = appLinkAlarmRepository.getAlarmById(alarmId).first()
-                    appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm)
+                    appLinkAlarmScheduleManager.scheduleAlarm(appLinkAlarm, true)
                 }
             }
             Result.success()

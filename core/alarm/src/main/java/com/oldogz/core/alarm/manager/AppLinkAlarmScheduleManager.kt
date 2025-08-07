@@ -30,10 +30,10 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         }
     }
 
-    fun scheduleAlarm(alarm: AppLinkAlarm) {
+    fun scheduleAlarm(alarm: AppLinkAlarm, isRescheduling: Boolean = false) {
         if (!alarm.active || alarm.dayOfWeek.isEmpty()) return
 
-        val nextAlarmTime = calculateNextAlarmTime(alarm)
+        val nextAlarmTime = calculateNextAlarmTime(alarm, isRescheduling)
 
         val pendingIntent =
             createPendingIntent(alarm.id, alarm.alarmMode.name, alarm.linkedAppPackage)
@@ -49,10 +49,13 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         alarmManager.cancel(createPendingIntent(alarmId, alarmMode, linkedAppPackage))
     }
 
-    private fun calculateNextAlarmTime(alarm: AppLinkAlarm): Long {
+    private fun calculateNextAlarmTime(alarm: AppLinkAlarm, isRescheduling: Boolean): Long {
+        val marginMs = if (isRescheduling) 2000L else 0L
+        val now = System.currentTimeMillis() + marginMs
+
         val calendar = Calendar.getInstance().apply {
             timeZone = TimeZone.getDefault()
-            timeInMillis = System.currentTimeMillis()
+            timeInMillis = now
 
             val hour24 = (alarm.hour % 12) + if (alarm.periodOfDay == PeriodOfDay.PM) 12 else 0
 
@@ -64,10 +67,11 @@ class AppLinkAlarmScheduleManager @Inject constructor(
 
         val todayDayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK)
         val nextDayOfWeek =
-            findNextDayOfWeek(alarm.dayOfWeek, todayDayOfWeek, calendar.timeInMillis)
+            findNextDayOfWeek(alarm.dayOfWeek, todayDayOfWeek, calendar.timeInMillis, now)
         calendar.set(Calendar.DAY_OF_WEEK, nextDayOfWeek)
 
-        if (calendar.timeInMillis <= System.currentTimeMillis()) {
+
+        if (calendar.timeInMillis <= now) {
             calendar.add(Calendar.WEEK_OF_YEAR, 1)
         }
 
@@ -77,11 +81,12 @@ class AppLinkAlarmScheduleManager @Inject constructor(
     private fun findNextDayOfWeek(
         dayOfWeekList: List<DayOfWeek>,
         todayDayOfWeek: Int,
-        alarmTime: Long
+        alarmTime: Long,
+        now: Long,
     ): Int {
         val sortedDayOfWeek = dayOfWeekList.map { it.value }.sorted()
         val dayOfWeek = sortedDayOfWeek.find {
-            it > todayDayOfWeek || (it == todayDayOfWeek && alarmTime > System.currentTimeMillis())
+            it > todayDayOfWeek || (it == todayDayOfWeek && alarmTime > now)
         }
         return dayOfWeek ?: sortedDayOfWeek.first()
     }
