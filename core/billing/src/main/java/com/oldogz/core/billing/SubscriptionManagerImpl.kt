@@ -25,7 +25,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 class SubscriptionManagerImpl @Inject constructor(
-    @ApplicationContext context: Context
+    @ApplicationContext private val context: Context
 ) : SubscriptionManager {
 
     private val _availableProducts = MutableStateFlow<List<Product>>(emptyList())
@@ -72,6 +72,7 @@ class SubscriptionManagerImpl @Inject constructor(
     private var billingClient: BillingClient = BillingClient.newBuilder(context)
         .setListener(purchasesUpdatedListener)
         .enablePendingPurchases(pendingPurchasesParams)
+        .enableAutoServiceReconnection()
         .build()
 
     override fun initialize(onSetupFinished: () -> Unit) {
@@ -149,16 +150,26 @@ class SubscriptionManagerImpl @Inject constructor(
         productDetails: ProductDetails,
         offerToken: String
     ) {
-        val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
-            .setProductDetails(productDetails)
-            .setOfferToken(offerToken)
-            .build()
+        println("billingClient.isReady: ${billingClient.isReady}")
+        if (billingClient.isReady) {
+            val productDetailsParams = BillingFlowParams.ProductDetailsParams.newBuilder()
+                .setProductDetails(productDetails)
+                .setOfferToken(offerToken)
+                .build()
 
-        val billingFlowParams = BillingFlowParams.newBuilder()
-            .setProductDetailsParamsList(listOf(productDetailsParams))
-            .build()
+            val billingFlowParams = BillingFlowParams.newBuilder()
+                .setProductDetailsParamsList(listOf(productDetailsParams))
+                .build()
 
-        billingClient.launchBillingFlow(activity, billingFlowParams)
+            billingClient.launchBillingFlow(activity, billingFlowParams)
+        } else {
+            Log.e(TAG, "Billing client is not ready")
+            Toast.makeText(
+                context,
+                context.getString(R.string.core_billing_text_connection_error),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
     override fun queryPurchases(

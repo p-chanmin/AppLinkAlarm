@@ -1,4 +1,5 @@
 <resources>
     <string name="core_billing_text_payment_canceled">Pembayaran dibatalkan</string>
     <string name="core_billing_text_payment_error">Terjadi kesalahan saat pembayaran (%1$d)</string>
+    <string name="core_billing_text_connection_error">Tidak dapat terhubung ke layanan pembayaran. Harap mulai ulang aplikasi.</string>
 </resources>
