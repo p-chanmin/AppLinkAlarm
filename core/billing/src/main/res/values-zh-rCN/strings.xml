@@ -1,4 +1,5 @@
 <resources>
     <string name="core_billing_text_payment_canceled">支付已取消</string>
     <string name="core_billing_text_payment_error">支付过程中发生错误（%1$d）</string>
+    <string name="core_billing_text_connection_error">无法连接到支付服务。请重启应用。</string>
 </resources>

@@ -1,4 +1,5 @@
 <resources>
     <string name="core_billing_text_payment_canceled">Payment canceled</string>
     <string name="core_billing_text_payment_error">An error occurred during payment(%1$d)</string>
+    <string name="core_billing_text_connection_error">Could not connect to the payment service. Please restart the app.</string>
 </resources>
