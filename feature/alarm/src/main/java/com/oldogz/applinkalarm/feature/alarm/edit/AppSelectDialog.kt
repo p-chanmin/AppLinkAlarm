@@ -2,6 +2,7 @@ package com.oldogz.applinkalarm.feature.alarm.edit
 
 import android.content.Intent
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -37,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -144,6 +146,13 @@ fun AppSelectDialog(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    item {
+                        if (searchKeyWords.isEmpty()) {
+                            AddUrlItem(
+                                onClick = {}
+                            )
+                        }
+                    }
                     items(filteredApps, key = { it.packageName }) { appInfo ->
                         AppInfoItem(
                             appInfo = appInfo,
@@ -155,6 +164,47 @@ fun AppSelectDialog(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+internal fun AddUrlItem(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .clickable { onClick() }
+            .padding(Paddings.xlarge),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            painter = painterResource(R.drawable.outline_link_24),
+            contentDescription = "",
+        )
+        Column(
+            modifier = Modifier.padding(start = Paddings.xlarge),
+        ) {
+            Text(
+                text = "Add URL",
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Text(
+                modifier = Modifier.padding(top = Paddings.small),
+                text = "Enter a URL directly.",
+                style = MaterialTheme.typography.labelLarge.copy(
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            )
         }
     }
 }
@@ -222,6 +272,17 @@ private fun searchApps(
 
         val result = apps.filter { regex.containsMatchIn(it.appName) }
         filteredApps.addAll(result)
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
+private fun AddUrlItemPreview() {
+    AppLinkAlarmTheme {
+        AddUrlItem(
+            onClick = {}
+        )
     }
 }
 
