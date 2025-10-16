@@ -661,7 +661,7 @@ internal fun AlarmMode(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val coroutineScope = rememberCoroutineScope()
-            val tooltipState = rememberTooltipState()
+            val tooltipState = rememberTooltipState(isPersistent = true)
             Text(
                 modifier = Modifier,
                 text = stringResource(R.string.feature_alarm_text_alarm_mode),
@@ -688,7 +688,8 @@ internal fun AlarmMode(
                         Text(stringResource(R.string.feature_alarm_text_alarm_mode_tool_tip))
                     }
                 },
-                state = tooltipState
+                state = tooltipState,
+                enableUserInput = false,
             ) {
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Info,
