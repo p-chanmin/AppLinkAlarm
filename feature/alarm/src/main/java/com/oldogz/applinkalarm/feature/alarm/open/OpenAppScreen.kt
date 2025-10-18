@@ -40,6 +40,7 @@ import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AlarmMode
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
@@ -120,21 +121,29 @@ private fun OpenAppContent(
                     minute = openAppUiState.minute,
                     alarmMode = AlarmMode.NOTIFICATION_ONLY,
                     periodOfDay = openAppUiState.periodOfDay,
-                    linkedAppPackage = openAppUiState.linkedAppPackage,
+                    linkTarget = openAppUiState.linkTarget,
                     onClick = {
-                        val launchIntent =
-                            context.packageManager.getLaunchIntentForPackage(openAppUiState.linkedAppPackage)
-                        if (launchIntent != null) {
-                            context.startActivity(launchIntent)
-                        } else {
-                            onShowErrorSnackBar(
-                                Throwable(
-                                    context.getString(
-                                        R.string.feature_alarm_error_text_app_not_found,
-                                        openAppUiState.linkedAppPackage
+                        when (val target = openAppUiState.linkTarget) {
+                            is LinkTarget.App -> {
+                                val launchIntent =
+                                    context.packageManager.getLaunchIntentForPackage(target.packageName)
+                                if (launchIntent != null) {
+                                    context.startActivity(launchIntent)
+                                } else {
+                                    onShowErrorSnackBar(
+                                        Throwable(
+                                            context.getString(
+                                                R.string.feature_alarm_error_text_app_not_found,
+                                                target.packageName
+                                            )
+                                        )
                                     )
-                                )
-                            )
+                                }
+                            }
+
+                            is LinkTarget.Url -> {
+
+                            }
                         }
                         popBackStack()
                     }
@@ -174,7 +183,7 @@ private fun OpenAppContentPreview() {
                 minute = 30,
                 alarmMode = AlarmMode.NOTIFICATION_ONLY,
                 periodOfDay = PeriodOfDay.AM,
-                linkedAppPackage = "com.example.app"
+                linkTarget = LinkTarget.App(packageName = "com.example.app")
             ),
             hasPremium = false,
             popBackStack = {},

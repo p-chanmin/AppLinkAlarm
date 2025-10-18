@@ -2,6 +2,7 @@ package com.oldogz.applinkalarm.feature.alarm.model
 
 import androidx.compose.runtime.Immutable
 import com.oldogz.core.model.AppLinkAlarm
+import com.oldogz.core.model.LinkTarget
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -21,5 +22,5 @@ data class AppLinkAlarmUiState(
 )
 
 sealed interface AlarmHomeUiEvent {
-    data class LinkedAppOpen(val linkedAppPackage: String) : AlarmHomeUiEvent
+    data class LinkedAppOpen(val linkTarget: LinkTarget) : AlarmHomeUiEvent
 }

@@ -55,12 +55,13 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmTextField
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.model.LinkTarget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun AppSelectDialog(
-    updateLinkedAppPackage: (String) -> Unit,
+    updateLinkTarget: (LinkTarget) -> Unit,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -157,7 +158,7 @@ fun AppSelectDialog(
                         AppInfoItem(
                             appInfo = appInfo,
                             onClick = {
-                                updateLinkedAppPackage(appInfo.packageName)
+                                updateLinkTarget(LinkTarget.App(packageName = appInfo.packageName))
                                 onDismiss()
                             }
                         )
@@ -308,7 +309,7 @@ private fun AppInfoItemPreview() {
 private fun AppSelectDialogPreview() {
     AppLinkAlarmTheme {
         AppSelectDialog(
-            updateLinkedAppPackage = {},
+            updateLinkTarget = {},
             onDismiss = {}
         )
     }

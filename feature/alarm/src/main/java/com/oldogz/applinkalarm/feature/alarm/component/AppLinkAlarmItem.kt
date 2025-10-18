@@ -33,6 +33,7 @@ import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
@@ -101,9 +102,18 @@ internal fun AppLinkAlarmItem(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AppIconImage(
-                    linkedAppPackage = appLinkAlarm.linkedAppPackage
-                )
+                when (val target = appLinkAlarm.linkTarget) {
+                    is LinkTarget.App -> {
+                        AppIconImage(
+                            linkedAppPackage = target.packageName
+                        )
+                    }
+
+                    is LinkTarget.Url -> {
+
+                    }
+                }
+
                 Column(
                     modifier = Modifier.padding(start = Paddings.xlarge),
                 ) {

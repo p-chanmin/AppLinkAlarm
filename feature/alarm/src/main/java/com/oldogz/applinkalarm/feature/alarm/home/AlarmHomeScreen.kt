@@ -72,6 +72,7 @@ import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -102,19 +103,27 @@ internal fun AlarmHomeScreen(
         alarmHomeViewModel.event.collect { event ->
             when (event) {
                 is AlarmHomeUiEvent.LinkedAppOpen -> {
-                    val launchIntent =
-                        context.packageManager.getLaunchIntentForPackage(event.linkedAppPackage)
-                    if (launchIntent != null) {
-                        context.startActivity(launchIntent)
-                    } else {
-                        onShowErrorSnackBar(
-                            Throwable(
-                                context.getString(
-                                    R.string.feature_alarm_error_text_app_not_found,
-                                    event.linkedAppPackage
+                    when (val target = event.linkTarget) {
+                        is LinkTarget.App -> {
+                            val launchIntent =
+                                context.packageManager.getLaunchIntentForPackage(target.packageName)
+                            if (launchIntent != null) {
+                                context.startActivity(launchIntent)
+                            } else {
+                                onShowErrorSnackBar(
+                                    Throwable(
+                                        context.getString(
+                                            R.string.feature_alarm_error_text_app_not_found,
+                                            target.packageName
+                                        )
+                                    )
                                 )
-                            )
-                        )
+                            }
+                        }
+
+                        is LinkTarget.Url -> {
+
+                        }
                     }
                 }
             }

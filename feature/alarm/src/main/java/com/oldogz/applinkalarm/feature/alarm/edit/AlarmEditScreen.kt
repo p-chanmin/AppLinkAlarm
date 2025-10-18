@@ -84,6 +84,7 @@ import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -147,7 +148,7 @@ internal fun AlarmEditScreen(
         alarmEditUiState = alarmEditUiState,
         paddingValues = paddingValues,
         popBackStack = popBackStack,
-        updateLinkedAppPackage = alarmEditViewModel::updateLinkedAppPackage,
+        updateLinkTarget = alarmEditViewModel::updateLinkTarget,
         hourState = hourState,
         minuteState = minuteState,
         periodOfDayState = periodOfDayState,
@@ -172,7 +173,7 @@ private fun AlarmEditContent(
     alarmEditUiState: AlarmEditUiState,
     paddingValues: PaddingValues,
     popBackStack: () -> Unit,
-    updateLinkedAppPackage: (String) -> Unit,
+    updateLinkTarget: (LinkTarget) -> Unit,
     hourState: LazyListState,
     minuteState: LazyListState,
     periodOfDayState: LazyListState,
@@ -236,7 +237,7 @@ private fun AlarmEditContent(
                     .verticalScroll(scrollState)
             ) {
                 ChooseApp(
-                    linkedAppPackage = alarmEditUiState.linkedAppPackage,
+                    linkTarget = alarmEditUiState.linkTarget,
                     updateVisibleSelectAppDialog = updateVisibleSelectAppDialog
                 )
                 AlarmTimer(
@@ -280,7 +281,7 @@ private fun AlarmEditContent(
                     .fillMaxWidth()
                     .padding(Paddings.large),
                 content = stringResource(R.string.feature_alarm_text_alarm_save),
-                enabled = (alarmEditUiState.linkedAppPackage != null &&
+                enabled = (alarmEditUiState.linkTarget != null &&
                         alarmEditUiState.dayOfWeek.isNotEmpty() &&
                         alarmEditUiState.alarmName.isNotEmpty() &&
                         alarmEditUiState.message.isNotEmpty()),
@@ -300,7 +301,7 @@ private fun AlarmEditContent(
 
     if (alarmEditUiState.visibleSelectAppDialog) {
         AppSelectDialog(
-            updateLinkedAppPackage = updateLinkedAppPackage,
+            updateLinkTarget = updateLinkTarget,
             onDismiss = updateVisibleSelectAppDialog
         )
     }
@@ -314,7 +315,7 @@ private fun AlarmEditContent(
 
 @Composable
 internal fun ChooseApp(
-    linkedAppPackage: String?,
+    linkTarget: LinkTarget?,
     updateVisibleSelectAppDialog: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -330,9 +331,13 @@ internal fun ChooseApp(
                 fontWeight = FontWeight.Bold
             )
         )
-        if (linkedAppPackage != null) {
+        if (linkTarget != null) {
             val appInfo = try {
-                packageManager.getApplicationInfo(linkedAppPackage, 0)
+                if (linkTarget is LinkTarget.App) {
+                    packageManager.getApplicationInfo(linkTarget.packageName, 0)
+                } else {
+                    null
+                }
             } catch (e: Exception) {
                 null
             }
@@ -814,13 +819,13 @@ private fun AlarmEditContentPreview() {
     AppLinkAlarmTheme {
         AlarmEditContent(
             alarmEditUiState = AlarmEditUiState(
-                linkedAppPackage = null,
+                linkTarget = null,
                 alarmMode = AlarmMode.STANDARD,
                 dayOfWeek = persistentListOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY)
             ),
             paddingValues = PaddingValues(),
             popBackStack = {},
-            updateLinkedAppPackage = {},
+            updateLinkTarget = {},
             hourState = rememberLazyListState(),
             minuteState = rememberLazyListState(),
             periodOfDayState = rememberLazyListState(),

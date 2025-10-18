@@ -1,5 +1,6 @@
 package com.oldogz.applinkalarm.feature.alarm.component
 
+import android.R.attr.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
@@ -30,7 +32,7 @@ internal fun OpenAppInfo(
     minute: Int,
     alarmMode: AlarmMode,
     periodOfDay: PeriodOfDay,
-    linkedAppPackage: String,
+    linkTarget: LinkTarget,
     onClick: () -> Unit,
 ) {
     val firebaseManager = LocalFirebaseManager.current
@@ -41,10 +43,18 @@ internal fun OpenAppInfo(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        AppIconImage(
-            linkedAppPackage = linkedAppPackage,
-            size = 64.dp
-        )
+        when (val target = linkTarget) {
+            is LinkTarget.App -> {
+                AppIconImage(
+                    linkedAppPackage = target.packageName,
+                    size = 64.dp
+                )
+            }
+
+            is LinkTarget.Url -> {
+
+            }
+        }
 
         val hourText = hour.toString().padStart(2, '0')
         val minuteText = minute.toString().padStart(2, '0')
