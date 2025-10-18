@@ -8,8 +8,11 @@ import android.os.Build
 import com.oldogz.core.alarm.receiver.AppLinkAlarmReceiver
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
@@ -36,7 +39,11 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         val nextAlarmTime = calculateNextAlarmTime(alarm, isRescheduling)
 
         val pendingIntent =
-            createPendingIntent(alarm.id, alarm.alarmMode.name, alarm.linkedAppPackage)
+            createPendingIntent(
+                alarm.id,
+                alarm.alarmMode.name,
+                Json.encodeToString(alarm.linkTarget)
+            )
 
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             nextAlarmTime,
@@ -45,8 +52,14 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
     }
 
-    fun cancelAlarm(alarmId: Int, alarmMode: String, linkedAppPackage: String) {
-        alarmManager.cancel(createPendingIntent(alarmId, alarmMode, linkedAppPackage))
+    fun cancelAlarm(alarmId: Int, alarmMode: String, linkTarget: LinkTarget) {
+        alarmManager.cancel(
+            createPendingIntent(
+                alarmId,
+                alarmMode,
+                Json.encodeToString(linkTarget)
+            )
+        )
     }
 
     private fun calculateNextAlarmTime(alarm: AppLinkAlarm, isRescheduling: Boolean): Long {
@@ -94,13 +107,13 @@ class AppLinkAlarmScheduleManager @Inject constructor(
     private fun createPendingIntent(
         alarmId: Int,
         alarmMode: String,
-        linkedAppPackage: String
+        linkTarget: String
     ): PendingIntent {
         val intent = Intent(context, AppLinkAlarmReceiver::class.java).apply {
             action = INTENT_ACTION_APP_LINK_ALARM
             putExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, alarmId)
             putExtra(INTENT_EXTRA_APP_LINK_ALARM_MODE, alarmMode)
-            putExtra(INTENT_EXTRA_APP_LINK_ALARM_PACKAGE, linkedAppPackage)
+            putExtra(INTENT_EXTRA_APP_LINK_TARGET, linkTarget)
         }
 
         return PendingIntent.getBroadcast(
@@ -115,6 +128,6 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         const val INTENT_ACTION_APP_LINK_ALARM = "intentActionAppLinkAlarm"
         const val INTENT_EXTRA_APP_LINK_ALARM_ID = "intentExtraAppLinkAlarmId"
         const val INTENT_EXTRA_APP_LINK_ALARM_MODE = "intentExtraAppLinkAlarmMode"
-        const val INTENT_EXTRA_APP_LINK_ALARM_PACKAGE = "intentExtraAppLinkAlarmPackage"
+        const val INTENT_EXTRA_APP_LINK_TARGET = "intentExtraAppLinkTarget"
     }
 }

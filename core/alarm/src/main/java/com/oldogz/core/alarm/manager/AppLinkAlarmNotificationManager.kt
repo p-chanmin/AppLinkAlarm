@@ -9,13 +9,16 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
 import androidx.core.graphics.createBitmap
+import androidx.core.net.toUri
 import com.oldogz.core.alarm.R
 import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.navigation.getDeepLinkOf
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -63,7 +66,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     ): Notification {
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+//            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
             .setContentTitle(appLinkAlarm.alarmName)
             .setContentText(appLinkAlarm.alarmMessage)
             .setStyle(NotificationCompat.BigTextStyle().bigText(appLinkAlarm.alarmMessage))
@@ -93,7 +96,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
 
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+//            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
             .setContentTitle(appLinkAlarm.alarmName)
             .setContentText(context.getString(R.string.core_alarm_text_click_to_dismiss_alarm, ""))
             .setStyle(
@@ -118,7 +121,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     ): Notification {
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
-            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+//            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
             .setContentTitle(
                 context.getString(
                     R.string.core_alarm_text_missed_alarm,
@@ -195,13 +198,27 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     }
 
     private fun createLinkedAppPendingIntent(appLinkAlarm: AppLinkAlarm): PendingIntent {
-        val intent = context.packageManager.getLaunchIntentForPackage(appLinkAlarm.linkedAppPackage)
-        return PendingIntent.getActivity(
-            context,
-            appLinkAlarm.id,
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
-        )
+        return when (val linkTarget = appLinkAlarm.linkTarget) {
+            is LinkTarget.App -> {
+                val intent = context.packageManager.getLaunchIntentForPackage(linkTarget.packageName)
+                PendingIntent.getActivity(
+                    context,
+                    appLinkAlarm.id,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                )
+            }
+
+            is LinkTarget.Url -> {
+                val intent = Intent(Intent.ACTION_VIEW, linkTarget.urlString.toUri())
+                PendingIntent.getActivity(
+                    context,
+                    appLinkAlarm.id,
+                    intent,
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                )
+            }
+        }
     }
 
     private fun createNotificationChannel(
