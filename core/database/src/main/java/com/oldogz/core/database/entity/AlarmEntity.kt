@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class AlarmEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val linkedAppPackage: String = "",
+    val linkTarget: String = "",
     val hour: Int = 0,
     val minute: Int = 0,
     val periodOfDay: String = "",
