@@ -95,9 +95,9 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
         }
     }
 
-    private fun isAppInstalled(context: Context, linkedAppPackage: String): Boolean {
+    private fun isAppInstalled(context: Context, packageName: String): Boolean {
         return try {
-            context.packageManager.getPackageInfo(linkedAppPackage, 0)
+            context.packageManager.getPackageInfo(packageName, 0)
             true
         } catch (e: Exception) {
             false
