@@ -150,7 +150,8 @@ fun AppSelectDialog(
                     item {
                         if (searchKeyWords.isEmpty()) {
                             AddUrlItem(
-                                onClick = {}
+                                addUrl = { updateLinkTarget(LinkTarget.Url(urlString = it)) },
+                                onDismiss = onDismiss
                             )
                         }
                     }
@@ -172,13 +173,16 @@ fun AppSelectDialog(
 @Composable
 internal fun AddUrlItem(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit,
+    addUrl: (String) -> Unit,
+    onDismiss: () -> Unit
 ) {
+    var dialog by remember { mutableStateOf(false) }
+
     Row(
         modifier = modifier
             .fillMaxWidth()
             .background(MaterialTheme.colorScheme.background)
-            .clickable { onClick() }
+            .clickable { dialog = true }
             .padding(Paddings.xlarge),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -187,13 +191,13 @@ internal fun AddUrlItem(
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
             painter = painterResource(R.drawable.outline_link_24),
-            contentDescription = "",
+            contentDescription = stringResource(R.string.feature_alarm_text_add_url),
         )
         Column(
             modifier = Modifier.padding(start = Paddings.xlarge),
         ) {
             Text(
-                text = "Add URL",
+                text = stringResource(R.string.feature_alarm_text_add_url),
                 style = MaterialTheme.typography.bodyLarge.copy(
                     color = MaterialTheme.colorScheme.onBackground,
                     fontWeight = FontWeight.Bold
@@ -201,12 +205,24 @@ internal fun AddUrlItem(
             )
             Text(
                 modifier = Modifier.padding(top = Paddings.small),
-                text = "Enter a URL directly.",
+                text = stringResource(R.string.feature_alarm_text_add_url_description),
                 style = MaterialTheme.typography.labelLarge.copy(
                     color = MaterialTheme.colorScheme.onSecondary
                 )
             )
         }
+    }
+
+    if (dialog) {
+        AddUrlDialog(
+            addUrl = {
+                addUrl(it)
+                onDismiss()
+            },
+            onDismiss = {
+                dialog = false
+            }
+        )
     }
 }
 
@@ -282,7 +298,8 @@ private fun searchApps(
 private fun AddUrlItemPreview() {
     AppLinkAlarmTheme {
         AddUrlItem(
-            onClick = {}
+            addUrl = {},
+            onDismiss = {}
         )
     }
 }

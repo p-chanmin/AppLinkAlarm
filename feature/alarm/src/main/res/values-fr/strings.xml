@@ -73,4 +73,10 @@
 
     <string name="feature_alarm_text_dismiss_and_open_app">Désactiver et ouvrir l’app</string>
     <string name="feature_alarm_text_open_app">Ouvrir l’app</string>
+
+    <string name="feature_alarm_text_url">URL</string>
+    <string name="feature_alarm_text_add_url">Ajouter une URL</string>
+    <string name="feature_alarm_text_add_url_description">Saisissez une URL valide</string>
+    <string name="feature_alarm_text_select_add">Ajouter</string>
+    <string name="feature_alarm_error_text_url">Aucune application n\'est disponible pour ouvrir l\'URL.</string>
 </resources>

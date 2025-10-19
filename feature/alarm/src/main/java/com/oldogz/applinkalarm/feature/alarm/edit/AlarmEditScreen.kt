@@ -20,12 +20,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -62,13 +60,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.logEvent
 import com.oldogz.applinkalarm.feature.alarm.R
+import com.oldogz.applinkalarm.feature.alarm.component.AppIconImage
 import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
 import com.oldogz.applinkalarm.feature.alarm.util.getFileName
 import com.oldogz.core.admob.LocalAdMobManager
-import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmFilterChip
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
@@ -331,19 +329,7 @@ internal fun ChooseApp(
                 fontWeight = FontWeight.Bold
             )
         )
-        if (linkTarget != null) {
-            val appInfo = try {
-                if (linkTarget is LinkTarget.App) {
-                    packageManager.getApplicationInfo(linkTarget.packageName, 0)
-                } else {
-                    null
-                }
-            } catch (e: Exception) {
-                null
-            }
-            val label = appInfo?.loadLabel(packageManager)
-                ?: stringResource(R.string.feature_alarm_text_not_found)
-            val icon = appInfo?.loadIcon(packageManager)
+        linkTarget?.let { linkTarget ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -354,21 +340,36 @@ internal fun ChooseApp(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row {
-                    AppLinkAlarmAsyncImage(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        drawable = icon,
-                        contentDescription = stringResource(
-                            R.string.feature_alarm_icon_description_app_icon,
-                            label
-                        ),
+                    AppIconImage(
+                        linkTarget = linkTarget,
+                        size = 32.dp
                     )
+
                     Column(
                         modifier = Modifier.padding(start = Paddings.xlarge),
                     ) {
+                        val (label, destination) = when (val target = linkTarget) {
+                            is LinkTarget.App -> {
+                                val appInfo = try {
+                                    packageManager.getApplicationInfo(target.packageName, 0)
+                                } catch (e: Exception) {
+                                    null
+                                }
+                                val label = appInfo?.loadLabel(packageManager)
+                                    ?: stringResource(R.string.feature_alarm_text_not_found)
+
+                                Pair(label.toString(), appInfo?.packageName)
+                            }
+
+                            is LinkTarget.Url -> {
+                                Pair(
+                                    stringResource(R.string.feature_alarm_text_url),
+                                    target.urlString
+                                )
+                            }
+                        }
                         Text(
-                            text = label.toString(),
+                            text = label,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontWeight = FontWeight.Bold
@@ -376,7 +377,7 @@ internal fun ChooseApp(
                         )
                         Text(
                             modifier = Modifier.padding(top = Paddings.small),
-                            text = appInfo?.packageName
+                            text = destination
                                 ?: stringResource(R.string.feature_alarm_text_not_found),
                             style = MaterialTheme.typography.labelLarge.copy(
                                 color = MaterialTheme.colorScheme.onSecondary
@@ -385,7 +386,9 @@ internal fun ChooseApp(
                     }
                 }
             }
-        } else {
+        }
+
+        if (linkTarget == null) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -819,7 +822,9 @@ private fun AlarmEditContentPreview() {
     AppLinkAlarmTheme {
         AlarmEditContent(
             alarmEditUiState = AlarmEditUiState(
-                linkTarget = null,
+//                linkTarget = null,
+//                linkTarget = LinkTarget.App(packageName = "example.com"),
+                linkTarget = LinkTarget.Url(urlString = "sample.com"),
                 alarmMode = AlarmMode.STANDARD,
                 dayOfWeek = persistentListOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY)
             ),

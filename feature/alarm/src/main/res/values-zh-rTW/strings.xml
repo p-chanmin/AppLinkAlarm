@@ -73,4 +73,10 @@
 
     <string name="feature_alarm_text_dismiss_and_open_app">關閉並開啟應用程式</string>
     <string name="feature_alarm_text_open_app">開啟應用程式</string>
+
+    <string name="feature_alarm_text_url">網址</string>
+    <string name="feature_alarm_text_add_url">新增網址</string>
+    <string name="feature_alarm_text_add_url_description">請輸入有效的網址</string>
+    <string name="feature_alarm_text_select_add">新增</string>
+    <string name="feature_alarm_error_text_url">沒有可開啟此網址的應用程式。</string>
 </resources>

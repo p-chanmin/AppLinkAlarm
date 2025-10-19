@@ -74,4 +74,10 @@
 
     <string name="feature_alarm_text_dismiss_and_open_app">알람 해제 및 앱 실행</string>
     <string name="feature_alarm_text_open_app">앱 실행</string>
+
+    <string name="feature_alarm_text_url">URL</string>
+    <string name="feature_alarm_text_add_url">URL 추가</string>
+    <string name="feature_alarm_text_add_url_description">유효한 URL을 입력하세요</string>
+    <string name="feature_alarm_text_select_add">추가</string>
+    <string name="feature_alarm_error_text_url">URL을 열 수 있는 앱이 없습니다.</string>
 </resources>

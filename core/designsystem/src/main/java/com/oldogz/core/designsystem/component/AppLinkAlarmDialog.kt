@@ -17,7 +17,7 @@ import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 @Composable
 fun AppLinkAlarmDialog(
     dialogTitle: String,
-    dialogText: String,
+    content: @Composable (() -> Unit),
     imageVector: ImageVector,
     contentDescription: String?,
     confirmText: String,
@@ -37,7 +37,7 @@ fun AppLinkAlarmDialog(
             Text(text = dialogTitle)
         },
         text = {
-            Text(text = dialogText)
+            content()
         },
         onDismissRequest = onDismissRequest,
         confirmButton = {
@@ -68,7 +68,7 @@ private fun AppLinkAlarmDialogPreview() {
     AppLinkAlarmTheme {
         AppLinkAlarmDialog(
             dialogTitle = "title",
-            dialogText = "content text",
+            content = { Text(text = "content") },
             imageVector = Icons.Filled.AppBlocking,
             contentDescription = "",
             confirmText = "Confirm",

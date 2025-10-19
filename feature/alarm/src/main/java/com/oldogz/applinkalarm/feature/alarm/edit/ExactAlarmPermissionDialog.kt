@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AppBlocking
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -22,7 +23,9 @@ fun ExactAlarmPermissionDialog(
     val context = LocalContext.current
     AppLinkAlarmDialog(
         dialogTitle = stringResource(R.string.feature_alarm_text_permission_denied),
-        dialogText = stringResource(R.string.feature_alarm_text_exact_alarm_permission_denied_content),
+        content = {
+            Text(text = stringResource(R.string.feature_alarm_text_exact_alarm_permission_denied_content))
+        },
         imageVector = Icons.Filled.AppBlocking,
         contentDescription = stringResource(R.string.feature_alarm_text_permission_denied),
         confirmText = stringResource(R.string.feature_alarm_text_permission_allow),

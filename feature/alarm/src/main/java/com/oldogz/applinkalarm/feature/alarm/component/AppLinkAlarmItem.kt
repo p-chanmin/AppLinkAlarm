@@ -102,17 +102,9 @@ internal fun AppLinkAlarmItem(
                 modifier = Modifier.weight(1f),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                when (val target = appLinkAlarm.linkTarget) {
-                    is LinkTarget.App -> {
-                        AppIconImage(
-                            linkedAppPackage = target.packageName
-                        )
-                    }
-
-                    is LinkTarget.Url -> {
-
-                    }
-                }
+                AppIconImage(
+                    linkTarget = appLinkAlarm.linkTarget
+                )
 
                 Column(
                     modifier = Modifier.padding(start = Paddings.xlarge),
@@ -185,6 +177,7 @@ private fun AppLinkAlarmItemPreview() {
                 selected = false,
                 navigateToAlarmEdit = {},
                 appLinkAlarm = AppLinkAlarm(
+                    linkTarget = LinkTarget.App(packageName = ""),
                     alarmName = "Sample",
                     dayOfWeek = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                     active = true
@@ -199,6 +192,7 @@ private fun AppLinkAlarmItemPreview() {
                 selected = false,
                 navigateToAlarmEdit = {},
                 appLinkAlarm = AppLinkAlarm(
+                    linkTarget = LinkTarget.Url(urlString = "sample.com"),
                     alarmName = "Sample",
                     dayOfWeek = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                     active = false
