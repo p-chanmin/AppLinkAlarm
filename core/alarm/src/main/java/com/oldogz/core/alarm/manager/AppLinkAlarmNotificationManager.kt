@@ -9,9 +9,9 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Canvas
-import android.net.Uri
 import androidx.annotation.StringRes
 import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import com.oldogz.core.alarm.R
@@ -64,9 +64,10 @@ class AppLinkAlarmNotificationManager @Inject constructor(
         appLinkAlarm: AppLinkAlarm,
         includeAds: Boolean
     ): Notification {
+
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
-//            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+            .setLargeIcon(createLargeIconBitmap(appLinkAlarm.linkTarget))
             .setContentTitle(appLinkAlarm.alarmName)
             .setContentText(appLinkAlarm.alarmMessage)
             .setStyle(NotificationCompat.BigTextStyle().bigText(appLinkAlarm.alarmMessage))
@@ -96,7 +97,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
 
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
-//            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+            .setLargeIcon(createLargeIconBitmap(appLinkAlarm.linkTarget))
             .setContentTitle(appLinkAlarm.alarmName)
             .setContentText(context.getString(R.string.core_alarm_text_click_to_dismiss_alarm, ""))
             .setStyle(
@@ -121,7 +122,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     ): Notification {
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
-//            .setLargeIcon(createAppIconBitmap(appLinkAlarm.linkedAppPackage))
+            .setLargeIcon(createLargeIconBitmap(appLinkAlarm.linkTarget))
             .setContentTitle(
                 context.getString(
                     R.string.core_alarm_text_missed_alarm,
@@ -158,10 +159,18 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             .build()
     }
 
-    private fun createAppIconBitmap(linkedAppPackage: String): Bitmap {
-        val packageManager = context.packageManager
-        val appInfo = packageManager.getApplicationInfo(linkedAppPackage, 0)
-        val drawable = packageManager.getApplicationIcon(appInfo)
+    private fun createLargeIconBitmap(linkTarget: LinkTarget): Bitmap {
+        val drawable = when (val target = linkTarget) {
+            is LinkTarget.App -> {
+                val packageManager = context.packageManager
+                val appInfo = packageManager.getApplicationInfo(target.packageName, 0)
+                packageManager.getApplicationIcon(appInfo)
+            }
+
+            is LinkTarget.Url -> {
+                ContextCompat.getDrawable(context, R.drawable.outline_link_24)!!
+            }
+        }
 
         val width = drawable.intrinsicWidth.takeIf { it > 0 } ?: 1
         val height = drawable.intrinsicHeight.takeIf { it > 0 } ?: 1
@@ -200,7 +209,8 @@ class AppLinkAlarmNotificationManager @Inject constructor(
     private fun createLinkedAppPendingIntent(appLinkAlarm: AppLinkAlarm): PendingIntent {
         return when (val linkTarget = appLinkAlarm.linkTarget) {
             is LinkTarget.App -> {
-                val intent = context.packageManager.getLaunchIntentForPackage(linkTarget.packageName)
+                val intent =
+                    context.packageManager.getLaunchIntentForPackage(linkTarget.packageName)
                 PendingIntent.getActivity(
                     context,
                     appLinkAlarm.id,
@@ -210,7 +220,8 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             }
 
             is LinkTarget.Url -> {
-                val intent = Intent(Intent.ACTION_VIEW, linkTarget.urlString.toUri())
+                val normalizeUrl = normalizeUrl(linkTarget.urlString)
+                val intent = Intent(Intent.ACTION_VIEW, normalizeUrl.toUri())
                 PendingIntent.getActivity(
                     context,
                     appLinkAlarm.id,
@@ -219,6 +230,12 @@ class AppLinkAlarmNotificationManager @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun normalizeUrl(input: String): String {
+        return if (!input.startsWith("http://") && !input.startsWith("https://")) {
+            "https://$input"
+        } else input
     }
 
     private fun createNotificationChannel(
