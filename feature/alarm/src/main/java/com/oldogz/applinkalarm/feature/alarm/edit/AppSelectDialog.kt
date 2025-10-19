@@ -86,12 +86,14 @@ fun AppSelectDialog(
                 )
             }.distinctBy { it.packageName }
             apps.addAll(appInfoList)
-            searchApps(searchKeyWords, apps, filteredApps)
+            filteredApps.addAll(appInfoList)
         }
     }
 
     LaunchedEffect(searchKeyWords) {
-        searchApps(searchKeyWords, apps, filteredApps)
+        if (apps.isNotEmpty()) {
+            searchApps(searchKeyWords, apps, filteredApps)
+        }
     }
 
     Dialog(
