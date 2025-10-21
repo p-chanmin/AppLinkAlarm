@@ -11,6 +11,7 @@ import com.oldogz.core.firebase.FakeFirebaseManager
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import com.oldogz.core.testing.rule.MainDispatcherRule
 import io.mockk.mockk
@@ -44,18 +45,27 @@ internal class AlarmEditViewModelTest {
     }
 
     @Test
-    fun `알람에 연결할 앱의 패키지명을 설정할 수 있다`() = runTest {
+    fun `알람에 연결할 앱의 패키지 또는 URL을 설정할 수 있다`() = runTest {
 
         // Given
-        val linkedAppPackage = "com.example.app"
+        val linkTargetApp = LinkTarget.App(packageName = "com.example.app.a")
+        val linkTargetUrl = LinkTarget.Url(urlString = "com.example.link.b")
 
         // When
-        alarmEditViewModel.updateLinkedAppPackage(linkedAppPackage)
+        alarmEditViewModel.updateLinkTarget(linkTargetApp)
 
-        // Then
         alarmEditViewModel.alarmEditUiState.test {
-            val uiState = awaitItem()
-            assertEquals(linkedAppPackage, uiState.linkedAppPackage)
+
+            // Then
+            var uiState = awaitItem()
+            assertEquals(linkTargetApp, uiState.linkTarget)
+
+            // When
+            alarmEditViewModel.updateLinkTarget(linkTargetUrl)
+
+            // Then
+            uiState = awaitItem()
+            assertEquals(linkTargetUrl, uiState.linkTarget)
         }
     }
 

@@ -11,6 +11,7 @@ import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import com.oldogz.core.testing.rule.MainDispatcherRule
 import io.mockk.coEvery
@@ -55,14 +56,14 @@ internal class DismissAlarmViewModelTest {
             assertEquals(alarm.minute, uiState.minute)
             assertEquals(alarm.alarmMode, uiState.alarmMode)
             assertEquals(alarm.periodOfDay, uiState.periodOfDay)
-            assertEquals(alarm.linkedAppPackage, uiState.linkedAppPackage)
+            assertEquals(alarm.linkTarget, uiState.linkTarget)
         }
     }
 
     companion object {
         val alarm = AppLinkAlarm(
             id = 1,
-            linkedAppPackage = "com.example.app.a",
+            linkTarget = LinkTarget.App(packageName = "com.example.app.a"),
             hour = 12,
             minute = 0,
             periodOfDay = PeriodOfDay.AM,
