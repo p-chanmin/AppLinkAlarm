@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">找不到已連結的應用程式：%1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">由於找不到已連結的應用程式，此鬧鐘將會被停用。</string>
+
+    <string name="core_alarm_text_skip_title">要關閉即將響起的鬧鐘嗎？</string>
+    <string name="core_alarm_text_skip_action">關閉今天的鬧鐘</string>
 </resources>

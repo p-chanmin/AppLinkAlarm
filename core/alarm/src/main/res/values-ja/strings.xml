@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">リンクされたアプリが見つかりません: %1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">リンクされたアプリが見つからないため、このアラームは無効になります。</string>
+
+    <string name="core_alarm_text_skip_title">まもなく鳴るアラームをオフにしますか？</string>
+    <string name="core_alarm_text_skip_action">今日のアラームをオフにする</string>
 </resources>
