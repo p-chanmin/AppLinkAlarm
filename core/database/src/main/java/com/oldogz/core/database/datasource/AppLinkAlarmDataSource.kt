@@ -14,7 +14,7 @@ class AppLinkAlarmDataSource @Inject constructor(
     fun getAlarmById(id: Int) = alarmEntityDao.getAlarmById(id)
 
     suspend fun addAlarm(
-        linkedAppPackage: String = "",
+        linkTarget: String = "",
         hour: Int = 0,
         minute: Int = 0,
         periodOfDay: String = "",
@@ -29,7 +29,7 @@ class AppLinkAlarmDataSource @Inject constructor(
     ): Int {
         return alarmEntityDao.insert(
             AlarmEntity(
-                linkedAppPackage = linkedAppPackage,
+                linkTarget = linkTarget,
                 hour = hour,
                 minute = minute,
                 periodOfDay = periodOfDay,
@@ -47,7 +47,7 @@ class AppLinkAlarmDataSource @Inject constructor(
 
     suspend fun updateAlarm(
         id: Int,
-        linkedAppPackage: String = "",
+        linkTarget: String = "",
         hour: Int = 0,
         minute: Int = 0,
         periodOfDay: String = "",
@@ -64,7 +64,7 @@ class AppLinkAlarmDataSource @Inject constructor(
         alarmEntityDao.update(
             alarmEntity.copy(
                 id = id,
-                linkedAppPackage = linkedAppPackage,
+                linkTarget = linkTarget,
                 hour = hour,
                 minute = minute,
                 periodOfDay = periodOfDay,

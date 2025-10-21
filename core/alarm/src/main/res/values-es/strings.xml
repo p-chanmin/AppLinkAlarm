@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">No se encontraron aplicaciones enlazadas: %1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">Esta alarma se desactivará porque no se puede encontrar la aplicación enlazada.</string>
+
+    <string name="core_alarm_text_skip_title">¿Apagar la alarma que está a punto de sonar?</string>
+    <string name="core_alarm_text_skip_action">Desactivar la alarma de hoy</string>
 </resources>

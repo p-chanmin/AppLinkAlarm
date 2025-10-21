@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">Tidak ada aplikasi tertaut yang ditemukan: %1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">Alarm ini akan dinonaktifkan karena aplikasi tertaut tidak ditemukan.</string>
+
+    <string name="core_alarm_text_skip_title">Matikan alarm yang sebentar lagi berbunyi?</string>
+    <string name="core_alarm_text_skip_action">Matikan alarm hari ini</string>
 </resources>

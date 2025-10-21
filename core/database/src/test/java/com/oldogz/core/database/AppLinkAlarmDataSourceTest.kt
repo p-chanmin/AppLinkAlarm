@@ -90,7 +90,7 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
 
                     // When
                     appLinkAlarmDataSource.addAlarm(
-                        linkedAppPackage = alarmEntity2.linkedAppPackage,
+                        linkTarget = alarmEntity2.linkTarget,
                         hour = alarmEntity2.hour,
                         minute = alarmEntity2.minute,
                         periodOfDay = alarmEntity2.periodOfDay,
@@ -138,7 +138,7 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
                     // When
                     appLinkAlarmDataSource.updateAlarm(
                         id = alarmEntity2.id,
-                        linkedAppPackage = alarmEntity1.linkedAppPackage,
+                        linkTarget = alarmEntity1.linkTarget,
                         hour = alarmEntity1.hour,
                         minute = alarmEntity1.minute,
                         periodOfDay = alarmEntity1.periodOfDay,
@@ -196,7 +196,7 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
     companion object {
         val alarmEntity1 = AlarmEntity(
             id = 1,
-            linkedAppPackage = "com.example.app.a",
+            linkTarget = """{"type":"com.oldogz.core.model.LinkTarget.App","packageName":"com.example.app.a"}""",
             hour = 12,
             minute = 0,
             periodOfDay = "\"PM\"",
@@ -212,7 +212,7 @@ internal class AppLinkAlarmDataSourceTest : StringSpec() {
 
         val alarmEntity2 = AlarmEntity(
             id = 2,
-            linkedAppPackage = "com.example.app.b",
+            linkTarget = """{"type":"com.oldogz.core.model.LinkTarget.Url","urlString":"com.example.link.b"}""",
             hour = 3,
             minute = 40,
             periodOfDay = "\"AM\"",

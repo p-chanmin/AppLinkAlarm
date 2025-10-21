@@ -6,23 +6,29 @@ import android.content.Intent
 import androidx.work.workDataOf
 import com.google.firebase.analytics.logEvent
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM_SKIP
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_ID
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_MODE
-import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_PACKAGE
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_TARGET
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.alarm.manager.WorkRequestManager
 import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_DATA_ID
+import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_SKIP_TAG
 import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_TAG
 import com.oldogz.core.alarm.worker.NOTIFICATION_NOT_FOUND_TAG
 import com.oldogz.core.alarm.worker.NotificationAlarmWorker
 import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_ALL_TAG
 import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_DATA_ID
+import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_SKIP_TAG
 import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_TAG
 import com.oldogz.core.alarm.worker.RescheduleAlarmWorker
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
+import com.oldogz.core.model.LinkTarget
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -43,49 +49,76 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                 workRequestManager.enqueueWorker<RescheduleAlarmWorker>(RESCHEDULE_ALARM_ALL_TAG)
             }
 
+            INTENT_ACTION_APP_LINK_ALARM_SKIP -> {
+                val alarmId = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
+                if (alarmId == -1) return
+                workRequestManager.enqueueWorker<NotificationAlarmWorker>(
+                    NOTIFICATION_ALARM_SKIP_TAG,
+                    workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
+                )
+            }
+
+            INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM -> {
+                val alarmId = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
+                if (alarmId == -1) return
+                workRequestManager.enqueueWorker<RescheduleAlarmWorker>(
+                    RESCHEDULE_ALARM_SKIP_TAG,
+                    workDataOf(RESCHEDULE_ALARM_DATA_ID to alarmId)
+                )
+            }
+
             INTENT_ACTION_APP_LINK_ALARM -> {
                 val alarmId = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
                 val alarmMode = AlarmMode.fromString(
                     intent.getStringExtra(INTENT_EXTRA_APP_LINK_ALARM_MODE)
                 )
-                val linkedAppPackage = intent.getStringExtra(INTENT_EXTRA_APP_LINK_ALARM_PACKAGE)
-                if (alarmId == -1 || alarmMode == null || linkedAppPackage == null) return
+                val linkTargetString = intent.getStringExtra(INTENT_EXTRA_APP_LINK_TARGET)
+                if (alarmId == -1 || alarmMode == null || linkTargetString == null) return
 
                 firebaseManager.firebaseAnalytics.logEvent(FA.Event.ALARM_TRIGGERED) {
                     param(FA.Param.Key.ALARM_MODE, alarmMode.name)
                 }
 
-                if (isAppInstalled(context, linkedAppPackage)) {
-                    when (alarmMode) {
-                        AlarmMode.NOTIFICATION_ONLY -> {
+                val linkTarget = Json.decodeFromString<LinkTarget>(linkTargetString)
+
+                when (val target = linkTarget) {
+                    is LinkTarget.App -> {
+                        if (!isAppInstalled(context, target.packageName)) {
+                            firebaseManager.firebaseAnalytics.logEvent(FA.Event.LINKED_APP_NOT_FOUND) {}
                             workRequestManager.enqueueWorker<NotificationAlarmWorker>(
-                                NOTIFICATION_ALARM_TAG,
+                                NOTIFICATION_NOT_FOUND_TAG,
                                 workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
                             )
-                        }
-
-                        AlarmMode.STANDARD -> {
-                            appLinkAlarmStateManager.startService(alarmId)
+                            return
                         }
                     }
-                    workRequestManager.enqueueWorker<RescheduleAlarmWorker>(
-                        RESCHEDULE_ALARM_TAG,
-                        workDataOf(RESCHEDULE_ALARM_DATA_ID to alarmId)
-                    )
-                } else {
-                    firebaseManager.firebaseAnalytics.logEvent(FA.Event.LINKED_APP_NOT_FOUND) {}
-                    workRequestManager.enqueueWorker<NotificationAlarmWorker>(
-                        NOTIFICATION_NOT_FOUND_TAG,
-                        workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
-                    )
+
+                    is LinkTarget.Url -> {}
                 }
+
+                when (alarmMode) {
+                    AlarmMode.NOTIFICATION_ONLY -> {
+                        workRequestManager.enqueueWorker<NotificationAlarmWorker>(
+                            NOTIFICATION_ALARM_TAG,
+                            workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
+                        )
+                    }
+
+                    AlarmMode.STANDARD -> {
+                        appLinkAlarmStateManager.startService(alarmId)
+                    }
+                }
+                workRequestManager.enqueueWorker<RescheduleAlarmWorker>(
+                    RESCHEDULE_ALARM_TAG,
+                    workDataOf(RESCHEDULE_ALARM_DATA_ID to alarmId)
+                )
             }
         }
     }
 
-    private fun isAppInstalled(context: Context, linkedAppPackage: String): Boolean {
+    private fun isAppInstalled(context: Context, packageName: String): Boolean {
         return try {
-            context.packageManager.getPackageInfo(linkedAppPackage, 0)
+            context.packageManager.getPackageInfo(packageName, 0)
             true
         } catch (e: Exception) {
             false

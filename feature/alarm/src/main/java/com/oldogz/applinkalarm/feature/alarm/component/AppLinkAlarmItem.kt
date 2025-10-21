@@ -33,6 +33,7 @@ import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
@@ -102,8 +103,9 @@ internal fun AppLinkAlarmItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AppIconImage(
-                    linkedAppPackage = appLinkAlarm.linkedAppPackage
+                    linkTarget = appLinkAlarm.linkTarget
                 )
+
                 Column(
                     modifier = Modifier.padding(start = Paddings.xlarge),
                 ) {
@@ -175,6 +177,7 @@ private fun AppLinkAlarmItemPreview() {
                 selected = false,
                 navigateToAlarmEdit = {},
                 appLinkAlarm = AppLinkAlarm(
+                    linkTarget = LinkTarget.App(packageName = ""),
                     alarmName = "Sample",
                     dayOfWeek = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                     active = true
@@ -189,6 +192,7 @@ private fun AppLinkAlarmItemPreview() {
                 selected = false,
                 navigateToAlarmEdit = {},
                 appLinkAlarm = AppLinkAlarm(
+                    linkTarget = LinkTarget.Url(urlString = "sample.com"),
                     alarmName = "Sample",
                     dayOfWeek = listOf(DayOfWeek.MONDAY, DayOfWeek.TUESDAY),
                     active = false

@@ -73,4 +73,10 @@
 
     <string name="feature_alarm_text_dismiss_and_open_app">关闭并打开应用</string>
     <string name="feature_alarm_text_open_app">打开应用</string>
+
+    <string name="feature_alarm_text_url">网址</string>
+    <string name="feature_alarm_text_add_url">添加网址</string>
+    <string name="feature_alarm_text_add_url_description">请输入有效的网址</string>
+    <string name="feature_alarm_text_select_add">添加</string>
+    <string name="feature_alarm_error_text_url">没有可用于打开该网址的应用。</string>
 </resources>

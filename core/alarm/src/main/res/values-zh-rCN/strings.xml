@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">未找到关联的应用：%1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">由于找不到关联的应用，此闹钟将被禁用。</string>
+
+    <string name="core_alarm_text_skip_title">要关闭即将响起的闹钟吗？</string>
+    <string name="core_alarm_text_skip_action">关闭今天的闹钟</string>
 </resources>

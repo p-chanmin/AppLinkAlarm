@@ -4,13 +4,14 @@ import com.oldogz.core.database.entity.AlarmEntity
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.serialization.json.Json
 
 internal fun AlarmEntity.toData(): AppLinkAlarm {
     return AppLinkAlarm(
         id = this.id,
-        linkedAppPackage = this.linkedAppPackage,
+        linkTarget = Json.decodeFromString<LinkTarget>(this.linkTarget),
         hour = this.hour,
         minute = this.minute,
         periodOfDay = Json.decodeFromString<PeriodOfDay>(this.periodOfDay),

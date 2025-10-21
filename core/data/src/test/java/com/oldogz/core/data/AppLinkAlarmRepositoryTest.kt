@@ -6,6 +6,7 @@ import com.oldogz.core.database.entity.AlarmEntity
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
@@ -109,7 +110,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
 
                 coEvery {
                     appLinkAlarmDataSource.addAlarm(
-                        linkedAppPackage = alarm2.linkedAppPackage,
+                        linkTarget = Json.encodeToString(alarm2.linkTarget),
                         hour = alarm2.hour,
                         minute = alarm2.minute,
                         periodOfDay = Json.encodeToString(alarm2.periodOfDay),
@@ -157,7 +158,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
                 coEvery {
                     appLinkAlarmDataSource.updateAlarm(
                         id = alarm2.id,
-                        linkedAppPackage = alarm1.linkedAppPackage,
+                        linkTarget = Json.encodeToString(alarm1.linkTarget),
                         hour = alarm1.hour,
                         minute = alarm1.minute,
                         periodOfDay = Json.encodeToString(alarm1.periodOfDay),
@@ -230,7 +231,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
     companion object {
         val alarmEntity1 = AlarmEntity(
             id = 1,
-            linkedAppPackage = "com.example.app.a",
+            linkTarget = """{"type":"com.oldogz.core.model.LinkTarget.App","packageName":"com.example.app.a"}""",
             hour = 10,
             minute = 30,
             periodOfDay = "\"AM\"",
@@ -246,7 +247,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
 
         val alarm1 = AppLinkAlarm(
             id = alarmEntity1.id,
-            linkedAppPackage = alarmEntity1.linkedAppPackage,
+            linkTarget = LinkTarget.App(packageName = "com.example.app.a"),
             hour = alarmEntity1.hour,
             minute = alarmEntity1.minute,
             periodOfDay = PeriodOfDay.AM,
@@ -262,7 +263,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
 
         val alarmEntity2 = AlarmEntity(
             id = 2,
-            linkedAppPackage = "com.example.app.b",
+            linkTarget = """{"type":"com.oldogz.core.model.LinkTarget.Url","urlString":"com.example.link.b"}""",
             hour = 8,
             minute = 10,
             periodOfDay = "\"PM\"",
@@ -278,7 +279,7 @@ internal class AppLinkAlarmRepositoryTest : StringSpec() {
 
         val alarm2 = AppLinkAlarm(
             id = alarmEntity2.id,
-            linkedAppPackage = alarmEntity2.linkedAppPackage,
+            linkTarget = LinkTarget.Url(urlString = "com.example.link.b"),
             hour = alarmEntity2.hour,
             minute = alarmEntity2.minute,
             periodOfDay = PeriodOfDay.PM,

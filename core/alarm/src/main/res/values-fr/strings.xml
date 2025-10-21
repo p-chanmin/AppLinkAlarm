@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">Aucune application liée trouvée : %1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">Cette alarme sera désactivée car l’application liée est introuvable.</string>
+
+    <string name="core_alarm_text_skip_title">Désactiver l’alarme sur le point de sonner ?</string>
+    <string name="core_alarm_text_skip_action">Désactiver l’alarme d’aujourd’hui</string>
 </resources>

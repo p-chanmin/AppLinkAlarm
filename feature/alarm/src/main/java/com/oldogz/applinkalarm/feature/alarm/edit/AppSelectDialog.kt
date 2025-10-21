@@ -2,6 +2,7 @@ package com.oldogz.applinkalarm.feature.alarm.edit
 
 import android.content.Intent
 import android.content.res.Configuration
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -37,6 +38,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -53,12 +55,13 @@ import com.oldogz.core.designsystem.component.AppLinkAlarmTextField
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
+import com.oldogz.core.model.LinkTarget
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
 @Composable
 fun AppSelectDialog(
-    updateLinkedAppPackage: (String) -> Unit,
+    updateLinkTarget: (LinkTarget) -> Unit,
     onDismiss: () -> Unit
 ) {
     val context = LocalContext.current
@@ -83,12 +86,14 @@ fun AppSelectDialog(
                 )
             }.distinctBy { it.packageName }
             apps.addAll(appInfoList)
-            searchApps(searchKeyWords, apps, filteredApps)
+            filteredApps.addAll(appInfoList)
         }
     }
 
     LaunchedEffect(searchKeyWords) {
-        searchApps(searchKeyWords, apps, filteredApps)
+        if (apps.isNotEmpty()) {
+            searchApps(searchKeyWords, apps, filteredApps)
+        }
     }
 
     Dialog(
@@ -144,11 +149,19 @@ fun AppSelectDialog(
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
+                    item {
+                        if (searchKeyWords.isEmpty()) {
+                            AddUrlItem(
+                                addUrl = { updateLinkTarget(LinkTarget.Url(urlString = it)) },
+                                onDismiss = onDismiss
+                            )
+                        }
+                    }
                     items(filteredApps, key = { it.packageName }) { appInfo ->
                         AppInfoItem(
                             appInfo = appInfo,
                             onClick = {
-                                updateLinkedAppPackage(appInfo.packageName)
+                                updateLinkTarget(LinkTarget.App(packageName = appInfo.packageName))
                                 onDismiss()
                             }
                         )
@@ -156,6 +169,62 @@ fun AppSelectDialog(
                 }
             }
         }
+    }
+}
+
+@Composable
+internal fun AddUrlItem(
+    modifier: Modifier = Modifier,
+    addUrl: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    var dialog by remember { mutableStateOf(false) }
+
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.background)
+            .clickable { dialog = true }
+            .padding(Paddings.xlarge),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(RoundedCornerShape(8.dp)),
+            painter = painterResource(R.drawable.outline_link_24),
+            contentDescription = stringResource(R.string.feature_alarm_text_add_url),
+        )
+        Column(
+            modifier = Modifier.padding(start = Paddings.xlarge),
+        ) {
+            Text(
+                text = stringResource(R.string.feature_alarm_text_add_url),
+                style = MaterialTheme.typography.bodyLarge.copy(
+                    color = MaterialTheme.colorScheme.onBackground,
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            Text(
+                modifier = Modifier.padding(top = Paddings.small),
+                text = stringResource(R.string.feature_alarm_text_add_url_description),
+                style = MaterialTheme.typography.labelLarge.copy(
+                    color = MaterialTheme.colorScheme.onSecondary
+                )
+            )
+        }
+    }
+
+    if (dialog) {
+        AddUrlDialog(
+            addUrl = {
+                addUrl(it)
+                onDismiss()
+            },
+            onDismiss = {
+                dialog = false
+            }
+        )
     }
 }
 
@@ -228,6 +297,18 @@ private fun searchApps(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 @Composable
+private fun AddUrlItemPreview() {
+    AppLinkAlarmTheme {
+        AddUrlItem(
+            addUrl = {},
+            onDismiss = {}
+        )
+    }
+}
+
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+@Composable
 private fun AppInfoItemPreview() {
     AppLinkAlarmTheme {
         AppInfoItem(
@@ -247,7 +328,7 @@ private fun AppInfoItemPreview() {
 private fun AppSelectDialogPreview() {
     AppLinkAlarmTheme {
         AppSelectDialog(
-            updateLinkedAppPackage = {},
+            updateLinkTarget = {},
             onDismiss = {}
         )
     }

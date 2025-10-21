@@ -73,4 +73,10 @@
 
     <string name="feature_alarm_text_dismiss_and_open_app">Matikan dan Buka Aplikasi</string>
     <string name="feature_alarm_text_open_app">Buka Aplikasi</string>
+
+    <string name="feature_alarm_text_url">URL</string>
+    <string name="feature_alarm_text_add_url">Tambah URL</string>
+    <string name="feature_alarm_text_add_url_description">Masukkan URL yang valid</string>
+    <string name="feature_alarm_text_select_add">Tambah</string>
+    <string name="feature_alarm_error_text_url">Tidak ada aplikasi yang tersedia untuk membuka URL.</string>
 </resources>

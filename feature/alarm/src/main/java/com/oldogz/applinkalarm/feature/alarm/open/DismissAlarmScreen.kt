@@ -36,13 +36,14 @@ import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AlarmMode
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
 fun DismissAlarmScreen(
     paddingValues: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    dismissAlarm: (String) -> Unit,
+    dismissAlarm: (LinkTarget) -> Unit,
     dismissAlarmViewModel: DismissAlarmViewModel = hiltViewModel()
 ) {
     val firebaseManager = LocalFirebaseManager.current
@@ -70,7 +71,7 @@ fun DismissAlarmScreen(
 private fun DismissAlarmContent(
     openAppUiState: OpenAppUiState,
     hasPremium: Boolean?,
-    dismissAlarm: (String) -> Unit,
+    dismissAlarm: (LinkTarget) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val scrollState = rememberScrollState()
@@ -109,8 +110,8 @@ private fun DismissAlarmContent(
                     minute = openAppUiState.minute,
                     alarmMode = AlarmMode.STANDARD,
                     periodOfDay = openAppUiState.periodOfDay,
-                    linkedAppPackage = openAppUiState.linkedAppPackage,
-                    onClick = { dismissAlarm(openAppUiState.linkedAppPackage) },
+                    linkTarget = openAppUiState.linkTarget,
+                    onClick = { dismissAlarm(openAppUiState.linkTarget) },
                 )
 
                 if (hasPremium == false) {
@@ -146,7 +147,7 @@ private fun DismissAlarmContentPreview() {
                 hour = 12,
                 minute = 30,
                 periodOfDay = PeriodOfDay.AM,
-                linkedAppPackage = "com.example.app"
+                linkTarget = LinkTarget.App(packageName = "com.example.app")
             ),
             hasPremium = false,
             onShowErrorSnackBar = {},

@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">연결된 앱을 찾을 수 없음: %1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">연결된 앱을 찾을 수 없어 알람이 비활성화됩니다.</string>
+
+    <string name="core_alarm_text_skip_title">곧 울릴 알람을 끌까요?</string>
+    <string name="core_alarm_text_skip_action">오늘 알람 끄기</string>
 </resources>

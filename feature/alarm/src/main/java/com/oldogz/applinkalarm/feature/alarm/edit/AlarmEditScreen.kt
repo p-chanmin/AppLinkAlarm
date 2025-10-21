@@ -18,14 +18,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -62,13 +61,13 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.google.firebase.analytics.logEvent
 import com.oldogz.applinkalarm.feature.alarm.R
+import com.oldogz.applinkalarm.feature.alarm.component.AppIconImage
 import com.oldogz.applinkalarm.feature.alarm.component.WheelPicker
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiEvent
 import com.oldogz.applinkalarm.feature.alarm.model.AlarmEditUiState
 import com.oldogz.applinkalarm.feature.alarm.util.dayOfWeekToString
 import com.oldogz.applinkalarm.feature.alarm.util.getFileName
 import com.oldogz.core.admob.LocalAdMobManager
-import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
 import com.oldogz.core.designsystem.component.AppLinkAlarmButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmFilterChip
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
@@ -84,6 +83,7 @@ import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -147,7 +147,7 @@ internal fun AlarmEditScreen(
         alarmEditUiState = alarmEditUiState,
         paddingValues = paddingValues,
         popBackStack = popBackStack,
-        updateLinkedAppPackage = alarmEditViewModel::updateLinkedAppPackage,
+        updateLinkTarget = alarmEditViewModel::updateLinkTarget,
         hourState = hourState,
         minuteState = minuteState,
         periodOfDayState = periodOfDayState,
@@ -172,7 +172,7 @@ private fun AlarmEditContent(
     alarmEditUiState: AlarmEditUiState,
     paddingValues: PaddingValues,
     popBackStack: () -> Unit,
-    updateLinkedAppPackage: (String) -> Unit,
+    updateLinkTarget: (LinkTarget) -> Unit,
     hourState: LazyListState,
     minuteState: LazyListState,
     periodOfDayState: LazyListState,
@@ -199,7 +199,8 @@ private fun AlarmEditContent(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .navigationBarsPadding(),
+            .navigationBarsPadding()
+            .imePadding(),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -236,7 +237,7 @@ private fun AlarmEditContent(
                     .verticalScroll(scrollState)
             ) {
                 ChooseApp(
-                    linkedAppPackage = alarmEditUiState.linkedAppPackage,
+                    linkTarget = alarmEditUiState.linkTarget,
                     updateVisibleSelectAppDialog = updateVisibleSelectAppDialog
                 )
                 AlarmTimer(
@@ -280,7 +281,7 @@ private fun AlarmEditContent(
                     .fillMaxWidth()
                     .padding(Paddings.large),
                 content = stringResource(R.string.feature_alarm_text_alarm_save),
-                enabled = (alarmEditUiState.linkedAppPackage != null &&
+                enabled = (alarmEditUiState.linkTarget != null &&
                         alarmEditUiState.dayOfWeek.isNotEmpty() &&
                         alarmEditUiState.alarmName.isNotEmpty() &&
                         alarmEditUiState.message.isNotEmpty()),
@@ -300,7 +301,7 @@ private fun AlarmEditContent(
 
     if (alarmEditUiState.visibleSelectAppDialog) {
         AppSelectDialog(
-            updateLinkedAppPackage = updateLinkedAppPackage,
+            updateLinkTarget = updateLinkTarget,
             onDismiss = updateVisibleSelectAppDialog
         )
     }
@@ -314,7 +315,7 @@ private fun AlarmEditContent(
 
 @Composable
 internal fun ChooseApp(
-    linkedAppPackage: String?,
+    linkTarget: LinkTarget?,
     updateVisibleSelectAppDialog: () -> Unit,
 ) {
     val context = LocalContext.current
@@ -330,15 +331,7 @@ internal fun ChooseApp(
                 fontWeight = FontWeight.Bold
             )
         )
-        if (linkedAppPackage != null) {
-            val appInfo = try {
-                packageManager.getApplicationInfo(linkedAppPackage, 0)
-            } catch (e: Exception) {
-                null
-            }
-            val label = appInfo?.loadLabel(packageManager)
-                ?: stringResource(R.string.feature_alarm_text_not_found)
-            val icon = appInfo?.loadIcon(packageManager)
+        linkTarget?.let { linkTarget ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -349,21 +342,36 @@ internal fun ChooseApp(
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row {
-                    AppLinkAlarmAsyncImage(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                        drawable = icon,
-                        contentDescription = stringResource(
-                            R.string.feature_alarm_icon_description_app_icon,
-                            label
-                        ),
+                    AppIconImage(
+                        linkTarget = linkTarget,
+                        size = 32.dp
                     )
+
                     Column(
                         modifier = Modifier.padding(start = Paddings.xlarge),
                     ) {
+                        val (label, destination) = when (val target = linkTarget) {
+                            is LinkTarget.App -> {
+                                val appInfo = try {
+                                    packageManager.getApplicationInfo(target.packageName, 0)
+                                } catch (e: Exception) {
+                                    null
+                                }
+                                val label = appInfo?.loadLabel(packageManager)
+                                    ?: stringResource(R.string.feature_alarm_text_not_found)
+
+                                Pair(label.toString(), appInfo?.packageName)
+                            }
+
+                            is LinkTarget.Url -> {
+                                Pair(
+                                    stringResource(R.string.feature_alarm_text_url),
+                                    target.urlString
+                                )
+                            }
+                        }
                         Text(
-                            text = label.toString(),
+                            text = label,
                             style = MaterialTheme.typography.bodyLarge.copy(
                                 color = MaterialTheme.colorScheme.onBackground,
                                 fontWeight = FontWeight.Bold
@@ -371,7 +379,7 @@ internal fun ChooseApp(
                         )
                         Text(
                             modifier = Modifier.padding(top = Paddings.small),
-                            text = appInfo?.packageName
+                            text = destination
                                 ?: stringResource(R.string.feature_alarm_text_not_found),
                             style = MaterialTheme.typography.labelLarge.copy(
                                 color = MaterialTheme.colorScheme.onSecondary
@@ -380,7 +388,9 @@ internal fun ChooseApp(
                     }
                 }
             }
-        } else {
+        }
+
+        if (linkTarget == null) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -661,7 +671,7 @@ internal fun AlarmMode(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             val coroutineScope = rememberCoroutineScope()
-            val tooltipState = rememberTooltipState()
+            val tooltipState = rememberTooltipState(isPersistent = true)
             Text(
                 modifier = Modifier,
                 text = stringResource(R.string.feature_alarm_text_alarm_mode),
@@ -688,7 +698,8 @@ internal fun AlarmMode(
                         Text(stringResource(R.string.feature_alarm_text_alarm_mode_tool_tip))
                     }
                 },
-                state = tooltipState
+                state = tooltipState,
+                enableUserInput = false,
             ) {
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Info,
@@ -813,13 +824,15 @@ private fun AlarmEditContentPreview() {
     AppLinkAlarmTheme {
         AlarmEditContent(
             alarmEditUiState = AlarmEditUiState(
-                linkedAppPackage = null,
+//                linkTarget = null,
+//                linkTarget = LinkTarget.App(packageName = "example.com"),
+                linkTarget = LinkTarget.Url(urlString = "sample.com"),
                 alarmMode = AlarmMode.STANDARD,
                 dayOfWeek = persistentListOf(DayOfWeek.MONDAY, DayOfWeek.FRIDAY)
             ),
             paddingValues = PaddingValues(),
             popBackStack = {},
-            updateLinkedAppPackage = {},
+            updateLinkTarget = {},
             hourState = rememberLazyListState(),
             minuteState = rememberLazyListState(),
             periodOfDayState = rememberLazyListState(),

@@ -12,6 +12,7 @@ import com.oldogz.core.billing.SubscriptionManager
 import com.oldogz.core.data.AppLinkAlarmRepository
 import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AppLinkAlarm
+import com.oldogz.core.model.LinkTarget
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -92,7 +93,7 @@ class AlarmHomeViewModel @Inject constructor(
                         appLinkAlarmScheduleManager.cancelAlarm(
                             appLinkAlarm.id,
                             appLinkAlarm.alarmMode.name,
-                            appLinkAlarm.linkedAppPackage
+                            appLinkAlarm.linkTarget
                         )
                     }
                     appLinkAlarmRepository.updateAlarm(
@@ -128,7 +129,7 @@ class AlarmHomeViewModel @Inject constructor(
                                 appLinkAlarmScheduleManager.cancelAlarm(
                                     appLinkAlarm.id,
                                     appLinkAlarm.alarmMode.name,
-                                    appLinkAlarm.linkedAppPackage
+                                    appLinkAlarm.linkTarget
                                 )
                             }
                             appLinkAlarmRepository.updateAlarm(
@@ -162,7 +163,7 @@ class AlarmHomeViewModel @Inject constructor(
                         appLinkAlarmScheduleManager.cancelAlarm(
                             appLinkAlarm.id,
                             appLinkAlarm.alarmMode.name,
-                            appLinkAlarm.linkedAppPackage
+                            appLinkAlarm.linkTarget
                         )
                         appLinkAlarmRepository.deleteAlarmById(appLinkAlarm.id)
                     }
@@ -227,10 +228,10 @@ class AlarmHomeViewModel @Inject constructor(
         }
     }
 
-    fun dismissAlarm(linkedAppPackage: String) {
+    fun dismissAlarm(linkTarget: LinkTarget) {
         viewModelScope.launch {
             appLinkAlarmStateManager.stopService()
-            _event.emit(AlarmHomeUiEvent.LinkedAppOpen(linkedAppPackage))
+            _event.emit(AlarmHomeUiEvent.LinkedAppOpen(linkTarget))
         }
     }
 }

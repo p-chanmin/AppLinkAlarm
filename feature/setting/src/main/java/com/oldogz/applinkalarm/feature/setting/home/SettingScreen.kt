@@ -269,7 +269,7 @@ private fun SubscriptionSetting(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
-    val tooltipState = rememberTooltipState()
+    val tooltipState = rememberTooltipState(isPersistent = true)
 
     val context = LocalContext.current
     val activity = context as? Activity
@@ -321,7 +321,8 @@ private fun SubscriptionSetting(
                         )
                     }
                 },
-                state = tooltipState
+                state = tooltipState,
+                enableUserInput = false,
             ) {
                 AppLinkAlarmIconButton(
                     imageVector = Icons.Filled.Info,

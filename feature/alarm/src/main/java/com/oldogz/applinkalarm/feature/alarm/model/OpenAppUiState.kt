@@ -2,6 +2,7 @@ package com.oldogz.applinkalarm.feature.alarm.model
 
 import androidx.compose.runtime.Immutable
 import com.oldogz.core.model.AlarmMode
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Immutable
@@ -13,5 +14,5 @@ data class OpenAppUiState(
     val minute: Int = 0,
     val alarmMode: AlarmMode = AlarmMode.STANDARD,
     val periodOfDay: PeriodOfDay = PeriodOfDay.AM,
-    val linkedAppPackage: String = "",
+    val linkTarget: LinkTarget = LinkTarget.App(packageName = ""),
 )

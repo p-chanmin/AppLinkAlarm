@@ -13,6 +13,7 @@ import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import com.oldogz.core.navigation.Route
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -60,7 +61,7 @@ class AlarmEditViewModel @Inject constructor(
                     _alarmEditUiState.update {
                         it.copy(
                             id = id,
-                            linkedAppPackage = appLinkAlarm.linkedAppPackage,
+                            linkTarget = appLinkAlarm.linkTarget,
                             hour = appLinkAlarm.hour,
                             minute = appLinkAlarm.minute,
                             periodOfDay = appLinkAlarm.periodOfDay,
@@ -89,9 +90,9 @@ class AlarmEditViewModel @Inject constructor(
         }
     }
 
-    fun updateLinkedAppPackage(linkedAppPackage: String) {
+    fun updateLinkTarget(linkTarget: LinkTarget) {
         _alarmEditUiState.update {
-            it.copy(linkedAppPackage = linkedAppPackage)
+            it.copy(linkTarget = linkTarget)
         }
     }
 
@@ -181,7 +182,7 @@ class AlarmEditViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val id = _alarmEditUiState.value.id
-                val linkedAppPackage = _alarmEditUiState.value.linkedAppPackage
+                val linkTarget = _alarmEditUiState.value.linkTarget
                 val hour = _alarmEditUiState.value.hour
                 val minute = _alarmEditUiState.value.minute
                 val periodOfDay = _alarmEditUiState.value.periodOfDay
@@ -193,10 +194,10 @@ class AlarmEditViewModel @Inject constructor(
                 val alarmSound = _alarmEditUiState.value.alarmSound
                 val alarmVolume = _alarmEditUiState.value.alarmVolume
 
-                if (linkedAppPackage != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
+                if (linkTarget != null && dayOfWeek.isNotEmpty() && alarmName.isNotEmpty() && message.isNotEmpty()) {
                     val appLinkAlarm = AppLinkAlarm(
                         id = id ?: 0,
-                        linkedAppPackage = linkedAppPackage,
+                        linkTarget = linkTarget,
                         hour = hour,
                         minute = minute,
                         periodOfDay = periodOfDay,

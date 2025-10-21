@@ -3,6 +3,7 @@ package com.oldogz.applinkalarm.feature.alarm.model
 import androidx.compose.runtime.Immutable
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -10,7 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class AlarmEditUiState(
     val id: Int? = null,
-    val linkedAppPackage: String? = null,
+    val linkTarget: LinkTarget? = null,
     val hour: Int = 6,
     val minute: Int = 30,
     val periodOfDay: PeriodOfDay = PeriodOfDay.AM,

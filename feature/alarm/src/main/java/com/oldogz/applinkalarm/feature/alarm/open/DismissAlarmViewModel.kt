@@ -57,7 +57,7 @@ class DismissAlarmViewModel @Inject constructor(
                     minute = linkedAlarm.minute,
                     alarmMode = linkedAlarm.alarmMode,
                     periodOfDay = linkedAlarm.periodOfDay,
-                    linkedAppPackage = linkedAlarm.linkedAppPackage
+                    linkTarget = linkedAlarm.linkTarget
                 )
             }
         } catch (e: Exception) {

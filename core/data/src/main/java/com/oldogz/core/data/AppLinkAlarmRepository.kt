@@ -24,7 +24,7 @@ class AppLinkAlarmRepository @Inject constructor(
 
     suspend fun addAlarm(appLinkAlarm: AppLinkAlarm): Int {
         return appLinkAlarmDataSource.addAlarm(
-            linkedAppPackage = appLinkAlarm.linkedAppPackage,
+            linkTarget = Json.encodeToString(appLinkAlarm.linkTarget),
             hour = appLinkAlarm.hour,
             minute = appLinkAlarm.minute,
             periodOfDay = Json.encodeToString(appLinkAlarm.periodOfDay),
@@ -42,7 +42,7 @@ class AppLinkAlarmRepository @Inject constructor(
     suspend fun updateAlarm(appLinkAlarm: AppLinkAlarm) {
         appLinkAlarmDataSource.updateAlarm(
             id = appLinkAlarm.id,
-            linkedAppPackage = appLinkAlarm.linkedAppPackage,
+            linkTarget = Json.encodeToString(appLinkAlarm.linkTarget),
             hour = appLinkAlarm.hour,
             minute = appLinkAlarm.minute,
             periodOfDay = Json.encodeToString(appLinkAlarm.periodOfDay),

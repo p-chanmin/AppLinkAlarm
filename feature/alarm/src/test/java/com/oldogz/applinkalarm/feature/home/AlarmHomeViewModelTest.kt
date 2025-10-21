@@ -15,6 +15,7 @@ import com.oldogz.core.firebase.FirebaseManager
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import com.oldogz.core.testing.rule.MainDispatcherRule
 import io.mockk.coEvery
@@ -414,18 +415,18 @@ internal class AlarmHomeViewModelTest {
         alarmHomeViewModel.event.test {
 
             // When
-            alarmHomeViewModel.dismissAlarm(alarm1.linkedAppPackage)
+            alarmHomeViewModel.dismissAlarm(alarm1.linkTarget)
 
             // Then
             val event = awaitItem()
-            assertEquals(AlarmHomeUiEvent.LinkedAppOpen(alarm1.linkedAppPackage), event)
+            assertEquals(AlarmHomeUiEvent.LinkedAppOpen(alarm1.linkTarget), event)
         }
     }
 
     companion object {
         val alarm1 = AppLinkAlarm(
             id = 1,
-            linkedAppPackage = "com.example.app.a",
+            linkTarget = LinkTarget.App(packageName = "com.example.app.a"),
             hour = 12,
             minute = 0,
             periodOfDay = PeriodOfDay.AM,
@@ -441,7 +442,7 @@ internal class AlarmHomeViewModelTest {
 
         val alarm2 = AppLinkAlarm(
             id = 2,
-            linkedAppPackage = "com.example.app.b",
+            linkTarget = LinkTarget.Url(urlString = "com.example.link.b"),
             hour = 1,
             minute = 0,
             periodOfDay = PeriodOfDay.PM,

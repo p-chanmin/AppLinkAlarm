@@ -1,7 +1,9 @@
 package com.oldogz.applinkalarm.feature.alarm.open
 
 import SmallNativeAd
+import android.content.Intent
 import android.content.res.Configuration
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,17 +31,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.component.OpenAppInfo
 import com.oldogz.applinkalarm.feature.alarm.model.OpenAppUiState
+import com.oldogz.applinkalarm.feature.alarm.util.normalizeUrl
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
 import com.oldogz.core.designsystem.theme.AppLinkAlarmTheme
 import com.oldogz.core.designsystem.theme.Paddings
 import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.model.AlarmMode
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 
 @Composable
@@ -120,21 +125,39 @@ private fun OpenAppContent(
                     minute = openAppUiState.minute,
                     alarmMode = AlarmMode.NOTIFICATION_ONLY,
                     periodOfDay = openAppUiState.periodOfDay,
-                    linkedAppPackage = openAppUiState.linkedAppPackage,
+                    linkTarget = openAppUiState.linkTarget,
                     onClick = {
-                        val launchIntent =
-                            context.packageManager.getLaunchIntentForPackage(openAppUiState.linkedAppPackage)
-                        if (launchIntent != null) {
-                            context.startActivity(launchIntent)
-                        } else {
-                            onShowErrorSnackBar(
-                                Throwable(
-                                    context.getString(
-                                        R.string.feature_alarm_error_text_app_not_found,
-                                        openAppUiState.linkedAppPackage
+                        when (val target = openAppUiState.linkTarget) {
+                            is LinkTarget.App -> {
+                                val launchIntent =
+                                    context.packageManager.getLaunchIntentForPackage(target.packageName)
+                                if (launchIntent != null) {
+                                    context.startActivity(launchIntent)
+                                } else {
+                                    onShowErrorSnackBar(
+                                        Throwable(
+                                            context.getString(
+                                                R.string.feature_alarm_error_text_app_not_found,
+                                                target.packageName
+                                            )
+                                        )
                                     )
-                                )
-                            )
+                                }
+                            }
+
+                            is LinkTarget.Url -> {
+                                val normalizeUrl = normalizeUrl(target.urlString)
+                                val intent = Intent(Intent.ACTION_VIEW, normalizeUrl.toUri())
+                                if (intent.resolveActivity(context.packageManager) != null) {
+                                    context.startActivity(intent)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        context.getString(R.string.feature_alarm_error_text_url),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
                         }
                         popBackStack()
                     }
@@ -174,7 +197,7 @@ private fun OpenAppContentPreview() {
                 minute = 30,
                 alarmMode = AlarmMode.NOTIFICATION_ONLY,
                 periodOfDay = PeriodOfDay.AM,
-                linkedAppPackage = "com.example.app"
+                linkTarget = LinkTarget.App(packageName = "com.example.app")
             ),
             hasPremium = false,
             popBackStack = {},

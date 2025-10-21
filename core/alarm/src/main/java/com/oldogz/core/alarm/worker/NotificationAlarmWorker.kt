@@ -41,6 +41,13 @@ class NotificationAlarmWorker @AssistedInject constructor(
                     }
                 }
 
+                tags.contains(NOTIFICATION_ALARM_SKIP_TAG) -> {
+                    appLinkAlarmNotificationManager.notify(
+                        appLinkAlarm.id,
+                        appLinkAlarmNotificationManager.createAlarmSkipNotification(appLinkAlarm)
+                    )
+                }
+
                 tags.contains(NOTIFICATION_NOT_FOUND_TAG) -> {
                     appLinkAlarmRepository.updateAlarm(appLinkAlarm.copy(active = false))
                     appLinkAlarmNotificationManager.notify(
@@ -59,5 +66,6 @@ class NotificationAlarmWorker @AssistedInject constructor(
 }
 
 const val NOTIFICATION_ALARM_TAG = "notificationAlarmTag"
+const val NOTIFICATION_ALARM_SKIP_TAG = "notificationAlarmSkipTag"
 const val NOTIFICATION_NOT_FOUND_TAG = "notificationNotFoundTag"
 const val NOTIFICATION_ALARM_DATA_ID = "rescheduleAlarmDataId"

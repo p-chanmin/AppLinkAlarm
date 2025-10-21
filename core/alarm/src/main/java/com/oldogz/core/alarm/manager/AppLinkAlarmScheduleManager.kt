@@ -6,10 +6,14 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import com.oldogz.core.alarm.receiver.AppLinkAlarmReceiver
+import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import java.util.Calendar
 import java.util.TimeZone
 import javax.inject.Inject
@@ -17,7 +21,8 @@ import javax.inject.Singleton
 
 @Singleton
 class AppLinkAlarmScheduleManager @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext private val context: Context,
+    private val appLinkAlarmNotificationManager: AppLinkAlarmNotificationManager,
 ) {
 
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -30,27 +35,76 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         }
     }
 
-    fun scheduleAlarm(alarm: AppLinkAlarm, isRescheduling: Boolean = false) {
+    fun scheduleAlarm(
+        alarm: AppLinkAlarm,
+        isRescheduling: Boolean = false,
+        isSkip: Boolean = false
+    ) {
         if (!alarm.active || alarm.dayOfWeek.isEmpty()) return
 
-        val nextAlarmTime = calculateNextAlarmTime(alarm, isRescheduling)
+        val nextAlarmTime = calculateNextAlarmTime(alarm, isRescheduling, isSkip)
 
         val pendingIntent =
-            createPendingIntent(alarm.id, alarm.alarmMode.name, alarm.linkedAppPackage)
+            createAlarmPendingIntent(
+                alarm.id,
+                alarm.alarmMode.name,
+                Json.encodeToString(alarm.linkTarget)
+            )
 
         val alarmClockInfo = AlarmManager.AlarmClockInfo(
             nextAlarmTime,
             pendingIntent
         )
         alarmManager.setAlarmClock(alarmClockInfo, pendingIntent)
+
+        val skipPendingIntent = createSkipPendingIntent(alarm.id)
+
+        when (alarm.alarmMode) {
+            AlarmMode.STANDARD -> {
+                val skipAlarmClockInfo = AlarmManager.AlarmClockInfo(
+                    nextAlarmTime - 30 * 60 * 1000L,
+                    skipPendingIntent
+                )
+                alarmManager.setAlarmClock(skipAlarmClockInfo, skipPendingIntent)
+            }
+
+            AlarmMode.NOTIFICATION_ONLY -> {
+                cancelSkipAlarm(alarm.id)
+            }
+        }
     }
 
-    fun cancelAlarm(alarmId: Int, alarmMode: String, linkedAppPackage: String) {
-        alarmManager.cancel(createPendingIntent(alarmId, alarmMode, linkedAppPackage))
+    fun cancelAlarm(alarmId: Int, alarmMode: String, linkTarget: LinkTarget) {
+        cancelSkipAlarm(alarmId)
+        alarmManager.cancel(
+            createAlarmPendingIntent(
+                alarmId,
+                alarmMode,
+                Json.encodeToString(linkTarget)
+            )
+        )
     }
 
-    private fun calculateNextAlarmTime(alarm: AppLinkAlarm, isRescheduling: Boolean): Long {
-        val marginMs = if (isRescheduling) 2000L else 0L
+    fun cancelSkipAlarm(alarmId: Int) {
+        appLinkAlarmNotificationManager.cancel(alarmId)
+        alarmManager.cancel(
+            createSkipPendingIntent(alarmId)
+        )
+    }
+
+    private fun calculateNextAlarmTime(
+        alarm: AppLinkAlarm,
+        isRescheduling: Boolean = false,
+        isSkip: Boolean = false
+    ): Long {
+        val marginMs = if (isSkip) {
+            30 * 60 * 1000L + 2000L
+        } else if (isRescheduling) {
+            2000L
+        } else {
+            0L
+        }
+
         val now = System.currentTimeMillis() + marginMs
 
         val calendar = Calendar.getInstance().apply {
@@ -91,16 +145,32 @@ class AppLinkAlarmScheduleManager @Inject constructor(
         return dayOfWeek ?: sortedDayOfWeek.first()
     }
 
-    private fun createPendingIntent(
+    private fun createAlarmPendingIntent(
         alarmId: Int,
         alarmMode: String,
-        linkedAppPackage: String
+        linkTarget: String
     ): PendingIntent {
         val intent = Intent(context, AppLinkAlarmReceiver::class.java).apply {
             action = INTENT_ACTION_APP_LINK_ALARM
             putExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, alarmId)
             putExtra(INTENT_EXTRA_APP_LINK_ALARM_MODE, alarmMode)
-            putExtra(INTENT_EXTRA_APP_LINK_ALARM_PACKAGE, linkedAppPackage)
+            putExtra(INTENT_EXTRA_APP_LINK_TARGET, linkTarget)
+        }
+
+        return PendingIntent.getBroadcast(
+            context,
+            alarmId,
+            intent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        )
+    }
+
+    private fun createSkipPendingIntent(
+        alarmId: Int,
+    ): PendingIntent {
+        val intent = Intent(context, AppLinkAlarmReceiver::class.java).apply {
+            action = INTENT_ACTION_APP_LINK_ALARM_SKIP
+            putExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, alarmId)
         }
 
         return PendingIntent.getBroadcast(
@@ -113,8 +183,10 @@ class AppLinkAlarmScheduleManager @Inject constructor(
 
     companion object {
         const val INTENT_ACTION_APP_LINK_ALARM = "intentActionAppLinkAlarm"
+        const val INTENT_ACTION_APP_LINK_ALARM_SKIP = "intentActionAppLinkAlarmSkip"
+        const val INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM = "intentActionAppLinkAlarmSkipConfirm"
         const val INTENT_EXTRA_APP_LINK_ALARM_ID = "intentExtraAppLinkAlarmId"
         const val INTENT_EXTRA_APP_LINK_ALARM_MODE = "intentExtraAppLinkAlarmMode"
-        const val INTENT_EXTRA_APP_LINK_ALARM_PACKAGE = "intentExtraAppLinkAlarmPackage"
+        const val INTENT_EXTRA_APP_LINK_TARGET = "intentExtraAppLinkTarget"
     }
 }

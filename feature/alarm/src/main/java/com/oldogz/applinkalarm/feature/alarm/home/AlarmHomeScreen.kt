@@ -3,8 +3,10 @@ package com.oldogz.applinkalarm.feature.alarm.home
 import SmallNativeAd
 import android.Manifest
 import android.app.Activity
+import android.content.Intent
 import android.content.res.Configuration
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
@@ -49,6 +51,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat.shouldShowRequestPermissionRationale
+import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -63,6 +66,7 @@ import com.oldogz.applinkalarm.feature.alarm.model.AlarmHomeUiState
 import com.oldogz.applinkalarm.feature.alarm.model.AppLinkAlarmUiState
 import com.oldogz.applinkalarm.feature.alarm.model.PermissionState
 import com.oldogz.applinkalarm.feature.alarm.open.DismissAlarmScreen
+import com.oldogz.applinkalarm.feature.alarm.util.normalizeUrl
 import com.oldogz.core.designsystem.component.AppLinkAlarmDialog
 import com.oldogz.core.designsystem.component.AppLinkAlarmIconButton
 import com.oldogz.core.designsystem.component.AppLinkAlarmTopAppBar
@@ -72,6 +76,7 @@ import com.oldogz.core.firebase.LocalFirebaseManager
 import com.oldogz.core.firebase.model.FA
 import com.oldogz.core.model.AppLinkAlarm
 import com.oldogz.core.model.DayOfWeek
+import com.oldogz.core.model.LinkTarget
 import com.oldogz.core.model.PeriodOfDay
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -102,19 +107,37 @@ internal fun AlarmHomeScreen(
         alarmHomeViewModel.event.collect { event ->
             when (event) {
                 is AlarmHomeUiEvent.LinkedAppOpen -> {
-                    val launchIntent =
-                        context.packageManager.getLaunchIntentForPackage(event.linkedAppPackage)
-                    if (launchIntent != null) {
-                        context.startActivity(launchIntent)
-                    } else {
-                        onShowErrorSnackBar(
-                            Throwable(
-                                context.getString(
-                                    R.string.feature_alarm_error_text_app_not_found,
-                                    event.linkedAppPackage
+                    when (val target = event.linkTarget) {
+                        is LinkTarget.App -> {
+                            val launchIntent =
+                                context.packageManager.getLaunchIntentForPackage(target.packageName)
+                            if (launchIntent != null) {
+                                context.startActivity(launchIntent)
+                            } else {
+                                onShowErrorSnackBar(
+                                    Throwable(
+                                        context.getString(
+                                            R.string.feature_alarm_error_text_app_not_found,
+                                            target.packageName
+                                        )
+                                    )
                                 )
-                            )
-                        )
+                            }
+                        }
+
+                        is LinkTarget.Url -> {
+                            val normalizeUrl = normalizeUrl(target.urlString)
+                            val intent = Intent(Intent.ACTION_VIEW, normalizeUrl.toUri())
+                            if (intent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(intent)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.feature_alarm_error_text_url),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
                     }
                 }
             }
@@ -294,7 +317,9 @@ private fun CheckPermission(
     if (visibleNotificationPermissionDialog) {
         AppLinkAlarmDialog(
             dialogTitle = stringResource(R.string.feature_alarm_text_permission_denied),
-            dialogText = stringResource(R.string.feature_alarm_text_notification_permission_denied_content),
+            content = {
+                Text(text = stringResource(R.string.feature_alarm_text_notification_permission_denied_content))
+            },
             imageVector = Icons.Filled.AppBlocking,
             contentDescription = stringResource(R.string.feature_alarm_text_permission_denied),
             confirmText = stringResource(R.string.feature_alarm_text_permission_allow),
