@@ -6,17 +6,21 @@ import android.content.Intent
 import androidx.work.workDataOf
 import com.google.firebase.analytics.logEvent
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM_SKIP
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_ID
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_MODE
 import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_TARGET
 import com.oldogz.core.alarm.manager.AppLinkAlarmStateManager
 import com.oldogz.core.alarm.manager.WorkRequestManager
 import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_DATA_ID
+import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_SKIP_TAG
 import com.oldogz.core.alarm.worker.NOTIFICATION_ALARM_TAG
 import com.oldogz.core.alarm.worker.NOTIFICATION_NOT_FOUND_TAG
 import com.oldogz.core.alarm.worker.NotificationAlarmWorker
 import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_ALL_TAG
 import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_DATA_ID
+import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_SKIP_TAG
 import com.oldogz.core.alarm.worker.RESCHEDULE_ALARM_TAG
 import com.oldogz.core.alarm.worker.RescheduleAlarmWorker
 import com.oldogz.core.firebase.FirebaseManager
@@ -45,6 +49,24 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                 workRequestManager.enqueueWorker<RescheduleAlarmWorker>(RESCHEDULE_ALARM_ALL_TAG)
             }
 
+            INTENT_ACTION_APP_LINK_ALARM_SKIP -> {
+                val alarmId = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
+                if (alarmId == -1) return
+                workRequestManager.enqueueWorker<NotificationAlarmWorker>(
+                    NOTIFICATION_ALARM_SKIP_TAG,
+                    workDataOf(NOTIFICATION_ALARM_DATA_ID to alarmId)
+                )
+            }
+
+            INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM -> {
+                val alarmId = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
+                if (alarmId == -1) return
+                workRequestManager.enqueueWorker<RescheduleAlarmWorker>(
+                    RESCHEDULE_ALARM_SKIP_TAG,
+                    workDataOf(RESCHEDULE_ALARM_DATA_ID to alarmId)
+                )
+            }
+
             INTENT_ACTION_APP_LINK_ALARM -> {
                 val alarmId = intent.getIntExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, -1)
                 val alarmMode = AlarmMode.fromString(
@@ -71,7 +93,7 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                         }
                     }
 
-                    is LinkTarget.Url -> { }
+                    is LinkTarget.Url -> {}
                 }
 
                 when (alarmMode) {
@@ -90,7 +112,6 @@ class AppLinkAlarmReceiver : BroadcastReceiver() {
                     RESCHEDULE_ALARM_TAG,
                     workDataOf(RESCHEDULE_ALARM_DATA_ID to alarmId)
                 )
-
             }
         }
     }

@@ -15,6 +15,9 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.createBitmap
 import androidx.core.net.toUri
 import com.oldogz.core.alarm.R
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM
+import com.oldogz.core.alarm.manager.AppLinkAlarmScheduleManager.Companion.INTENT_EXTRA_APP_LINK_ALARM_ID
+import com.oldogz.core.alarm.receiver.AppLinkAlarmReceiver
 import com.oldogz.core.alarm.service.AppLinkAlarmPlayingService
 import com.oldogz.core.model.AlarmMode
 import com.oldogz.core.model.AppLinkAlarm
@@ -64,7 +67,6 @@ class AppLinkAlarmNotificationManager @Inject constructor(
         appLinkAlarm: AppLinkAlarm,
         includeAds: Boolean
     ): Notification {
-
         return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
             .setSmallIcon(R.mipmap.ic_launcher)
             .setLargeIcon(createLargeIconBitmap(appLinkAlarm.linkTarget))
@@ -156,6 +158,48 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setContentIntent(createDefaultPendingIntent(appLinkAlarm, "home"))
             .setAutoCancel(true)
+            .build()
+    }
+
+    fun createAlarmSkipNotification(
+        appLinkAlarm: AppLinkAlarm
+    ): Notification {
+
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            0,
+            Intent(),
+            PendingIntent.FLAG_IMMUTABLE
+        )
+
+        val alarmSkipIntent = Intent(context, AppLinkAlarmReceiver::class.java).apply {
+            action = INTENT_ACTION_APP_LINK_ALARM_SKIP_CONFIRM
+            putExtra(INTENT_EXTRA_APP_LINK_ALARM_ID, appLinkAlarm.id)
+        }
+
+        val skipPendingIntent = PendingIntent.getBroadcast(
+            context,
+            appLinkAlarm.id,
+            alarmSkipIntent,
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        )
+
+        val hourText = appLinkAlarm.hour.toString().padStart(2, '0')
+        val minuteText = appLinkAlarm.minute.toString().padStart(2, '0')
+
+        return NotificationCompat.Builder(context, CHANNEL_ID_APP_LINK_ALARM)
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setLargeIcon(createLargeIconBitmap(appLinkAlarm.linkTarget))
+            .setContentTitle(context.getString(R.string.core_alarm_text_skip_title))
+            .setContentText("$hourText:$minuteText ${appLinkAlarm.periodOfDay}, ${appLinkAlarm.alarmName}")
+            .setContentIntent(pendingIntent)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
+            .addAction(
+                R.drawable.alarm_off_24,
+                context.getString(R.string.core_alarm_text_skip_action),
+                skipPendingIntent
+            )
+            .setSilent(true)
             .build()
     }
 

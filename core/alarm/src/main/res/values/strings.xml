@@ -7,4 +7,7 @@
 
     <string name="core_alarm_text_no_linked_apps_found">No linked apps found: %1$s</string>
     <string name="core_alarm_text_no_linked_apps_content_text">This alarm will be disabled because the linked app cannot be found.</string>
+
+    <string name="core_alarm_text_skip_title">Turn off the alarm that\'s about to ring?</string>
+    <string name="core_alarm_text_skip_action">Turn off today\'s alarm</string>
 </resources>
