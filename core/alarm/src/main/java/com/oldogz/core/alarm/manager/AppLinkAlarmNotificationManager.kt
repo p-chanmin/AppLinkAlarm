@@ -92,7 +92,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             context,
             appLinkAlarm.id,
             alarmStopIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val pendingIntent = createDefaultPendingIntent(appLinkAlarm, "home")
@@ -181,7 +181,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             context,
             appLinkAlarm.id,
             alarmSkipIntent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
         )
 
         val hourText = appLinkAlarm.hour.toString().padStart(2, '0')
@@ -245,7 +245,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
             addNextIntentWithParentStack(intent)
             getPendingIntent(
                 appLinkAlarm.id,
-                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
     }
@@ -259,7 +259,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
                     context,
                     appLinkAlarm.id,
                     intent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
 
@@ -270,7 +270,7 @@ class AppLinkAlarmNotificationManager @Inject constructor(
                     context,
                     appLinkAlarm.id,
                     intent,
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
             }
         }

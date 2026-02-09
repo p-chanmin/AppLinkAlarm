@@ -122,6 +122,7 @@ class AppLinkAlarmPlayingService : Service() {
 
 
     private suspend fun playAppLinkAlarm(appLinkAlarm: AppLinkAlarm, includeAds: Boolean) {
+        appLinkAlarmNotificationManager.cancel(appLinkAlarm.id)
         startForeground(
             appLinkAlarm.id,
             appLinkAlarmNotificationManager.createNotification(appLinkAlarm, includeAds)
