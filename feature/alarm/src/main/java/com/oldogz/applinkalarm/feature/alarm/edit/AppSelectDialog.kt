@@ -35,18 +35,18 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.core.graphics.drawable.toDrawable
 import com.oldogz.applinkalarm.feature.alarm.R
 import com.oldogz.applinkalarm.feature.alarm.model.AppInfo
 import com.oldogz.core.designsystem.component.AppLinkAlarmAsyncImage
@@ -82,7 +82,6 @@ fun AppSelectDialog(
                 AppInfo(
                     appName = app.loadLabel(packageManager).toString(),
                     packageName = app.packageName,
-                    icon = app.loadIcon(packageManager)
                 )
             }.distinctBy { it.packageName }
             apps.addAll(appInfoList)
@@ -192,7 +191,7 @@ internal fun AddUrlItem(
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            painter = painterResource(R.drawable.outline_link_24),
+            imageVector = ImageVector.vectorResource(R.drawable.outline_link_24),
             contentDescription = stringResource(R.string.feature_alarm_text_add_url),
         )
         Column(
@@ -246,7 +245,7 @@ internal fun AppInfoItem(
             modifier = Modifier
                 .size(48.dp)
                 .clip(RoundedCornerShape(8.dp)),
-            drawable = appInfo.icon,
+            packageName = appInfo.packageName,
             contentDescription = stringResource(
                 R.string.feature_alarm_icon_description_app_icon,
                 appInfo.appName
@@ -315,7 +314,6 @@ private fun AppInfoItemPreview() {
             appInfo = AppInfo(
                 appName = "앱 이름",
                 packageName = "com.dev.oldogz",
-                icon = (1).toDrawable(),
             ),
             onClick = {}
         )
