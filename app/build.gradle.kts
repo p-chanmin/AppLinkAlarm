@@ -9,12 +9,12 @@ plugins {
 
 android {
     namespace = "com.oldogz.applinkalarm"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.oldogz.applinkalarm"
         minSdk = 26
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 13
         versionName = "1.1.1"
 
